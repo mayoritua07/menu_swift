@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:swift_menu/screens/onboarding_screens.dart';
 import 'package:swift_menu/widgets/completed_order_dialog.dart';
 
-void main() {
+bool? isFirstTimeUsingApp;
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  isFirstTimeUsingApp = preferences.getBool("isFirstTimeUsingApp") ?? true;
   runApp(const MyApp());
 }
 
@@ -38,14 +45,24 @@ class Home extends StatelessWidget {
   //Simple flutter screen to show button to display completed order dialog ad wait for order
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: ElevatedButton(
-            onPressed: () {
-              showCompletedOrderDialog(context);
-            },
-            child: Text("Show completed order dialog")),
-      ),
-    );
+    return isFirstTimeUsingApp!
+        ? OnboardingScreen()
+        : Scaffold(
+            body: Center(
+              child: Text("Place bar code scanner screen here"),
+            ),
+          );
   }
 }
+//replace scaffold with the bar code scanner
+
+
+// Scaffold(
+//       body: Center(
+//         child: ElevatedButton(
+//             onPressed: () {
+//               showCompletedOrderDialog(context);
+//             },
+//             child: Text("Show completed order dialog")),
+//       ),
+//     );
