@@ -27,6 +27,7 @@ class Home extends StatelessWidget {
   const Home({super.key});
 
   void showCompletedOrderDialog(context) {
+    ///function to show completed order Dialog
     showDialog(
         context: context,
         builder: (ctx) {
@@ -34,6 +35,7 @@ class Home extends StatelessWidget {
         });
   }
 
+  //Simple flutter screen to show button to display completed order dialog ad wait for order
   @override
   Widget build(BuildContext context) {
     return Scaffold(
