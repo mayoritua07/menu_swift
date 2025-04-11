@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:swift_menu/screens/onboarding_screen_template.dart';
+import 'package:swift_menu/screens/scan_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -38,11 +39,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (ctx) {
-          return Scaffold(
-            body: Center(
-              child: Text("Place bar code scanner screen here"),
-            ),
-          ); //place bar code scanner here
+          return 
+         Scanscreen();
         },
       ),
     );
