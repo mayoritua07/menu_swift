@@ -71,7 +71,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               OnboardingScreenTemplate(
                 title: "ONE TAP & YOU ARE DONE",
                 details:
-                    " Select your meal, customize it, and send your order straight to the kitchen. Simple, fast, and effortless!",
+                    "Select your meal, customize it, and send your order straight to the kitchen. Simple, fast, and effortless!",
                 imagePath: "assets/images/Onboarding/onboarding_3.png",
               ),
             ],

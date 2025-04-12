@@ -22,6 +22,7 @@ class OnboardingScreenTemplate extends StatelessWidget {
       child: Column(
         children: [
           Container(
+            width: double.infinity,
             clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
               borderRadius: BorderRadiusDirectional.vertical(
