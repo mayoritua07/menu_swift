@@ -49,20 +49,14 @@ class Home extends StatelessWidget {
         ? OnboardingScreen()
         : Scaffold(
             body: Center(
-              child: Text("Place bar code scanner screen here"),
+              child: ElevatedButton(
+                onPressed: () {
+                  showCompletedOrderDialog(context);
+                },
+                child: Text("Show completed order dialog"),
+              ),
             ),
           );
   }
 }
 //replace scaffold with the bar code scanner
-
-
-// Scaffold(
-//       body: Center(
-//         child: ElevatedButton(
-//             onPressed: () {
-//               showCompletedOrderDialog(context);
-//             },
-//             child: Text("Show completed order dialog")),
-//       ),
-//     );

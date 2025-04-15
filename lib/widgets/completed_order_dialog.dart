@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swift_menu/main.dart';
 
 class CompletedOrderDialog extends StatelessWidget {
   const CompletedOrderDialog({super.key});
@@ -7,52 +8,60 @@ class CompletedOrderDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.sizeOf(context).width;
+    bool isLandscape =
+        MediaQuery.maybeOf(context)!.orientation == Orientation.landscape;
     return AlertDialog(
       contentPadding: EdgeInsets.all(18),
       backgroundColor: Colors.white,
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(height: 10),
-          Image.asset(
-            "assets/images/Frame.png",
-            width: (MediaQuery.sizeOf(context).width * 0.6),
-            fit: BoxFit.cover,
-          ),
-          SizedBox(height: gap),
-          Text(
-            "Your order has been confirmed.",
-            style: Theme.of(context).textTheme.titleMedium,
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: gap),
-          Text(
-            "Sit back and relax, as your order is on it's way to you",
-            style: Theme.of(context).textTheme.bodyMedium,
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: gap),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                // padding: EdgeInsets.symmetric(vertical: 8, horizontal: 40),
-                backgroundColor: Color.fromARGB(255, 247, 107, 21)),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: Center(
-                child: Text(
-                  "Done",
-                  style: TextStyle(color: Colors.white, fontSize: 18),
+      content: SizedBox(
+        // width: isLandscape ? width * 0.3 : null,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // SizedBox(height: 10),
+              Image.asset(
+                "assets/images/Frame.png",
+                width: isLandscape ? width * 0.17 : width * 0.32,
+                fit: BoxFit.cover,
+              ),
+              SizedBox(height: gap),
+              Text(
+                "Your order has been confirmed.",
+                style: Theme.of(context).textTheme.titleMedium,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: gap),
+              Text(
+                "Sit back and relax, as your order is on it's way to you",
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: gap),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    // padding: EdgeInsets.symmetric(vertical: 8, horizontal: 40),
+                    backgroundColor: Color.fromARGB(255, 247, 107, 21)),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: Center(
+                    child: Text(
+                      "Done",
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                  ),
                 ),
               ),
-            ),
+              // SizedBox(height: 10),
+            ],
           ),
-          SizedBox(height: 10),
-        ],
+        ),
       ),
     );
   }

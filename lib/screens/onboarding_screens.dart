@@ -35,6 +35,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   void skipOnboardingScreen() async {
     preferences.setBool("isFirstTimeUsingApp", false);
+    Navigator.pop(context);
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (ctx) {
@@ -50,6 +51,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.sizeOf(context).width;
+    //double height = MediaQuery.sizeOf(context).height;
+    bool isLandscape =
+        MediaQuery.maybeOf(context)!.orientation == Orientation.landscape;
     return Scaffold(
       body: Stack(
         children: [
@@ -77,9 +82,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ],
           ),
           Container(
+              padding: isLandscape
+                  ? EdgeInsets.only(left: width * 0.6)
+                  : null, //equal to image size in landscape mode
               alignment: Alignment(0, 0.85),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+                // mainAxisSize: isLandscape ? MainAxisSize.min : MainAxisSize.max,
                 children: [
                   TextButton(
                     onPressed: skipOnboardingScreen,
