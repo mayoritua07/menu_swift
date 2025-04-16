@@ -27,22 +27,22 @@ class OnboardingScreenTemplate extends StatelessWidget {
       child: isLandscape
           ? Row(
               children: [
-                Container(
+                SizedBox(
                   width: width * 0.6,
                   height: double.infinity,
-                  clipBehavior: Clip.hardEdge,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.horizontal(
-                      // right: Radius.circular(30),
-                      left: Radius.circular(30),
-                    ),
-                  ),
+                  // clipBehavior: Clip.hardEdge,
+                  // decoration: BoxDecoration(
+                  //   borderRadius: BorderRadius.horizontal(
+                  //     // right: Radius.circular(30),
+                  //     left: Radius.circular(30),
+                  //   ),
+                  // ),
                   child: Image.asset(
                     imagePath,
                     fit: BoxFit.cover,
                   ),
                 ),
-                SizedBox(width: width * 0.01),
+                SizedBox(width: width * 0.012),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -59,8 +59,10 @@ class OnboardingScreenTemplate extends StatelessWidget {
                       ),
                     ],
                   ),
-                )
+                ),
+                SizedBox(width: width * 0.012),
               ],
+
             )
           : Column(
               children: [
@@ -68,11 +70,11 @@ class OnboardingScreenTemplate extends StatelessWidget {
                   width: double.infinity,
                   height: null,
                   clipBehavior: Clip.hardEdge,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(30),
-                    ),
-                  ),
+                  // decoration: BoxDecoration(
+                  //   borderRadius: BorderRadius.vertical(
+                  //     top: Radius.circular(30),
+                  //   ),
+                  // ),
                   child: Image.asset(
                     imagePath,
                     fit: BoxFit.cover,

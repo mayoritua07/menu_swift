@@ -39,6 +39,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (ctx) {
+          //######################## PUT BAR SCANNER PAGE HERE #########################
           return Scaffold(
             body: Center(
               child: Text("Place bar code scanner screen here"),
