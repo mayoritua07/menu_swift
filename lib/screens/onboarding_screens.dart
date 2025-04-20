@@ -11,8 +11,10 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-  final PageController _controller = PageController();
+  final PageController _pageController = PageController();
   late SharedPreferences preferences;
+  int lastPageNumber = 2;
+  bool isLastPage = false;
 
   void loadSharedPreferences() async {
     preferences = await SharedPreferences.getInstance();
@@ -20,47 +22,63 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   void initState() {
-    loadSharedPreferences();
     super.initState();
+    loadSharedPreferences();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _pageController.dispose();
   }
 
   void nextOnboardingScreen() {
-    if (_controller.page == 2) {
+    if (_pageController.page == lastPageNumber) {
       skipOnboardingScreen();
       return;
     }
-    _controller.nextPage(
+    _pageController.nextPage(
         duration: Duration(milliseconds: 300), curve: Curves.easeIn);
   }
 
   void skipOnboardingScreen() async {
     preferences.setBool("isFirstTimeUsingApp", false);
-    Navigator.pop(context);
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (ctx) {
-          //######################## PUT BAR SCANNER PAGE HERE #########################
+    Navigator.of(context).pushReplacement(PageRouteBuilder(
+        transitionDuration: Duration(milliseconds: 300),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: Tween(begin: 0.65, end: 1.0).animate(animation),
+            child: child,
+          );
+        },
+        pageBuilder: (context, animation, secondaryAnimation) {
+          //####################O replace Scaffold with bar scanner page
           return Scaffold(
             body: Center(
               child: Text("Place bar code scanner screen here"),
             ),
-          ); //place bar code scanner here
-        },
-      ),
-    );
+          );
+        }));
   }
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.sizeOf(context).width;
-    //double height = MediaQuery.sizeOf(context).height;
+    double height = MediaQuery.sizeOf(context).height;
     bool isLandscape =
-        MediaQuery.maybeOf(context)!.orientation == Orientation.landscape;
+        MediaQuery.maybeOf(context)!.orientation == Orientation.landscape &&
+            width > 400;
+
     return Scaffold(
       body: Stack(
         children: [
           PageView(
-            controller: _controller,
+            controller: _pageController,
+            onPageChanged: (int pageNumber) {
+              setState(() {
+                isLastPage = pageNumber == lastPageNumber;
+              });
+            },
             children: [
               OnboardingScreenTemplate(
                 title: "SCAN & GO",
@@ -79,51 +97,81 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 details:
                     "Select your meal, customize it, and send your order straight to the kitchen. Simple, fast, and effortless!",
                 imagePath: "assets/images/Onboarding/onboarding_3.png",
+                isLastPage: isLastPage,
+                skipOnboardingScreen: skipOnboardingScreen,
               ),
             ],
           ),
           Container(
-              padding: isLandscape
-                  ? EdgeInsets.only(left: width * 0.6)
-                  : null, //equal to image size in landscape mode
-              alignment: Alignment(0, 0.85),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                // mainAxisSize: isLandscape ? MainAxisSize.min : MainAxisSize.max,
-                children: [
-                  TextButton(
-                    onPressed: skipOnboardingScreen,
-                    child: Text(
-                      "Skip",
-                      style: TextStyle(color: Colors.black, fontSize: 17),
-                    ),
-                  ),
-                  SmoothPageIndicator(
-                    controller: _controller,
-                    onDotClicked: (index) {
-                      _controller.animateToPage(index,
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.easeIn);
-                    },
-                    count: 3,
-                    effect: ExpandingDotsEffect(
-                      activeDotColor: const Color.fromARGB(255, 247, 107, 21),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: nextOnboardingScreen,
-                    child: CircleAvatar(
-                      radius: 17,
-                      backgroundColor: const Color.fromARGB(255, 247, 107, 21),
-                      child: Icon(
-                        Icons.arrow_forward_rounded,
-                        size: 28,
-                        color: Colors.white,
+            padding: isLandscape
+                ? EdgeInsets.only(
+                    left: width * 0.6) //equal to image size in landscape mode
+                : null,
+            alignment: Alignment(0, 0.88),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  height: 40,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    // mainAxisSize: isLandscape ? MainAxisSize.min : MainAxisSize.max,
+                    children: [
+                      AnimatedOpacity(
+                        duration: Duration(milliseconds: 300),
+                        opacity: isLastPage ? 0 : 1,
+                        child: TextButton(
+                          onPressed: skipOnboardingScreen,
+                          child: Text(
+                            "Skip",
+                            style: TextStyle(color: Colors.black, fontSize: 17),
+                            // textScaler: TextScaler.linear(textScale),x
+                          ),
+                        ),
                       ),
-                    ),
+                      SmoothPageIndicator(
+                        controller: _pageController,
+                        onDotClicked: (index) {
+                          _pageController.animateToPage(index,
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.easeIn);
+                        },
+                        count: 3,
+                        effect: ExpandingDotsEffect(
+                          spacing: 12,
+                          expansionFactor: 2,
+                          radius: 10,
+                          dotHeight: 10,
+                          dotWidth: 10,
+                          strokeWidth: 0.8,
+                          dotColor: const Color.fromARGB(201, 254, 233, 221),
+                          activeDotColor:
+                              const Color.fromARGB(255, 247, 107, 21),
+                        ),
+                      ),
+                      AnimatedOpacity(
+                        duration: Duration(milliseconds: 300),
+                        opacity: isLastPage ? 0 : 1,
+                        child: InkWell(
+                          onTap: nextOnboardingScreen,
+                          child: CircleAvatar(
+                            radius: 15,
+                            backgroundColor:
+                                const Color.fromARGB(255, 247, 107, 21),
+                            child: Icon(
+                              Icons.arrow_forward_rounded,
+                              size: 23,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              )),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
