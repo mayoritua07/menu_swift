@@ -24,13 +24,14 @@ class MenuHeader extends StatelessWidget {
         Positioned(
           bottom: 0,
           left: 0,
-          right: 0,
+          top: 0,
+          right: 200,
           child: Container(
             height: 70, // Covers the bottom part
             width: double.infinity,
             decoration: BoxDecoration(
-              color: Color(0x663D0466), // Semi-transparent color
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
+              color: Colors.transparent, // Semi-transparent color
+              //borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
             ),
           ),
         ),
@@ -43,7 +44,14 @@ class MenuHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Swoop Dining",
+                "EXPERIENCE OUR",
+                style: TextStyle(
+                  fontSize: 24,
+                  color: Colors.white,
+                ),
+              ),
+              Text(
+                "UNIQUE BLEND",
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -51,7 +59,7 @@ class MenuHeader extends StatelessWidget {
                 ),
               ),
               Text(
-                "Best Naija Cuisine",
+                "Savor every taste",
                 style: TextStyle(fontSize: 16, color: Colors.white70),
               ),
             ],

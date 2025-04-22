@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:swift_menu/widgets/completed_order_dialog.dart';
-
+import 'package:swift_menu/component/completed_order_dialog.dart';
+import 'package:swift_menu/model/order_item_model.dart';
 
 class ConfirmOrderSheet extends StatefulWidget {
-  final String itemName;
-  final String price;
-  final int initialQuantity;
+  final List<OrderItem> orders;
+  final VoidCallback onAddMoreItems;
 
   const ConfirmOrderSheet({
     super.key,
-    required this.itemName,
-    required this.price,
-    this.initialQuantity = 1,
+    required this.orders,
+    required this.onAddMoreItems,
   });
 
   @override
@@ -19,15 +17,8 @@ class ConfirmOrderSheet extends StatefulWidget {
 }
 
 class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
-  late int quantity;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _seatController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    quantity = widget.initialQuantity;
-  }
 
   @override
   void dispose() {
@@ -35,15 +26,20 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
     _seatController.dispose();
     super.dispose();
   }
+  //late int quantity;
+  
 
+  double get subtotal {
+    return widget.orders.fold(0, (sum, item) => sum + item.totalPrice);
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -51,15 +47,17 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
           children: [
             _buildHeader(),
             const SizedBox(height: 16),
+            _buildSeatNumberControls(),
+            const SizedBox(height: 16),
             _buildRestaurantInfo(),
             const SizedBox(height: 16),
-            _buildPlateHeader(),
-            const SizedBox(height: 16),
-            _buildOrderItem(),
+            ..._buildOrderItems(),
             const SizedBox(height: 16),
             _buildAddAnotherPlateButton(),
             const SizedBox(height: 16),
-            _buildSeatNumberControls(),
+            _costTitle(),
+            const SizedBox(height: 16),
+            _costDetails(),
             const SizedBox(height: 16),
             _buildConfirmOrderButton(),
             SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
@@ -73,89 +71,140 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-        const Text(
-          "Order Summary",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRestaurantInfo() {
-    return Row(
-      children: [
-        Text(
-          'SD',
-          style: TextStyle(color: const Color(0xff3c00c6), fontSize: 14),
-        ),
-        const SizedBox(width: 10),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text('Swoop Dining'),
-            Text('1 item', style: TextStyle(color: Colors.grey)),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPlateHeader() {
-    return const Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text("Plate"),
         Row(
           children: [
-            Icon(Icons.copy, color: Colors.grey),
-            SizedBox(width: 10),
-            Icon(Icons.delete, color: Colors.red),
+            IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.pop(context),
+            ),
+            Text(
+              'Order Summary',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        const Text("Customer Details", style: TextStyle(fontSize: 14)),
+        const SizedBox(height: 10),
+        Divider(thickness: 1, color: const Color(0xffDCDCDC)),
+      ],
+    );
+  }
+ List<Widget> _buildOrderItems() {
+    return widget.orders.asMap().entries.map((entry) {
+      final index = entry.key;
+      final item = entry.value;
+      return Column(
+        children: [
+          _buildPlateHeader(index + 1),
+          const SizedBox(height: 16),
+          _buildOrderItem(item),
+          const SizedBox(height: 16),
+        ],
+      );
+    }).toList();
+  }
+
+  Widget _buildPlateHeader(int orderNumber) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          "Order $orderNumber",
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Row(
+          children: [
+            Container(
+              height: 39,
+              width: 137,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                border: Border.all(color: const Color(0xffDCDCDC), width: 1.0),
+                borderRadius: BorderRadius.circular(300),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.add, size: 12),
+                  Text(
+                    'Add to this order',
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  widget.orders.removeAt(orderNumber - 1);
+                });
+              },
+              child: Container(
+                height: 32,
+                width: 32,
+                decoration: BoxDecoration(
+                  color: Colors.red[100],
+                  borderRadius: BorderRadius.circular(4000),
+                ),
+                child: Center(child: Icon(Icons.delete, color: Colors.red)),
+              ),
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildOrderItem() {
+  Widget _buildOrderItem(OrderItem item) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(widget.itemName, style: const TextStyle(fontSize: 16)),
-            Text(widget.price, style: const TextStyle(color: Colors.grey)),
+            Text(item.name, style: const TextStyle(fontSize: 16)),
+            Text(item.price, style: const TextStyle(color: Colors.grey)),
           ],
         ),
-        _buildQuantityControl(),
+        _buildQuantityControl(item),
       ],
     );
   }
 
-  Widget _buildQuantityControl() {
+  Widget _buildQuantityControl(OrderItem item) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        border: Border.all(
-          color: const Color(0xffFAAB7A),
-          width: 1.0,
-        ),
+        border: Border.all(color: const Color(0xffDCDCDC), width: 1.0),
         borderRadius: BorderRadius.circular(300),
       ),
       child: Row(
         children: [
           IconButton(
             icon: const Icon(Icons.remove),
-            onPressed: _decreaseQuantity,
+            onPressed: () {
+              setState(() {
+                if (item.quantity > 1) {
+                  item.quantity--;
+                }
+              });
+            },
           ),
-          Text('$quantity', style: const TextStyle(fontSize: 16)),
+          Text(
+            '${item.quantity}',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: _increaseQuantity,
+            onPressed: () {
+              setState(() {
+                item.quantity++;
+              });
+            },
           ),
         ],
       ),
@@ -167,16 +216,93 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.grey[200],
           padding: const EdgeInsets.symmetric(vertical: 15),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(300),
           ),
         ),
-        onPressed: () {},
+        onPressed: () {
+          widget.onAddMoreItems();
+        },
         child: const Text(
           "+ Add another plate",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Color(0xffF76b15), fontSize: 16),
+        ),
+      ),
+    );
+  }
+
+  Widget _costDetails() {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Sub-total(${widget.orders.length} ${widget.orders.length > 1 ? 'orders' : 'order'})',
+              style: TextStyle(fontSize: 15, color: const Color(0xff6b6b6b)),
+            ),
+            Text(
+              'N${subtotal.toStringAsFixed(2)}',
+              style: TextStyle(fontSize: 15, color: const Color(0xff6b6b6b)),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Total',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'N${subtotal.toStringAsFixed(2)}',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRestaurantInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Order Details',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Divider(thickness: 1, color: const Color(0xffDCDCDC)),
+      ],
+    );
+  }
+
+  Widget _costTitle() {
+    return Container(
+      height: 44,
+      width: 402,
+      decoration: BoxDecoration(color: const Color(0xffF0F0F0)),
+      child: Padding(
+        padding: const EdgeInsets.all(9.0),
+        child: Text(
+          'Cost Summary',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -191,7 +317,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
             height: 48,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xffF76b15)),
+              border: Border.all(color: const Color(0xffDCDCDC)),
               borderRadius: BorderRadius.circular(200),
             ),
             child: TextField(
@@ -199,6 +325,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
               decoration: const InputDecoration(
                 border: InputBorder.none,
                 hintText: 'Name',
+                hintStyle: TextStyle(fontSize: 14, color: Color(0xff808080)),
               ),
             ),
           ),
@@ -210,14 +337,15 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
             height: 48,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xffF76b15)),
+              border: Border.all(color: const Color(0xffDCDCDC)),
               borderRadius: BorderRadius.circular(200),
             ),
             child: TextField(
               controller: _seatController,
               decoration: const InputDecoration(
                 border: InputBorder.none,
-                hintText: 'Seat number',
+                hintText: 'Table Tag',
+                hintStyle: TextStyle(fontSize: 14, color: Color(0xff808080)),
               ),
               keyboardType: TextInputType.number,
             ),
@@ -249,21 +377,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
       ),
     );
   }
-
-  void _increaseQuantity() {
-    setState(() {
-      quantity++;
-    });
-  }
-
-  void _decreaseQuantity() {
-    if (quantity > 1) {
-      setState(() {
-        quantity--;
-      });
-    }
-  }
-
+  
   void showCompletedOrderDialog(context) {
     showDialog(
       context: context,

@@ -1,8 +1,11 @@
+
 import 'package:flutter/material.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:swift_menu/component/completed_order_dialog.dart';
 import 'package:swift_menu/screens/onboarding_screens.dart';
 import 'package:swift_menu/screens/scan_screen.dart';
-import 'package:swift_menu/widgets/completed_order_dialog.dart';
+
 
 bool? isFirstTimeUsingApp;
 
@@ -48,7 +51,7 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return isFirstTimeUsingApp!
         ? OnboardingScreen()
-        :Scanscreen();
+        : Scanscreen();
   }
 }
 //replace scaffold with the bar code scanner

@@ -13,20 +13,19 @@ class CategoryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 102.25,
-      height: 39,
+      width: 111,
+      height: 36,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: isSelected ? Color(0xffF76B15) : Colors.grey[200],
+        color: isSelected ? Color(0xffF76B15) : Color(0xffF2F2F2),
         borderRadius: BorderRadius.circular(300),
       ),
       child: Center(
         child: Text(
           text,
           style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: isSelected ? Colors.white : Colors.black,
+            fontSize: 16,
+            color: isSelected ? Colors.white : Color(0xff606060),
           ),
         ),
       ),

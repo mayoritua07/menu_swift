@@ -39,19 +39,20 @@ class MenuItem extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
+                    color: Color(0xff333333)
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 14, color: Color(0xff606060)),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   price,
                   style: const TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    color: Color(0xff606060),
                   ),
                 ),
               ],

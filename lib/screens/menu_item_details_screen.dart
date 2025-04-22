@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:swift_menu/screens/confirm_order_screen.dart';
-
-
 
 class MenuItemDetailsSheet extends StatefulWidget {
   final String itemName;
   final String price;
   final String imagePath;
   final String description;
+   final Function(int) onOrderAdded;
 
   const MenuItemDetailsSheet({
     super.key,
@@ -15,6 +13,7 @@ class MenuItemDetailsSheet extends StatefulWidget {
     required this.price,
     required this.imagePath,
     required this.description,
+    required this.onOrderAdded
   });
 
   @override
@@ -23,6 +22,7 @@ class MenuItemDetailsSheet extends StatefulWidget {
 
 class _MenuItemDetailsSheetState extends State<MenuItemDetailsSheet> {
   int _quantity = 1;
+  
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +42,7 @@ class _MenuItemDetailsSheetState extends State<MenuItemDetailsSheet> {
           const SizedBox(height: 10),
           _buildItemInfo(),
           const SizedBox(height: 20),
-          _buildOrderControls(),
+           _buildOrderControls(),
           SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
         ],
       ),
@@ -78,10 +78,18 @@ class _MenuItemDetailsSheetState extends State<MenuItemDetailsSheet> {
         Positioned(
           top: 8,
           right: 8,
-          child: IconButton(
-            icon: const Icon(Icons.close),
+          child: Container(
+            height: 50,
+            width: 50,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(800),
+              color:Colors.white
+            ),
+            child: IconButton(
+            icon: const Icon(Icons.close,color: Colors.black,),
             onPressed: () => Navigator.pop(context),
           ),
+          )
         ),
       ],
     );
@@ -96,9 +104,9 @@ class _MenuItemDetailsSheetState extends State<MenuItemDetailsSheet> {
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 5),
-         Text(
+        Text(
           ' ${widget.description}',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
         ),
         const SizedBox(height: 5),
         Text(
@@ -125,8 +133,8 @@ class _MenuItemDetailsSheetState extends State<MenuItemDetailsSheet> {
               ),
             ),
             onPressed: () {
-              Navigator.pop(context); // Close current sheet
-              _showConfirmOrderSheet(context);
+             Navigator.pop(context); // Close the current bottom sheet
+            widget.onOrderAdded(_quantity); 
             },
             child: const Text(
               'Add to Order',
@@ -178,16 +186,16 @@ class _MenuItemDetailsSheetState extends State<MenuItemDetailsSheet> {
     );
   }
 
-  void _showConfirmOrderSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => ConfirmOrderSheet(
-        itemName: widget.itemName,
-        price: widget.price,
-       // quantity: _quantity,
-      ),
-    );
-  }
+  // void _showConfirmOrderSheet(BuildContext context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true,
+  //     backgroundColor: Colors.transparent,
+  //     builder: (context) => ConfirmOrderSheet(
+  //       itemName: widget.itemName,
+  //       price: widget.price,
+  //       // quantity: _quantity,
+  //     ),
+  //   );
+  // }
 }

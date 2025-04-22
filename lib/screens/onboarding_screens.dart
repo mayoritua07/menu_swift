@@ -39,8 +39,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (ctx) {
-          return 
-         Scanscreen();
+          return Scanscreen();
         },
       ),
     );
