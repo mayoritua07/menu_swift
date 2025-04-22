@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:swift_menu/component/completed_order_dialog.dart';
 import 'package:swift_menu/screens/onboarding_screens.dart';
-import 'package:swift_menu/widgets/completed_order_dialog.dart';
+import 'package:swift_menu/screens/scan_screen.dart';
 
 bool? isFirstTimeUsingApp;
 
@@ -43,21 +45,8 @@ class Home extends StatelessWidget {
         });
   }
 
-  //Simple flutter screen to show button to display completed order dialog ad wait for order
   @override
   Widget build(BuildContext context) {
-    return isFirstTimeUsingApp!
-        ? OnboardingScreen()
-        : Scaffold(
-            body: Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  showCompletedOrderDialog(context);
-                },
-                child: Text("Show completed order dialog"),
-              ),
-            ),
-          );
+    return isFirstTimeUsingApp! ? OnboardingScreen() : Scanscreen();
   }
 }
-//replace scaffold with the bar code scanner
