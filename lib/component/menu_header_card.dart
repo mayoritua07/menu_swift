@@ -48,6 +48,7 @@ class MenuHeader extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 24,
                   color: Colors.white,
+                  fontFamily: 'Helvetica Neue',
                 ),
               ),
               Text(
@@ -56,11 +57,12 @@ class MenuHeader extends StatelessWidget {
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
+                  fontFamily: 'Helvetica Neue',
                 ),
               ),
               Text(
                 "Savor every taste",
-                style: TextStyle(fontSize: 16, color: Colors.white70),
+                style: TextStyle(fontSize: 16, color: Colors.white70,fontFamily: 'Helvetica Neue',),
               ),
             ],
           ),
