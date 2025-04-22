@@ -36,7 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   smooth_page_indicator: ^1.2.1
   shared_preferences: ^2.5.3
-  google_fonts: ^6.2.1
+
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +67,10 @@ flutter:
     - "assets/images/image 5.png"
     - "assets/images/image 6.png"
     - "assets/images/Exclude.png"
+    - "assets/images/biscuit.png"
+    - "assets/images/icecream.png"
+    - "assets/images/barcode.png"
+    - "assets/images/tea.png"
     - "assets/images/Restaurant Image.png"
     - "assets/images/Search Icon.png"
     - "assets/images/Onboarding/onboarding_1.png"
@@ -85,6 +89,11 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
+  fonts:
+    - family: Helvetica Neue
+      fonts:
+        - asset: assets/fonts/HelveticaNeueItalic.ttf
+          weight: 400
   # fonts:
   #   - family: Schyler
   #     fonts:

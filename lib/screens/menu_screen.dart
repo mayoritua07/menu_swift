@@ -76,7 +76,7 @@ class _MenuScreenState extends State<MenuScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Image.asset('assets/Exclude.png', fit: BoxFit.cover),
+        Image.asset('assets/images/Exclude.png', fit: BoxFit.cover),
         Container(
           width: 32,
           height: 32,
@@ -324,21 +324,21 @@ class _MenuScreenState extends State<MenuScreen> {
       'title': 'Iceream',
       'description': 'Chocolate iceream',
       'price': 'N3,500',
-      'image': 'assets/images/icecream.jpg',
+      'image': 'assets/images/icecream.png',
       'category': 'Snacks',
     },
     {
       'title': 'Tea',
       'description': 'Slim tea',
       'price': 'N2,500',
-      'image': 'assets/images/tea.jpg',
+      'image': 'assets/images/tea.png',
       'category': 'Snacks',
     },
     {
       'title': 'Biscuit',
       'description': 'Chocolate biscuit',
       'price': 'N3,500',
-      'image': 'assets/images/biscuit.jpg',
+      'image': 'assets/images/biscuit.png',
       'category': 'Snacks',
     },
   ];

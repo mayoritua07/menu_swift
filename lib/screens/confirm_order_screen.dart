@@ -68,37 +68,46 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
         ),
       ),
     );
-  }
-
-  Widget _buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            IconButton(
+  }Widget _buildHeader() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Stack(
+        alignment: Alignment.center,
+        children: [
+          // Back button aligned to start (left)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () => Navigator.pop(context),
             ),
-            Text(
-              'Order Summary',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Helvetica Neue',
-              ),
+          ),
+          // Centered title
+          Text(
+            'Order Summary',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Helvetica Neue',
             ),
-          ],
-        ),
-        const Text(
+          ),
+        ],
+      ),
+      const SizedBox(height: 4), // Reduced spacing
+       const  Text(
           "Customer Details",
-          style: TextStyle(fontSize: 14, fontFamily: 'Helvetica Neue'),
-        ),
-        const SizedBox(height: 10),
-        Divider(thickness: 1, color: const Color(0xffDCDCDC)),
-      ],
-    );
-  }
+          style: TextStyle(
+            fontSize: 14,
+            fontFamily: 'Helvetica Neue',
+          ),
+        
+      ),
+      const SizedBox(height: 10),
+      const Divider(thickness: 1, color: Color(0xffDCDCDC)),
+    ],
+  );
+}
 
   List<Widget> _buildOrderItems() {
     return widget.orders.asMap().entries.map((entry) {
