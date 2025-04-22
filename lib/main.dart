@@ -45,10 +45,8 @@ class Home extends StatelessWidget {
         });
   }
 
-  //Simple flutter screen to show button to display completed order dialog ad wait for order
   @override
   Widget build(BuildContext context) {
     return isFirstTimeUsingApp! ? OnboardingScreen() : Scanscreen();
   }
 }
-//replace scaffold with the bar code scanner

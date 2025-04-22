@@ -161,11 +161,11 @@ class OnboardingScreenTemplate extends StatelessWidget {
                       height: 50,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6)),
-                            // padding: EdgeInsets.symmetric(
-                            //     vertical: 8, horizontal: double.infinity),
-                            backgroundColor: Color.fromARGB(255, 247, 107, 21)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          backgroundColor: Color.fromARGB(255, 247, 107, 21),
+                        ),
                         onPressed: skipOnboardingScreen,
                         child: Text(
                           "Click to scan Now",

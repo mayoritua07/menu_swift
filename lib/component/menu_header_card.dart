@@ -14,7 +14,8 @@ class MenuHeader extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             image: DecorationImage(
-              image: AssetImage('assets/food.png'), // Ensure correct path
+              image: AssetImage(
+                  'assets/images/Restaurant Image.png'), // Ensure correct path
               fit: BoxFit.cover,
             ),
           ),

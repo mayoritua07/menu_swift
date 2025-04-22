@@ -61,7 +61,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.sizeOf(context).width;
-    double height = MediaQuery.sizeOf(context).height;
+    // double height = MediaQuery.sizeOf(context).height;
     bool isLandscape =
         MediaQuery.maybeOf(context)!.orientation == Orientation.landscape &&
             width > 400;
