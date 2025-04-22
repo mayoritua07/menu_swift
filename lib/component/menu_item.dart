@@ -89,21 +89,24 @@ class MenuItem extends StatelessWidget {
                 // Button overlapping the image
                 Positioned(
                   bottom: 0,
-                  child: ElevatedButton(
-                    onPressed: onTap,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                  child: SizedBox(
+                    width: 80,
+                    child: ElevatedButton(
+                      onPressed: onTap,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
                       ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
+                      child: const Text(
+                        'Add +',
+                        style: TextStyle(color: Colors.black, fontSize: 14),
                       ),
-                    ),
-                    child: const Text(
-                      'Add +',
-                      style: TextStyle(color: Colors.black, fontSize: 14),
                     ),
                   ),
                 ),

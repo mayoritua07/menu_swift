@@ -71,15 +71,25 @@ class _MenuScreenState extends State<MenuScreen> {
       ),
     );
   }
-  Widget _headerIcons(){
+  Widget _headerIcons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Icon(Icons.circle,size: 24,color: Color(0xffF76B15),),
-        Icon(Icons.notifications,size: 24,color: Color(0xffF76B15),)
+        Image.asset('assets/images/Exclude.png',fit: BoxFit.cover,),
+        Container(
+          width: 32,
+          height: 32,
+          //padding: const EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
+            border: Border.all(color: const Color(0xffDCDCDC), width: 1.0),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(Icons.notifications, size: 24, color: Color(0xffF76B15)),
+        ),
       ],
     );
   }
+
  void _showMenuItemDetailsSheet(BuildContext context, Map<String, dynamic> item) {
     showModalBottomSheet(
       context: context,
