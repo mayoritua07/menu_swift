@@ -19,7 +19,7 @@ class OnboardingScreenTemplate extends StatelessWidget {
   Widget build(BuildContext context) {
     double width = MediaQuery.sizeOf(context).width;
     double height = MediaQuery.sizeOf(context).height;
-    double textScale = (width / 420).clamp(0.85, 1.6);
+    double textScale = (width / 800).clamp(1, 1.4);
     bool isLandscape =
         MediaQuery.maybeOf(context)!.orientation == Orientation.landscape;
     return Container(
@@ -153,7 +153,7 @@ class OnboardingScreenTemplate extends StatelessWidget {
                   ),
                   SizedBox(height: height * 0.04),
                   AnimatedOpacity(
-                    duration: Duration(milliseconds: 500),
+                    duration: Duration(milliseconds: 300),
                     opacity: isLastPage ? 1 : 0,
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: width * 0.04),
