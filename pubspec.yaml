@@ -37,6 +37,7 @@ dependencies:
   smooth_page_indicator: ^1.2.1
   shared_preferences: ^2.5.3
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -66,6 +67,10 @@ flutter:
     - "assets/images/image 5.png"
     - "assets/images/image 6.png"
     - "assets/images/Exclude.png"
+    - "assets/images/biscuit.png"
+    - "assets/images/icecream.png"
+    - "assets/images/barcode.png"
+    - "assets/images/tea.png"
     - "assets/images/Restaurant Image.png"
     - "assets/images/Search Icon.png"
     - "assets/images/Onboarding/onboarding_1.png"

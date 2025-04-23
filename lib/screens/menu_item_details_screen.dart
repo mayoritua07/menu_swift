@@ -101,17 +101,17 @@ class _MenuItemDetailsSheetState extends State<MenuItemDetailsSheet> {
       children: [
         Text(
           widget.itemName,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold,fontFamily: 'Helvetica Neue',),
         ),
         const SizedBox(height: 5),
         Text(
           ' ${widget.description}',
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal,fontFamily: 'Helvetica Neue',),
         ),
         const SizedBox(height: 5),
         Text(
           'Price: ${widget.price}', 
-          style: const TextStyle(fontSize: 16)
+          style: const TextStyle(fontSize: 16,fontFamily: 'Helvetica Neue',)
         ),
       ],
     );
@@ -138,7 +138,7 @@ class _MenuItemDetailsSheetState extends State<MenuItemDetailsSheet> {
             },
             child: const Text(
               'Add to Order',
-              style: TextStyle(color: Colors.white, fontSize: 18),
+              style: TextStyle(color: Colors.white, fontSize: 18,fontFamily: 'Helvetica Neue',),
             ),
           ),
         ),
@@ -170,7 +170,7 @@ class _MenuItemDetailsSheetState extends State<MenuItemDetailsSheet> {
             ),
             Text(
               '$_quantity',
-              style: const TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16,fontFamily: 'Helvetica Neue',),
             ),
             IconButton(
               padding: EdgeInsets.zero,
@@ -186,16 +186,4 @@ class _MenuItemDetailsSheetState extends State<MenuItemDetailsSheet> {
     );
   }
 
-  // void _showConfirmOrderSheet(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: true,
-  //     backgroundColor: Colors.transparent,
-  //     builder: (context) => ConfirmOrderSheet(
-  //       itemName: widget.itemName,
-  //       price: widget.price,
-  //       // quantity: _quantity,
-  //     ),
-  //   );
-  // }
 }

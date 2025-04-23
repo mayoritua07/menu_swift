@@ -14,37 +14,37 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-
   List<OrderItem> cartItems = [];
-
+  String selectedCategory = 'All';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: cartItems.isNotEmpty
-          ? Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xffF76b15),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(200),
+      bottomNavigationBar:
+          cartItems.isNotEmpty
+              ? Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xffF76b15),
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(200),
+                    ),
+                    minimumSize: const Size(double.infinity, 50),
                   ),
-                  minimumSize: const Size(double.infinity, 50),
+                  onPressed: () {
+                    _showConfirmOrderSheet(context);
+                  },
+                  child: Text(
+                    'Proceed to Order ${cartItems.length} ${cartItems.length > 1 ? 'items' : 'item'}',
+                    style: const TextStyle(color: Colors.white, fontSize: 18,fontFamily: 'Helvetica Neue',),
+                  ),
                 ),
-                onPressed: () {
-                  _showConfirmOrderSheet(context);
-                },
-                child: Text(
-                  'Proceed to Order ${cartItems.length} ${cartItems.length > 1 ? 'items' : 'item'}',
-                  style: const TextStyle(color: Colors.white, fontSize: 18),
-                ),
-              ),
-            )
-          : null,
-           body: SafeArea(
+              )
+              : null,
+      body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -52,7 +52,7 @@ class _MenuScreenState extends State<MenuScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _headerIcons(),
-                const SizedBox(height: 16,),
+                const SizedBox(height: 16),
                 const MenuHeader(),
                 const SizedBox(height: 16),
                 _buildSearchField(),
@@ -60,9 +60,9 @@ class _MenuScreenState extends State<MenuScreen> {
                 _buildCategoryButtons(),
                 const SizedBox(height: 16),
                 _buildMenuSection(
-                  title: 'Rice Dishes',
-                  itemCount: '3 items',
-                  items: _riceDishes,
+                  title: selectedCategory,
+                  itemCount: '${filteredItems.length} items',
+                  items: filteredItems,
                 ),
               ],
             ),
@@ -71,11 +71,12 @@ class _MenuScreenState extends State<MenuScreen> {
       ),
     );
   }
+
   Widget _headerIcons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Image.asset('assets/images/Exclude.png',fit: BoxFit.cover,),
+        Image.asset('assets/images/Exclude.png', fit: BoxFit.cover),
         Container(
           width: 32,
           height: 32,
@@ -90,73 +91,139 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 
- void _showMenuItemDetailsSheet(BuildContext context, Map<String, dynamic> item) {
+  void _showMenuItemDetailsSheet(
+    BuildContext context,
+    Map<String, dynamic> item,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => MenuItemDetailsSheet(
-        itemName: item['title'],
-        price: item['price'],
-        imagePath: item['image'],
-        description: item['description'],
-        onOrderAdded: (quantity) {  // Change to accept quantity parameter
-         setState(() {
-            cartItems.add(OrderItem(
-              name: item['title'],
-              price: item['price'],
-              quantity: quantity,
-            ));
-          });
-        },
-      ),
+      builder:
+          (context) => MenuItemDetailsSheet(
+            itemName: item['title'],
+            price: item['price'],
+            imagePath: item['image'],
+            description: item['description'],
+            onOrderAdded: (quantity) {
+              // Change to accept quantity parameter
+              setState(() {
+                cartItems.add(
+                  OrderItem(
+                    name: item['title'],
+                    price: item['price'],
+                    quantity: quantity,
+                  ),
+                );
+              });
+            },
+          ),
     );
   }
 
-void _showConfirmOrderSheet(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (context) =>  ConfirmOrderSheet(
-        orders: cartItems,
-        onAddMoreItems: () {
-          Navigator.pop(context); // Close the confirm order sheet
-        },
-      ),
+  void _showConfirmOrderSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder:
+          (context) => ConfirmOrderSheet(
+            orders: cartItems,
+            onAddMoreItems: () {
+              Navigator.pop(context); // Close the confirm order sheet
+            },
+             onOrderConfirmed: () {  // Add this new callback
+        setState(() {
+          cartItems.clear(); // Clear the cart
+        });
+        Navigator.pop(context); // Close the confirm order sheet
+      },
+          ),
     ).then((_) {
       // This runs when the sheet is closed
       setState(() {});
     });
-}
+  }
+
   Widget _buildSearchField() {
-    return TextField(
-      decoration: InputDecoration(
-        hintText: "Search menu",
-        hintStyle: const TextStyle(color: Color(0xffFAAB7A)),
-        prefixIcon: const Icon(Icons.search, color: Color(0xffFAAB7A)),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5),
-          borderSide: const BorderSide(color: Color(0xffFAAB7A)),
+    return SizedBox(
+      height: 44,
+      width: 362,
+      child: TextField(
+        decoration: InputDecoration(
+          hintText: "Search menu name",
+          hintStyle: const TextStyle(
+            color: Color(0xffFAAB7A),
+            fontSize: 16,
+            fontFamily: 'Helvetica Neue',
+          ),
+          prefixIcon: const Icon(Icons.search, color: Color(0xffFAAB7A)),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: const BorderSide(color: Color(0xffFAAB7A)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: const BorderSide(color: Color(0xffFAAB7A), width: 2.0),
+          ),
+          fillColor: Colors.white,
+          filled: true,
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5),
-          borderSide: const BorderSide(color: Color(0xffFAAB7A), width: 2.0),
-        ),
-        fillColor: Colors.white,
-        filled: true,
       ),
     );
   }
 
+  // Get filtered items based on selected category
+  List<Map<String, dynamic>> get filteredItems {
+    if (selectedCategory == 'All') return _allItems;
+    return _allItems
+        .where((item) => item['category'] == selectedCategory)
+        .toList();
+  }
+
+  // Update category buttons
   Widget _buildCategoryButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: const [
-        CategoryButton(text: "All", isSelected: true),
-        CategoryButton(text: "Rice Dishes"),
-        CategoryButton(text: "Local Meals"),
-      ],
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () => setState(() => selectedCategory = 'All'),
+            child: CategoryButton(
+              text: "All",
+              isSelected: selectedCategory == 'All',
+              onTap: () => setState(() => selectedCategory = 'All'),
+            ),
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: () => setState(() => selectedCategory = 'Rice Dishes'),
+            child: CategoryButton(
+              text: "Rice Dishes",
+              isSelected: selectedCategory == 'Rice Dishes',
+              onTap: () => setState(() => selectedCategory = 'Rice Dishes'),
+            ),
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: () => setState(() => selectedCategory = 'Local Meals'),
+            child: CategoryButton(
+              text: "Local Meals",
+              isSelected: selectedCategory == 'Local Meals',
+              onTap: () => setState(() => selectedCategory = 'Local Meals'),
+            ),
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: () => setState(() => selectedCategory = 'Snacks'),
+            child: CategoryButton(
+              text: "Snacks",
+              isSelected: selectedCategory == 'Snacks',
+              onTap: () => setState(() => selectedCategory = 'Snacks'),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -174,6 +241,7 @@ void _showConfirmOrderSheet(BuildContext context) {
             Text(
               title,
               style: const TextStyle(
+                 fontFamily: 'Helvetica Neue',
                 fontWeight: FontWeight.w600,
                 fontSize: 18,
                 color: Colors.black,
@@ -182,6 +250,7 @@ void _showConfirmOrderSheet(BuildContext context) {
             Text(
               itemCount,
               style: const TextStyle(
+                fontFamily: 'Helvetica Neue',
                 fontWeight: FontWeight.w400,
                 fontSize: 18,
                 color: Colors.grey,
@@ -193,12 +262,15 @@ void _showConfirmOrderSheet(BuildContext context) {
         ...items.map(
           (item) => Column(
             children: [
-              MenuItem(
-                title: item['title'],
-                description: item['description'],
-                price: item['price'],
-                imagePath: item['image'],
+              GestureDetector(
                 onTap: () => _showMenuItemDetailsSheet(context, item),
+                child: MenuItem(
+                  title: item['title'],
+                  description: item['description'],
+                  price: item['price'],
+                  imagePath: item['image'],
+                  onTap: () => _showMenuItemDetailsSheet(context, item),
+                ),
               ),
               const SizedBox(height: 10),
             ],
@@ -208,24 +280,66 @@ void _showConfirmOrderSheet(BuildContext context) {
     );
   }
 
-  final List<Map<String, dynamic>> _riceDishes = [
+  final List<Map<String, dynamic>> _allItems = [
+    // Rice Dishes
     {
       'title': 'Asun Pepper Rice',
       'description': 'Basmati Rice with pieces of Asun',
       'price': 'N3,500',
       'image': 'assets/images/image 5.png',
+      'category': 'Rice Dishes',
     },
     {
       'title': 'Party Jollof',
       'description': 'Flavorful rice cooked',
       'price': 'N3,500',
       'image': 'assets/images/image 6.png',
+      'category': 'Rice Dishes',
     },
     {
       'title': 'Fried Rice',
       'description': 'Rice stir-fried with vegetables',
       'price': 'N3,500',
       'image': 'assets/images/image 4.png',
+      'category': 'Rice Dishes',
+    },
+    // Local Meals
+    {
+      'title': 'Pounded Yam',
+      'description': 'Traditional Nigerian meal',
+      'price': 'N3,500',
+      'image': 'assets/images/image 4.png',
+      'category': 'Local Meals',
+    },
+    {
+      'title': 'Eba',
+      'description': 'Cassava flour meal',
+      'price': 'N2,500',
+      'image': 'assets/images/image 5.png',
+      'category': 'Local Meals',
+    },
+
+    // Snacks
+    {
+      'title': 'Iceream',
+      'description': 'Chocolate iceream',
+      'price': 'N3,500',
+      'image': 'assets/images/icecream.png',
+      'category': 'Snacks',
+    },
+    {
+      'title': 'Tea',
+      'description': 'Slim tea',
+      'price': 'N2,500',
+      'image': 'assets/images/tea.png',
+      'category': 'Snacks',
+    },
+    {
+      'title': 'Biscuit',
+      'description': 'Chocolate biscuit',
+      'price': 'N3,500',
+      'image': 'assets/images/biscuit.png',
+      'category': 'Snacks',
     },
   ];
 }

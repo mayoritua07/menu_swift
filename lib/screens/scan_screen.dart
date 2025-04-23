@@ -21,17 +21,13 @@ class _ScanscreenState extends State<Scanscreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                width: 150,
-                height: 150,
+                width: 146,
+                height: 154,
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey, width: 2),
+                 // border: Border.all(color: Colors.grey, width: 2),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(
-                  Icons.qr_code_scanner,
-                  size: 80,
-                  color: Colors.grey,
-                ),
+                child: Image.asset('assets/images/barcode.png')
               ),
               const SizedBox(height: 10),
               GestureDetector(
@@ -39,6 +35,8 @@ class _ScanscreenState extends State<Scanscreen> {
                   Navigator.push(context, MaterialPageRoute(builder: (context)=> MenuScreen()));
                 },
                 child: Container(
+                  height: 48,
+                  width: 354,
                   padding: const EdgeInsets.only(
                     top: 12,
                     bottom: 12,
