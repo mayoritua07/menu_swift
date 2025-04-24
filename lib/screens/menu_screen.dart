@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:swift_menu/component/category_button.dart';
-import 'package:swift_menu/component/menu_header_card.dart';
-import 'package:swift_menu/component/menu_item.dart';
-import 'package:swift_menu/model/order_item_model.dart';
-import 'package:swift_menu/screens/confirm_order_screen.dart';
-import 'package:swift_menu/screens/menu_item_details_screen.dart';
+import 'package:menu_swift/component/category_button.dart';
+import 'package:menu_swift/component/menu_header_card.dart';
+import 'package:menu_swift/component/menu_item.dart';
+import 'package:menu_swift/model/order_item_model.dart';
+import 'package:menu_swift/screens/confirm_order_screen.dart';
+import 'package:menu_swift/screens/menu_item_details_screen.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});

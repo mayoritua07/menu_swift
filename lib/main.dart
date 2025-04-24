@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:swift_menu/component/completed_order_dialog.dart';
-import 'package:swift_menu/screens/onboarding_screens.dart';
-import 'package:swift_menu/screens/scan_screen.dart';
+import 'package:menu_swift/component/completed_order_dialog.dart';
+import 'package:menu_swift/screens/onboarding_screens.dart';
+import 'package:menu_swift/screens/scan_screen.dart';
 
 bool? isFirstTimeUsingApp;
 

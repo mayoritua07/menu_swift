@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:swift_menu/screens/menu_screen.dart';
+import 'package:menu_swift/screens/menu_screen.dart';
 
 class Scanscreen extends StatefulWidget {
   const Scanscreen({super.key});

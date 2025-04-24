@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:swift_menu/screens/onboarding_screen_template.dart';
-import 'package:swift_menu/screens/scan_screen.dart';
+import 'package:menu_swift/screens/onboarding_screen_template.dart';
+import 'package:menu_swift/screens/scan_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});

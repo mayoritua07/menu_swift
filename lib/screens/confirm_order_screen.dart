@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:swift_menu/component/completed_order_dialog.dart';
-import 'package:swift_menu/model/order_item_model.dart';
+import 'package:menu_swift/component/completed_order_dialog.dart';
+import 'package:menu_swift/model/order_item_model.dart';
 
 class ConfirmOrderSheet extends StatefulWidget {
   final List<OrderItem> orders;
