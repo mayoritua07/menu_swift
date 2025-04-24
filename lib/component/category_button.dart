@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class CategoryButton extends StatelessWidget {
   final String text;
   final bool isSelected;
-   final VoidCallback onTap;
+  final VoidCallback onTap;
 
   const CategoryButton({
     super.key,
     required this.text,
     this.isSelected = false,
-      required this.onTap,
+    required this.onTap,
   });
 
   @override
@@ -25,10 +25,10 @@ class CategoryButton extends StatelessWidget {
       child: Center(
         child: Text(
           text,
+          textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 16,
             color: isSelected ? Colors.white : Color(0xff606060),
-            fontFamily: 'Helvetica Neue'
           ),
         ),
       ),

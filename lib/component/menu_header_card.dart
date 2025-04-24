@@ -44,31 +44,19 @@ class MenuHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "EXPERIENCE OUR",
-                style: TextStyle(
-                  fontSize: 24,
-                  color: Colors.white,
-                  fontFamily: 'Helvetica Neue',
-                ),
-              ),
-              Text(
-                "UNIQUE BLEND",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontFamily: 'Helvetica Neue',
-                ),
-              ),
-              Text(
-                "Savor every taste",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white70,
-                  fontFamily: 'Helvetica Neue',
-                ),
-              ),
+              Text("EXPERIENCE OUR",
+                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                        color: Colors.white,
+                      )),
+              Text("UNIQUE BLEND",
+                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      )),
+              Text("Savor every taste",
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: Colors.white,
+                      )),
             ],
           ),
         ),

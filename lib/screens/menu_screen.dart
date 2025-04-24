@@ -21,29 +21,31 @@ class _MenuScreenState extends State<MenuScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar:
-          cartItems.isNotEmpty
-              ? Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xffF76b15),
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(200),
-                    ),
-                    minimumSize: const Size(double.infinity, 50),
+      bottomNavigationBar: cartItems.isNotEmpty
+          ? Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xffF76b15),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(200),
                   ),
-                  onPressed: () {
-                    _showConfirmOrderSheet(context);
-                  },
-                  child: Text(
-                    'Proceed to Order ${cartItems.length} ${cartItems.length > 1 ? 'items' : 'item'}',
-                    style: const TextStyle(color: Colors.white, fontSize: 18,fontFamily: 'Helvetica Neue',),
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+                onPressed: () {
+                  _showConfirmOrderSheet(context);
+                },
+                child: Text(
+                  'Proceed to Order ${cartItems.length} ${cartItems.length > 1 ? 'items' : 'item'}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
                   ),
                 ),
-              )
-              : null,
+              ),
+            )
+          : null,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -99,25 +101,24 @@ class _MenuScreenState extends State<MenuScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder:
-          (context) => MenuItemDetailsSheet(
-            itemName: item['title'],
-            price: item['price'],
-            imagePath: item['image'],
-            description: item['description'],
-            onOrderAdded: (quantity) {
-              // Change to accept quantity parameter
-              setState(() {
-                cartItems.add(
-                  OrderItem(
-                    name: item['title'],
-                    price: item['price'],
-                    quantity: quantity,
-                  ),
-                );
-              });
-            },
-          ),
+      builder: (context) => MenuItemDetailsSheet(
+        itemName: item['title'],
+        price: item['price'],
+        imagePath: item['image'],
+        description: item['description'],
+        onOrderAdded: (quantity) {
+          // Change to accept quantity parameter
+          setState(() {
+            cartItems.add(
+              OrderItem(
+                name: item['title'],
+                price: item['price'],
+                quantity: quantity,
+              ),
+            );
+          });
+        },
+      ),
     );
   }
 
@@ -126,19 +127,19 @@ class _MenuScreenState extends State<MenuScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder:
-          (context) => ConfirmOrderSheet(
-            orders: cartItems,
-            onAddMoreItems: () {
-              Navigator.pop(context); // Close the confirm order sheet
-            },
-             onOrderConfirmed: () {  // Add this new callback
-        setState(() {
-          cartItems.clear(); // Clear the cart
-        });
-        Navigator.pop(context); // Close the confirm order sheet
-      },
-          ),
+      builder: (context) => ConfirmOrderSheet(
+        orders: cartItems,
+        onAddMoreItems: () {
+          Navigator.pop(context); // Close the confirm order sheet
+        },
+        onOrderConfirmed: () {
+          // Add this new callback
+          setState(() {
+            cartItems.clear(); // Clear the cart
+          });
+          Navigator.pop(context); // Close the confirm order sheet
+        },
+      ),
     ).then((_) {
       // This runs when the sheet is closed
       setState(() {});
@@ -147,23 +148,21 @@ class _MenuScreenState extends State<MenuScreen> {
 
   Widget _buildSearchField() {
     return SizedBox(
-      height: 44,
+      // height: 44,
       width: 362,
       child: TextField(
         decoration: InputDecoration(
           hintText: "Search menu name",
-          hintStyle: const TextStyle(
-            color: Color(0xffFAAB7A),
-            fontSize: 16,
-            fontFamily: 'Helvetica Neue',
-          ),
+          hintStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                color: Color(0xffFAAB7A),
+              ),
           prefixIcon: const Icon(Icons.search, color: Color(0xffFAAB7A)),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
+            borderRadius: BorderRadius.circular(50),
             borderSide: const BorderSide(color: Color(0xffFAAB7A)),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
+            borderRadius: BorderRadius.circular(50),
             borderSide: const BorderSide(color: Color(0xffFAAB7A), width: 2.0),
           ),
           fillColor: Colors.white,
@@ -241,7 +240,6 @@ class _MenuScreenState extends State<MenuScreen> {
             Text(
               title,
               style: const TextStyle(
-                 fontFamily: 'Helvetica Neue',
                 fontWeight: FontWeight.w600,
                 fontSize: 18,
                 color: Colors.black,
@@ -250,7 +248,6 @@ class _MenuScreenState extends State<MenuScreen> {
             Text(
               itemCount,
               style: const TextStyle(
-                fontFamily: 'Helvetica Neue',
                 fontWeight: FontWeight.w400,
                 fontSize: 18,
                 color: Colors.grey,

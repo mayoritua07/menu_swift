@@ -68,46 +68,45 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
         ),
       ),
     );
-  }Widget _buildHeader() {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Stack(
-        alignment: Alignment.center,
-        children: [
-          // Back button aligned to start (left)
-          Align(
-            alignment: Alignment.centerLeft,
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.pop(context),
+  }
+
+  Widget _buildHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            // Back button aligned to start (left)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.pop(context),
+              ),
             ),
-          ),
-          // Centered title
-          Text(
-            'Order Summary',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Helvetica Neue',
+            // Centered title
+            Text(
+              'Order Summary',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-        ],
-      ),
-      const SizedBox(height: 4), // Reduced spacing
-       const  Text(
+          ],
+        ),
+        const SizedBox(height: 4), // Reduced spacing
+        const Text(
           "Customer Details",
           style: TextStyle(
             fontSize: 14,
-            fontFamily: 'Helvetica Neue',
           ),
-        
-      ),
-      const SizedBox(height: 10),
-      const Divider(thickness: 1, color: Color(0xffDCDCDC)),
-    ],
-  );
-}
+        ),
+        const SizedBox(height: 10),
+        const Divider(thickness: 1, color: Color(0xffDCDCDC)),
+      ],
+    );
+  }
 
   List<Widget> _buildOrderItems() {
     return widget.orders.asMap().entries.map((entry) {
@@ -134,7 +133,6 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
             fontSize: 16,
             color: Colors.black,
             fontWeight: FontWeight.bold,
-            fontFamily: 'Helvetica Neue',
           ),
         ),
         Row(
@@ -154,7 +152,6 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
                     'Add to this order',
                     style: const TextStyle(
                       fontSize: 12,
-                      fontFamily: 'Helvetica Neue',
                     ),
                   ),
                 ],
@@ -194,14 +191,12 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
               item.name,
               style: const TextStyle(
                 fontSize: 16,
-                fontFamily: 'Helvetica Neue',
               ),
             ),
             Text(
               item.price,
               style: const TextStyle(
                 color: Colors.grey,
-                fontFamily: 'Helvetica Neue',
               ),
             ),
           ],
@@ -235,7 +230,6 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              fontFamily: 'Helvetica Neue',
             ),
           ),
           IconButton(
@@ -273,7 +267,6 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
           style: TextStyle(
             color: Color(0xffF76b15), // Orange text color
             fontSize: 16,
-            fontFamily: 'Helvetica Neue',
           ),
         ),
       ),
@@ -291,7 +284,6 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
               style: TextStyle(
                 fontSize: 15,
                 color: const Color(0xff6b6b6b),
-                fontFamily: 'Helvetica Neue',
               ),
             ),
             Text(
@@ -299,7 +291,6 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
               style: TextStyle(
                 fontSize: 15,
                 color: const Color(0xff6b6b6b),
-                fontFamily: 'Helvetica Neue',
               ),
             ),
           ],
@@ -314,7 +305,6 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
                 fontSize: 14,
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'Helvetica Neue',
               ),
             ),
             const SizedBox(height: 16),
@@ -324,7 +314,6 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
                 fontSize: 14,
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'Helvetica Neue',
               ),
             ),
           ],
@@ -343,7 +332,6 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
             color: Colors.black,
             fontSize: 14,
             fontWeight: FontWeight.bold,
-            fontFamily: 'Helvetica Neue',
           ),
         ),
         const SizedBox(height: 10),
@@ -364,7 +352,6 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            fontFamily: 'Helvetica Neue',
           ),
         ),
       ),
@@ -396,11 +383,9 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
                       hintStyle: TextStyle(
                         fontSize: 14,
                         color: Color(0xff808080),
-                        fontFamily: 'Helvetica Neue',
                       ),
                       errorStyle: TextStyle(
                         fontSize: 12,
-                        fontFamily: 'Helvetica Neue',
                       ),
                     ),
                     validator: (value) {
@@ -430,11 +415,9 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
                       hintStyle: TextStyle(
                         fontSize: 14,
                         color: Color(0xff808080),
-                        fontFamily: 'Helvetica Neue',
                       ),
                       errorStyle: TextStyle(
                         fontSize: 12,
-                        fontFamily: 'Helvetica Neue',
                       ),
                     ),
                     keyboardType: TextInputType.number,
@@ -471,7 +454,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
 
             // Then call the success callback
             widget.onOrderConfirmed();
-          
+
             showCompletedOrderDialog(context);
           }
         },
@@ -480,7 +463,6 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
           style: TextStyle(
             color: Colors.white,
             fontSize: 18,
-            fontFamily: 'Helvetica Neue',
           ),
         ),
       ),

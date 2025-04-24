@@ -38,16 +38,17 @@ class MenuItem extends StatelessWidget {
                   Text(
                     title,
                     style: const TextStyle(
-                       fontFamily: 'Helvetica Neue',
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xff333333)
-                    ),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff333333)),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     description,
-                    style: TextStyle(fontSize: 14, color: Color(0xff606060), fontFamily: 'Helvetica Neue'),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color(0xff606060),
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -55,7 +56,6 @@ class MenuItem extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 16,
                       color: Color(0xff606060),
-                       fontFamily: 'Helvetica Neue'
                     ),
                   ),
                 ],
@@ -85,7 +85,10 @@ class MenuItem extends StatelessWidget {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(imagePath,fit: BoxFit.cover,),
+                        child: Image.asset(
+                          imagePath,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),
@@ -108,7 +111,10 @@ class MenuItem extends StatelessWidget {
                         ),
                         child: const Text(
                           'Add +',
-                          style: TextStyle(color: Colors.black, fontSize: 14, fontFamily: 'Helvetica Neue'),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 14,
+                          ),
                         ),
                       ),
                     ),

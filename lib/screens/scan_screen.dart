@@ -11,6 +11,7 @@ class Scanscreen extends StatefulWidget {
 class _ScanscreenState extends State<Scanscreen> {
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.sizeOf(context).width;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
@@ -21,22 +22,30 @@ class _ScanscreenState extends State<Scanscreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                width: 146,
-                height: 154,
+                // width: width * 0.45,
+                // height: 154,
                 decoration: BoxDecoration(
-                 // border: Border.all(color: Colors.grey, width: 2),
+                  // border: Border.all(color: Colors.grey, width: 2),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Image.asset('assets/images/barcode.png')
+                child: Image.asset(
+                  'assets/images/barcode.png',
+                  fit: BoxFit.cover,
+                ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 25),
               GestureDetector(
-                onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=> MenuScreen()));
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MenuScreen(),
+                    ),
+                  );
                 },
                 child: Container(
                   height: 48,
-                  width: 354,
+                  width: width * 0.55,
                   padding: const EdgeInsets.only(
                     top: 12,
                     bottom: 12,
@@ -50,9 +59,18 @@ class _ScanscreenState extends State<Scanscreen> {
                   child: Center(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Icon(Icons.qr_code, size: 30, color: Color(0xfff76B15)),
-                        const Text('Scan Barcode'),
+                        Center(
+                            child: Icon(Icons.qr_code,
+                                size: 30, color: Color(0xfff76B15))),
+                        Text(
+                          'Scan Barcode',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .copyWith(color: Color(0xfff76B15)),
+                        ),
                       ],
                     ),
                   ),
