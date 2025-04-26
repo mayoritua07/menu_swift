@@ -20,11 +20,12 @@
                             </imageView>
                         </subviews> -->
 
-                        <color key="backgroundColor" red="0.992" green="0.510" blue="0.251" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                       
 
                         <!-- APP ICON AND BRANDING IMAGE -->
                         <imageView contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" image="splash_icon" id="SplashIcon"></imageView>
                         <imageView contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" image="branding_image" id="BrandingImage">
+                        <color key="backgroundColor" red="0.992" green="0.510" blue="0.251" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint  firstAttribute="width" constant="200" id="brandingImageWidth"/>
                             <constraint  firstAttribute="height" constant="80" id="brandingImageHeight"/>

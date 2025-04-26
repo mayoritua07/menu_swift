@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -156,7 +158,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             backgroundColor:
                                 const Color.fromARGB(255, 247, 107, 21),
                             child: Icon(
-                              Icons.arrow_forward_rounded,
+                              Platform.isIOS
+                                  ? Icons.arrow_forward_ios_rounded
+                                  : Icons.arrow_forward_rounded,
                               size: 23,
                               color: Colors.white,
                             ),
