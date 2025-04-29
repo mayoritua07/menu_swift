@@ -24,25 +24,27 @@ class _MenuItemDetailsSheetState extends State<MenuItemDetailsSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildDragHandle(),
-          const SizedBox(height: 10),
-          _buildItemImage(),
-          const SizedBox(height: 10),
-          _buildItemInfo(),
-          const SizedBox(height: 20),
-          _buildOrderControls(),
-          SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
-        ],
+    return SingleChildScrollView(
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildDragHandle(),
+            const SizedBox(height: 10),
+            _buildItemImage(),
+            const SizedBox(height: 10),
+            _buildItemInfo(),
+            const SizedBox(height: 20),
+            _buildOrderControls(),
+            SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
+          ],
+        ),
       ),
     );
   }

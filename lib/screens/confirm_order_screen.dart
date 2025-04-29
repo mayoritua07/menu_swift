@@ -343,7 +343,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
   Widget _costTitle() {
     return Container(
       height: 44,
-      width: 402,
+      width: double.infinity,
       decoration: BoxDecoration(color: const Color(0xffF0F0F0)),
       child: Padding(
         padding: const EdgeInsets.all(9.0),

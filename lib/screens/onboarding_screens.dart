@@ -116,18 +116,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     // mainAxisSize: isLandscape ? MainAxisSize.min : MainAxisSize.max,
                     children: [
-                      AnimatedOpacity(
-                        duration: Duration(milliseconds: 300),
-                        opacity: isLastPage ? 0 : 1,
-                        child: TextButton(
-                          onPressed: skipOnboardingScreen,
-                          child: Text(
-                            "Skip",
-                            style: TextStyle(color: Colors.black, fontSize: 17),
-                            // textScaler: TextScaler.linear(textScale),x
+                      if (!isLastPage)
+                        AnimatedOpacity(
+                          duration: Duration(milliseconds: 300),
+                          opacity: isLastPage ? 0 : 1,
+                          child: TextButton(
+                            onPressed: skipOnboardingScreen,
+                            child: Text(
+                              "Skip",
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 17),
+                              // textScaler: TextScaler.linear(textScale),x
+                            ),
                           ),
                         ),
-                      ),
                       SmoothPageIndicator(
                         controller: _pageController,
                         onDotClicked: (index) {
@@ -148,25 +150,26 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               const Color.fromARGB(255, 247, 107, 21),
                         ),
                       ),
-                      AnimatedOpacity(
-                        duration: Duration(milliseconds: 300),
-                        opacity: isLastPage ? 0 : 1,
-                        child: InkWell(
-                          onTap: nextOnboardingScreen,
-                          child: CircleAvatar(
-                            radius: 15,
-                            backgroundColor:
-                                const Color.fromARGB(255, 247, 107, 21),
-                            child: Icon(
-                              Platform.isIOS
-                                  ? Icons.arrow_forward_ios_rounded
-                                  : Icons.arrow_forward_rounded,
-                              size: 23,
-                              color: Colors.white,
+                      if (!isLastPage)
+                        AnimatedOpacity(
+                          duration: Duration(milliseconds: 300),
+                          opacity: isLastPage ? 0 : 1,
+                          child: InkWell(
+                            onTap: nextOnboardingScreen,
+                            child: CircleAvatar(
+                              radius: 15,
+                              backgroundColor:
+                                  const Color.fromARGB(255, 247, 107, 21),
+                              child: Icon(
+                                Platform.isIOS
+                                    ? Icons.arrow_forward_ios_rounded
+                                    : Icons.arrow_forward_rounded,
+                                size: 23,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),

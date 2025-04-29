@@ -17,6 +17,7 @@ class CategoryButton extends StatelessWidget {
     return Container(
       width: 111,
       height: 36,
+      margin: EdgeInsets.symmetric(horizontal: 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: isSelected ? Color(0xffF76B15) : Color(0xffF2F2F2),

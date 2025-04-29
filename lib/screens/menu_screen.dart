@@ -16,6 +16,12 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
   List<OrderItem> cartItems = [];
   String selectedCategory = 'All';
+  List<String> categories = [
+    'All',
+    'Rice Dishes',
+    'Local Meals',
+    'Snacks',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +155,7 @@ class _MenuScreenState extends State<MenuScreen> {
   Widget _buildSearchField() {
     return SizedBox(
       // height: 44,
-      width: 362,
+      width: double.infinity,
       child: TextField(
         decoration: InputDecoration(
           hintText: "Search menu name",
@@ -158,11 +164,11 @@ class _MenuScreenState extends State<MenuScreen> {
               ),
           prefixIcon: const Icon(Icons.search, color: Color(0xffFAAB7A)),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(50),
+            borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(color: Color(0xffFAAB7A)),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(50),
+            borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(color: Color(0xffFAAB7A), width: 2.0),
           ),
           fillColor: Colors.white,
@@ -182,46 +188,58 @@ class _MenuScreenState extends State<MenuScreen> {
 
   // Update category buttons
   Widget _buildCategoryButtons() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => setState(() => selectedCategory = 'All'),
+    return Center(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+            children: categories.map((e) {
+          return GestureDetector(
+            onTap: () => setState(() => selectedCategory = e),
             child: CategoryButton(
-              text: "All",
-              isSelected: selectedCategory == 'All',
-              onTap: () => setState(() => selectedCategory = 'All'),
+              text: e,
+              isSelected: selectedCategory == e,
+              onTap: () => setState(() => selectedCategory = e),
             ),
-          ),
-          const SizedBox(width: 8),
-          GestureDetector(
-            onTap: () => setState(() => selectedCategory = 'Rice Dishes'),
-            child: CategoryButton(
-              text: "Rice Dishes",
-              isSelected: selectedCategory == 'Rice Dishes',
-              onTap: () => setState(() => selectedCategory = 'Rice Dishes'),
+          );
+        }).toList()
+            // [
+            //   GestureDetector(
+            //     onTap: () => setState(() => selectedCategory = 'All'),
+            //     child: CategoryButton(
+            //       text: "All",
+            //       isSelected: selectedCategory == 'All',
+            //       onTap: () => setState(() => selectedCategory = 'All'),
+            //     ),
+            //   ),
+            //   const SizedBox(width: 12),
+            //   GestureDetector(
+            //     onTap: () => setState(() => selectedCategory = 'Rice Dishes'),
+            //     child: CategoryButton(
+            //       text: "Rice Dishes",
+            //       isSelected: selectedCategory == 'Rice Dishes',
+            //       onTap: () => setState(() => selectedCategory = 'Rice Dishes'),
+            //     ),
+            //   ),
+            //   const SizedBox(width: 12),
+            //   GestureDetector(
+            //     onTap: () => setState(() => selectedCategory = 'Local Meals'),
+            //     child: CategoryButton(
+            //       text: "Local Meals",
+            //       isSelected: selectedCategory == 'Local Meals',
+            //       onTap: () => setState(() => selectedCategory = 'Local Meals'),
+            //     ),
+            //   ),
+            //   const SizedBox(width: 12),
+            //   GestureDetector(
+            //     onTap: () => setState(() => selectedCategory = 'Snacks'),
+            //     child: CategoryButton(
+            //       text: "Snacks",
+            //       isSelected: selectedCategory == 'Snacks',
+            //       onTap: () => setState(() => selectedCategory = 'Snacks'),
+            //     ),
+            //   ),
+            // ],
             ),
-          ),
-          const SizedBox(width: 8),
-          GestureDetector(
-            onTap: () => setState(() => selectedCategory = 'Local Meals'),
-            child: CategoryButton(
-              text: "Local Meals",
-              isSelected: selectedCategory == 'Local Meals',
-              onTap: () => setState(() => selectedCategory = 'Local Meals'),
-            ),
-          ),
-          const SizedBox(width: 8),
-          GestureDetector(
-            onTap: () => setState(() => selectedCategory = 'Snacks'),
-            child: CategoryButton(
-              text: "Snacks",
-              isSelected: selectedCategory == 'Snacks',
-              onTap: () => setState(() => selectedCategory = 'Snacks'),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -234,26 +252,29 @@ class _MenuScreenState extends State<MenuScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 18,
-                color: Colors.black,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 6.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                  color: Colors.black,
+                ),
               ),
-            ),
-            Text(
-              itemCount,
-              style: const TextStyle(
-                fontWeight: FontWeight.w400,
-                fontSize: 18,
-                color: Colors.grey,
+              Text(
+                itemCount,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 18,
+                  color: Colors.grey,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(height: 10),
         ...items.map(
