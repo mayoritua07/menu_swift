@@ -5,11 +5,13 @@ import 'package:swift_menu/model/order_item_model.dart';
 class ConfirmOrderSheet extends StatefulWidget {
   final List<OrderItem> orders;
   final VoidCallback onAddMoreItems;
+  final VoidCallback onOrderConfirmed;
 
   const ConfirmOrderSheet({
     super.key,
     required this.orders,
     required this.onAddMoreItems,
+    required this.onOrderConfirmed,
   });
 
   @override
@@ -17,6 +19,7 @@ class ConfirmOrderSheet extends StatefulWidget {
 }
 
 class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _seatController = TextEditingController();
 
@@ -27,19 +30,19 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
     super.dispose();
   }
   //late int quantity;
-  
 
   double get subtotal {
     return widget.orders.fold(0, (sum, item) => sum + item.totalPrice);
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -71,25 +74,41 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
+        Stack(
+          alignment: Alignment.center,
           children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.pop(context),
+            // Back button aligned to start (left)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.pop(context),
+              ),
             ),
+            // Centered title
             Text(
               'Order Summary',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
-        const Text("Customer Details", style: TextStyle(fontSize: 14)),
+        const SizedBox(height: 4), // Reduced spacing
+        const Text(
+          "Customer Details",
+          style: TextStyle(
+            fontSize: 14,
+          ),
+        ),
         const SizedBox(height: 10),
-        Divider(thickness: 1, color: const Color(0xffDCDCDC)),
+        const Divider(thickness: 1, color: Color(0xffDCDCDC)),
       ],
     );
   }
- List<Widget> _buildOrderItems() {
+
+  List<Widget> _buildOrderItems() {
     return widget.orders.asMap().entries.map((entry) {
       final index = entry.key;
       final item = entry.value;
@@ -131,7 +150,9 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
                   const Icon(Icons.add, size: 12),
                   Text(
                     'Add to this order',
-                    style: const TextStyle(fontSize: 12),
+                    style: const TextStyle(
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),
@@ -166,8 +187,18 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(item.name, style: const TextStyle(fontSize: 16)),
-            Text(item.price, style: const TextStyle(color: Colors.grey)),
+            Text(
+              item.name,
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            Text(
+              item.price,
+              style: const TextStyle(
+                color: Colors.grey,
+              ),
+            ),
           ],
         ),
         _buildQuantityControl(item),
@@ -196,7 +227,10 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
           ),
           Text(
             '${item.quantity}',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           IconButton(
             icon: const Icon(Icons.add),
@@ -214,11 +248,15 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
   Widget _buildAddAnotherPlateButton() {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 15),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(300),
+          ),
+          side: const BorderSide(
+            color: Color(0xffF76b15), // Orange border color
+            width: 1.0,
           ),
         ),
         onPressed: () {
@@ -226,7 +264,10 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
         },
         child: const Text(
           "+ Add another plate",
-          style: TextStyle(color: Color(0xffF76b15), fontSize: 16),
+          style: TextStyle(
+            color: Color(0xffF76b15), // Orange text color
+            fontSize: 16,
+          ),
         ),
       ),
     );
@@ -240,11 +281,17 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
           children: [
             Text(
               'Sub-total(${widget.orders.length} ${widget.orders.length > 1 ? 'orders' : 'order'})',
-              style: TextStyle(fontSize: 15, color: const Color(0xff6b6b6b)),
+              style: TextStyle(
+                fontSize: 15,
+                color: const Color(0xff6b6b6b),
+              ),
             ),
             Text(
               'N${subtotal.toStringAsFixed(2)}',
-              style: TextStyle(fontSize: 15, color: const Color(0xff6b6b6b)),
+              style: TextStyle(
+                fontSize: 15,
+                color: const Color(0xff6b6b6b),
+              ),
             ),
           ],
         ),
@@ -296,62 +343,97 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
   Widget _costTitle() {
     return Container(
       height: 44,
-      width: 402,
+      width: double.infinity,
       decoration: BoxDecoration(color: const Color(0xffF0F0F0)),
       child: Padding(
         padding: const EdgeInsets.all(9.0),
         child: Text(
           'Cost Summary',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
   }
 
   Widget _buildSeatNumberControls() {
-    return Row(
-      children: [
-        Expanded(
-          flex: 2,
-          child: Container(
-            height: 48,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xffDCDCDC)),
-              borderRadius: BorderRadius.circular(200),
-            ),
-            child: TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                hintText: 'Name',
-                hintStyle: TextStyle(fontSize: 14, color: Color(0xff808080)),
+    return Form(
+      key:
+          _formKey, // Add this to your state class: final _formKey = GlobalKey<FormState>();
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: Container(
+                  height: 48,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: const Color(0xffDCDCDC)),
+                    borderRadius: BorderRadius.circular(200),
+                  ),
+                  child: TextFormField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Name',
+                      hintStyle: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xff808080),
+                      ),
+                      errorStyle: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Required';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          flex: 1,
-          child: Container(
-            height: 48,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xffDCDCDC)),
-              borderRadius: BorderRadius.circular(200),
-            ),
-            child: TextField(
-              controller: _seatController,
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                hintText: 'Table Tag',
-                hintStyle: TextStyle(fontSize: 14, color: Color(0xff808080)),
+              const SizedBox(width: 10),
+              Expanded(
+                flex: 1,
+                child: Container(
+                  height: 48,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: const Color(0xffDCDCDC)),
+                    borderRadius: BorderRadius.circular(200),
+                  ),
+                  child: TextFormField(
+                    controller: _seatController,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Table Tag',
+                      hintStyle: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xff808080),
+                      ),
+                      errorStyle: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Required';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
               ),
-              keyboardType: TextInputType.number,
-            ),
+            ],
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -367,17 +449,26 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
           ),
         ),
         onPressed: () {
-          Navigator.pop(context); // Close the sheet
-          showCompletedOrderDialog(context);
+          if (_formKey.currentState!.validate()) {
+            // Proceed with order
+
+            // Then call the success callback
+            widget.onOrderConfirmed();
+
+            showCompletedOrderDialog(context);
+          }
         },
         child: const Text(
           "Confirm Order",
-          style: TextStyle(color: Colors.white, fontSize: 18),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+          ),
         ),
       ),
     );
   }
-  
+
   void showCompletedOrderDialog(context) {
     showDialog(
       context: context,

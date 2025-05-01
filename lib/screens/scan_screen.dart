@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:swift_menu/screens/menu_screen.dart';
+
+String baseUrl = "";
 
 class Scanscreen extends StatefulWidget {
   const Scanscreen({super.key});
@@ -9,58 +12,172 @@ class Scanscreen extends StatefulWidget {
 }
 
 class _ScanscreenState extends State<Scanscreen> {
+  MobileScannerController controller = MobileScannerController(
+      autoStart: true, detectionSpeed: DetectionSpeed.normal);
+  bool isScanningCode = false;
+  bool showLoadingSpinner = false;
+
+  @override
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  Future<Map<String, String>> fetchData(String businessID) async {
+    return {};
+  }
+
+  void onQRDetected(capture) {
+    if (!isScanningCode) {
+      return;
+    }
+    ScaffoldMessenger.of(context).clearSnackBars();
+    final List<Barcode> scannedQRcodes = capture.barcodes;
+    final Barcode scannedQRcode = scannedQRcodes[0];
+
+    String? data = scannedQRcode.rawValue;
+    bool hasValidData = data != null;
+
+    if (hasValidData) {
+      setState(() {
+        showLoadingSpinner = true;
+      });
+
+      fetchData(data).then((onValue) {
+        if (context.mounted) {
+          return Navigator.of(context)
+              .push(PageRouteBuilder(
+                  transitionDuration: Duration(milliseconds: 300),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(
+                      opacity: Tween(begin: 0.65, end: 1.0).animate(animation),
+                      child: child,
+                    );
+                  },
+                  pageBuilder: (context, animation, secondaryAnimation) {
+                    return MenuScreen();
+                  }))
+              .then((onValue) {
+            setState(() {
+              isScanningCode = false;
+              showLoadingSpinner = false;
+            });
+          });
+        }
+      });
+    } else {
+      isScanningCode = false;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            padding: EdgeInsets.all(14),
+            behavior: SnackBarBehavior.floating,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            duration: Duration(seconds: 2, milliseconds: 500),
+            backgroundColor: const Color.fromARGB(255, 247, 107, 21),
+            content: Center(
+              child: Text("Invalid QR code. Please Try again!",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(color: Colors.white)),
+            )),
+      );
+    }
+  }
+
+  void scanCode() {
+    setState(() {
+      isScanningCode = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.sizeOf(context).height;
+    double width = MediaQuery.sizeOf(context).width;
+    bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 15),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                width: 150,
-                height: 150,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey, width: 2),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  Icons.qr_code_scanner,
-                  size: 80,
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(height: 10),
-              GestureDetector(
-                onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=> MenuScreen()));
-                },
-                child: Container(
-                  padding: const EdgeInsets.only(
-                    top: 12,
-                    bottom: 12,
-                    left: 16,
-                    right: 24,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Color(0xffF76B15)),
-                  ),
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.qr_code, size: 30, color: Color(0xfff76B15)),
-                        const Text('Scan Barcode'),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
+      body: SingleChildScrollView(
+        child: Container(
+          constraints: BoxConstraints(minHeight: height),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: showLoadingSpinner
+                  ? [
+                      CircularProgressIndicator.adaptive(
+                        backgroundColor:
+                            const Color.fromARGB(255, 247, 107, 21),
+                      ),
+                      SizedBox(height: 8),
+                      Text("Loading Digital Menu")
+                    ]
+                  : [
+                      Container(
+                        clipBehavior: Clip.hardEdge,
+                        constraints: BoxConstraints(
+                          minWidth: 280,
+                          minHeight: 280,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        width: isLandscape ? height * 0.5 : width * 0.5,
+                        height: isLandscape ? height * 0.5 : width * 0.5,
+                        child: MobileScanner(
+                          controller: controller,
+                          onDetect: onQRDetected,
+                          placeholderBuilder:
+                              (BuildContext context, Widget? child) {
+                            return Image.asset(
+                              'assets/images/barcode.png',
+                              fit: BoxFit.cover,
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      InkWell(
+                        onTap: () {
+                          scanCode();
+                        },
+                        child: Container(
+                          // height: 55,
+                          constraints: BoxConstraints(
+                            minWidth: 280,
+                          ),
+                          width: height * 0.5,
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Color(0xffF76B15)),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(Icons.qr_code,
+                                  size: 30, color: Color(0xfff76B15)),
+                              SizedBox(width: 4),
+                              Text(
+                                'Scan QRcode',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .copyWith(color: Color(0xfff76B15)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+            ),
           ),
         ),
       ),

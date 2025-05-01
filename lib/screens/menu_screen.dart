@@ -14,9 +14,14 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-
   List<OrderItem> cartItems = [];
-
+  String selectedCategory = 'All';
+  List<String> categories = [
+    'All',
+    'Rice Dishes',
+    'Local Meals',
+    'Snacks',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +44,15 @@ class _MenuScreenState extends State<MenuScreen> {
                 },
                 child: Text(
                   'Proceed to Order ${cartItems.length} ${cartItems.length > 1 ? 'items' : 'item'}',
-                  style: const TextStyle(color: Colors.white, fontSize: 18),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
                 ),
               ),
             )
           : null,
-           body: SafeArea(
+      body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -52,7 +60,7 @@ class _MenuScreenState extends State<MenuScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _headerIcons(),
-                const SizedBox(height: 16,),
+                const SizedBox(height: 16),
                 const MenuHeader(),
                 const SizedBox(height: 16),
                 _buildSearchField(),
@@ -60,9 +68,9 @@ class _MenuScreenState extends State<MenuScreen> {
                 _buildCategoryButtons(),
                 const SizedBox(height: 16),
                 _buildMenuSection(
-                  title: 'Rice Dishes',
-                  itemCount: '3 items',
-                  items: _riceDishes,
+                  title: selectedCategory,
+                  itemCount: '${filteredItems.length} items',
+                  items: filteredItems,
                 ),
               ],
             ),
@@ -71,11 +79,12 @@ class _MenuScreenState extends State<MenuScreen> {
       ),
     );
   }
+
   Widget _headerIcons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Image.asset('assets/images/Exclude.png',fit: BoxFit.cover,),
+        Image.asset('assets/images/Exclude.png', fit: BoxFit.cover),
         Container(
           width: 32,
           height: 32,
@@ -90,7 +99,10 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 
- void _showMenuItemDetailsSheet(BuildContext context, Map<String, dynamic> item) {
+  void _showMenuItemDetailsSheet(
+    BuildContext context,
+    Map<String, dynamic> item,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -100,27 +112,37 @@ class _MenuScreenState extends State<MenuScreen> {
         price: item['price'],
         imagePath: item['image'],
         description: item['description'],
-        onOrderAdded: (quantity) {  // Change to accept quantity parameter
-         setState(() {
-            cartItems.add(OrderItem(
-              name: item['title'],
-              price: item['price'],
-              quantity: quantity,
-            ));
+        onOrderAdded: (quantity) {
+          // Change to accept quantity parameter
+          setState(() {
+            cartItems.add(
+              OrderItem(
+                name: item['title'],
+                price: item['price'],
+                quantity: quantity,
+              ),
+            );
           });
         },
       ),
     );
   }
 
-void _showConfirmOrderSheet(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (context) =>  ConfirmOrderSheet(
+  void _showConfirmOrderSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ConfirmOrderSheet(
         orders: cartItems,
         onAddMoreItems: () {
+          Navigator.pop(context); // Close the confirm order sheet
+        },
+        onOrderConfirmed: () {
+          // Add this new callback
+          setState(() {
+            cartItems.clear(); // Clear the cart
+          });
           Navigator.pop(context); // Close the confirm order sheet
         },
       ),
@@ -128,35 +150,97 @@ void _showConfirmOrderSheet(BuildContext context) {
       // This runs when the sheet is closed
       setState(() {});
     });
-}
+  }
+
   Widget _buildSearchField() {
-    return TextField(
-      decoration: InputDecoration(
-        hintText: "Search menu",
-        hintStyle: const TextStyle(color: Color(0xffFAAB7A)),
-        prefixIcon: const Icon(Icons.search, color: Color(0xffFAAB7A)),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5),
-          borderSide: const BorderSide(color: Color(0xffFAAB7A)),
+    return SizedBox(
+      // height: 44,
+      width: double.infinity,
+      child: TextField(
+        decoration: InputDecoration(
+          hintText: "Search menu name",
+          hintStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                color: Color(0xffFAAB7A),
+              ),
+          prefixIcon: const Icon(Icons.search, color: Color(0xffFAAB7A)),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xffFAAB7A)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xffFAAB7A), width: 2.0),
+          ),
+          fillColor: Colors.white,
+          filled: true,
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5),
-          borderSide: const BorderSide(color: Color(0xffFAAB7A), width: 2.0),
-        ),
-        fillColor: Colors.white,
-        filled: true,
       ),
     );
   }
 
+  // Get filtered items based on selected category
+  List<Map<String, dynamic>> get filteredItems {
+    if (selectedCategory == 'All') return _allItems;
+    return _allItems
+        .where((item) => item['category'] == selectedCategory)
+        .toList();
+  }
+
+  // Update category buttons
   Widget _buildCategoryButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: const [
-        CategoryButton(text: "All", isSelected: true),
-        CategoryButton(text: "Rice Dishes"),
-        CategoryButton(text: "Local Meals"),
-      ],
+    return Center(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+            children: categories.map((e) {
+          return GestureDetector(
+            onTap: () => setState(() => selectedCategory = e),
+            child: CategoryButton(
+              text: e,
+              isSelected: selectedCategory == e,
+              onTap: () => setState(() => selectedCategory = e),
+            ),
+          );
+        }).toList()
+            // [
+            //   GestureDetector(
+            //     onTap: () => setState(() => selectedCategory = 'All'),
+            //     child: CategoryButton(
+            //       text: "All",
+            //       isSelected: selectedCategory == 'All',
+            //       onTap: () => setState(() => selectedCategory = 'All'),
+            //     ),
+            //   ),
+            //   const SizedBox(width: 12),
+            //   GestureDetector(
+            //     onTap: () => setState(() => selectedCategory = 'Rice Dishes'),
+            //     child: CategoryButton(
+            //       text: "Rice Dishes",
+            //       isSelected: selectedCategory == 'Rice Dishes',
+            //       onTap: () => setState(() => selectedCategory = 'Rice Dishes'),
+            //     ),
+            //   ),
+            //   const SizedBox(width: 12),
+            //   GestureDetector(
+            //     onTap: () => setState(() => selectedCategory = 'Local Meals'),
+            //     child: CategoryButton(
+            //       text: "Local Meals",
+            //       isSelected: selectedCategory == 'Local Meals',
+            //       onTap: () => setState(() => selectedCategory = 'Local Meals'),
+            //     ),
+            //   ),
+            //   const SizedBox(width: 12),
+            //   GestureDetector(
+            //     onTap: () => setState(() => selectedCategory = 'Snacks'),
+            //     child: CategoryButton(
+            //       text: "Snacks",
+            //       isSelected: selectedCategory == 'Snacks',
+            //       onTap: () => setState(() => selectedCategory = 'Snacks'),
+            //     ),
+            //   ),
+            // ],
+            ),
+      ),
     );
   }
 
@@ -168,37 +252,43 @@ void _showConfirmOrderSheet(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 18,
-                color: Colors.black,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 6.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                  color: Colors.black,
+                ),
               ),
-            ),
-            Text(
-              itemCount,
-              style: const TextStyle(
-                fontWeight: FontWeight.w400,
-                fontSize: 18,
-                color: Colors.grey,
+              Text(
+                itemCount,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 18,
+                  color: Colors.grey,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(height: 10),
         ...items.map(
           (item) => Column(
             children: [
-              MenuItem(
-                title: item['title'],
-                description: item['description'],
-                price: item['price'],
-                imagePath: item['image'],
+              GestureDetector(
                 onTap: () => _showMenuItemDetailsSheet(context, item),
+                child: MenuItem(
+                  title: item['title'],
+                  description: item['description'],
+                  price: item['price'],
+                  imagePath: item['image'],
+                  onTap: () => _showMenuItemDetailsSheet(context, item),
+                ),
               ),
               const SizedBox(height: 10),
             ],
@@ -208,24 +298,66 @@ void _showConfirmOrderSheet(BuildContext context) {
     );
   }
 
-  final List<Map<String, dynamic>> _riceDishes = [
+  final List<Map<String, dynamic>> _allItems = [
+    // Rice Dishes
     {
       'title': 'Asun Pepper Rice',
       'description': 'Basmati Rice with pieces of Asun',
       'price': 'N3,500',
       'image': 'assets/images/image 5.png',
+      'category': 'Rice Dishes',
     },
     {
       'title': 'Party Jollof',
       'description': 'Flavorful rice cooked',
       'price': 'N3,500',
       'image': 'assets/images/image 6.png',
+      'category': 'Rice Dishes',
     },
     {
       'title': 'Fried Rice',
       'description': 'Rice stir-fried with vegetables',
       'price': 'N3,500',
       'image': 'assets/images/image 4.png',
+      'category': 'Rice Dishes',
+    },
+    // Local Meals
+    {
+      'title': 'Pounded Yam',
+      'description': 'Traditional Nigerian meal',
+      'price': 'N3,500',
+      'image': 'assets/images/image 4.png',
+      'category': 'Local Meals',
+    },
+    {
+      'title': 'Eba',
+      'description': 'Cassava flour meal',
+      'price': 'N2,500',
+      'image': 'assets/images/image 5.png',
+      'category': 'Local Meals',
+    },
+
+    // Snacks
+    {
+      'title': 'Iceream',
+      'description': 'Chocolate iceream',
+      'price': 'N3,500',
+      'image': 'assets/images/icecream.png',
+      'category': 'Snacks',
+    },
+    {
+      'title': 'Tea',
+      'description': 'Slim tea',
+      'price': 'N2,500',
+      'image': 'assets/images/tea.png',
+      'category': 'Snacks',
+    },
+    {
+      'title': 'Biscuit',
+      'description': 'Chocolate biscuit',
+      'price': 'N3,500',
+      'image': 'assets/images/biscuit.png',
+      'category': 'Snacks',
     },
   ];
 }
