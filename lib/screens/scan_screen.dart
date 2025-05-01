@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:swift_menu/screens/menu_screen.dart';
 
+String baseUrl = "";
+
 class Scanscreen extends StatefulWidget {
   const Scanscreen({super.key});
 
@@ -22,6 +24,10 @@ class _ScanscreenState extends State<Scanscreen> {
     super.dispose();
   }
 
+  Future<Map<String, String>> fetchData(String businessID) async {
+    return {};
+  }
+
   void onQRDetected(capture) {
     if (!isScanningCode) {
       return;
@@ -37,8 +43,8 @@ class _ScanscreenState extends State<Scanscreen> {
       setState(() {
         showLoadingSpinner = true;
       });
-      //fetch data then go to the next page
-      Future.delayed(Duration(seconds: 3)).then((onValue) {
+
+      fetchData(data).then((onValue) {
         if (context.mounted) {
           return Navigator.of(context)
               .push(PageRouteBuilder(
@@ -91,6 +97,9 @@ class _ScanscreenState extends State<Scanscreen> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.sizeOf(context).height;
+    double width = MediaQuery.sizeOf(context).width;
+    bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -119,8 +128,8 @@ class _ScanscreenState extends State<Scanscreen> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        width: height * 0.5,
-                        height: height * 0.5,
+                        width: isLandscape ? height * 0.5 : width * 0.5,
+                        height: isLandscape ? height * 0.5 : width * 0.5,
                         child: MobileScanner(
                           controller: controller,
                           onDetect: onQRDetected,

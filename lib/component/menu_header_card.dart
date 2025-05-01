@@ -59,16 +59,16 @@ class MenuHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("EXPERIENCE OUR",
-                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                         color: Colors.white,
                       )),
               Text("UNIQUE BLEND",
-                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       )),
               Text("Savor every taste",
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: Colors.white,
                       )),
             ],

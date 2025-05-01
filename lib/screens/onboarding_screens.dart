@@ -66,7 +66,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     // double height = MediaQuery.sizeOf(context).height;
     bool isLandscape =
         MediaQuery.maybeOf(context)!.orientation == Orientation.landscape &&
-            width > 400;
+            width > 500;
 
     return Scaffold(
       body: Stack(
