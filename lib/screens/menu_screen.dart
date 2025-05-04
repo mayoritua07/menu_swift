@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:swift_menu/component/category_button.dart';
 import 'package:swift_menu/component/menu_header_card.dart';
 import 'package:swift_menu/component/menu_item.dart';
+import 'package:swift_menu/constants/colors.dart';
 import 'package:swift_menu/model/order_item_model.dart';
 import 'package:swift_menu/screens/confirm_order_screen.dart';
 import 'package:swift_menu/screens/menu_item_details_screen.dart';
@@ -32,7 +33,7 @@ class _MenuScreenState extends State<MenuScreen> {
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xffF76b15),
+                  backgroundColor: mainOrangeColor,
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(200),
@@ -90,10 +91,10 @@ class _MenuScreenState extends State<MenuScreen> {
           height: 32,
           //padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            border: Border.all(color: const Color(0xffDCDCDC), width: 1.0),
+            border: Border.all(color: borderGreyColor, width: 1.0),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(Icons.notifications, size: 24, color: Color(0xffF76B15)),
+          child: Icon(Icons.notifications, size: 24, color: mainOrangeColor),
         ),
       ],
     );
@@ -162,14 +163,13 @@ class _MenuScreenState extends State<MenuScreen> {
           hintStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 color: Color(0xffFAAB7A),
               ),
-          prefixIcon: const Icon(Icons.search, color: Color(0xffFAAB7A)),
+          prefixIcon: const Icon(Icons.search, color: borderOrangeColor),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xffFAAB7A)),
-          ),
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: borderOrangeColor)),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xffFAAB7A), width: 2.0),
+            borderSide: const BorderSide(color: borderOrangeColor, width: 2.0),
           ),
           fillColor: Colors.white,
           filled: true,
@@ -277,23 +277,50 @@ class _MenuScreenState extends State<MenuScreen> {
           ),
         ),
         const SizedBox(height: 10),
-        ...items.map(
-          (item) => Column(
-            children: [
-              GestureDetector(
-                onTap: () => _showMenuItemDetailsSheet(context, item),
-                child: MenuItem(
-                  title: item['title'],
-                  description: item['description'],
-                  price: item['price'],
-                  imagePath: item['image'],
-                  onTap: () => _showMenuItemDetailsSheet(context, item),
-                ),
-              ),
-              const SizedBox(height: 10),
-            ],
-          ),
+        AnimatedSwitcher(
+          duration: Duration(milliseconds: 300),
+          child: ListView.builder(
+              key: ValueKey(filteredItems),
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: filteredItems.length,
+              itemBuilder: (BuildContext ctx, int index) {
+                final item = filteredItems[index];
+                return Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () => _showMenuItemDetailsSheet(context, item),
+                      child: MenuItem(
+                        title: item['title'],
+                        description: item['description'],
+                        price: item['price'],
+                        imagePath: item['image'],
+                        onTap: () => _showMenuItemDetailsSheet(context, item),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                );
+              }),
         ),
+        //Changing the items to a list view to animate it when filters are changed
+        // ...items.map(
+        //   (item) => Column(
+        //     children: [
+        //       GestureDetector(
+        //         onTap: () => _showMenuItemDetailsSheet(context, item),
+        //         child: MenuItem(
+        //           title: item['title'],
+        //           description: item['description'],
+        //           price: item['price'],
+        //           imagePath: item['image'],
+        //           onTap: () => _showMenuItemDetailsSheet(context, item),
+        //         ),
+        //       ),
+        //       const SizedBox(height: 10),
+        //     ],
+        //   ),
+        // ),
       ],
     );
   }

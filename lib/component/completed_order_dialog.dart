@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swift_menu/constants/colors.dart';
 // import 'package:swift_menu/main.dart';
 
 class CompletedOrderDialog extends StatelessWidget {
@@ -43,7 +44,7 @@ class CompletedOrderDialog extends StatelessWidget {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     // padding: EdgeInsets.symmetric(vertical: 8, horizontal: 40),
-                    backgroundColor: Color.fromARGB(255, 247, 107, 21)),
+                    backgroundColor: mainOrangeColor),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },

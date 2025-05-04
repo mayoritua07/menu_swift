@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:swift_menu/constants/colors.dart';
 import 'package:swift_menu/screens/onboarding_screen_template.dart';
 import 'package:swift_menu/screens/scan_screen.dart';
 
@@ -146,8 +147,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           dotWidth: 10,
                           strokeWidth: 0.8,
                           dotColor: const Color.fromARGB(201, 254, 233, 221),
-                          activeDotColor:
-                              const Color.fromARGB(255, 247, 107, 21),
+                          activeDotColor: mainOrangeColor,
                         ),
                       ),
                       if (!isLastPage)
@@ -158,8 +158,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             onTap: nextOnboardingScreen,
                             child: CircleAvatar(
                               radius: 15,
-                              backgroundColor:
-                                  const Color.fromARGB(255, 247, 107, 21),
+                              backgroundColor: mainOrangeColor,
                               child: Icon(
                                 Platform.isIOS
                                     ? Icons.arrow_forward_ios_rounded

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swift_menu/constants/colors.dart';
 
 class OnboardingScreenTemplate extends StatelessWidget {
   const OnboardingScreenTemplate(
@@ -91,8 +92,7 @@ class OnboardingScreenTemplate extends StatelessWidget {
                                   ),
                                   // padding: EdgeInsets.symmetric(
                                   //     vertical: 8, horizontal: double.infinity),
-                                  backgroundColor:
-                                      Color.fromARGB(255, 247, 107, 21)),
+                                  backgroundColor: mainOrangeColor),
                               onPressed: skipOnboardingScreen,
                               child: Text(
                                 "Click to scan Now",
@@ -151,7 +151,7 @@ class OnboardingScreenTemplate extends StatelessWidget {
                     textAlign: TextAlign.center,
                     textScaler: TextScaler.linear(textScale),
                   ),
-                  SizedBox(height: height * 0.04),
+                  SizedBox(height: height * 0.035),
                   if (isLastPage)
                     AnimatedOpacity(
                       duration: Duration(milliseconds: 300),
@@ -162,11 +162,10 @@ class OnboardingScreenTemplate extends StatelessWidget {
                         height: 50,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            backgroundColor: Color.fromARGB(255, 247, 107, 21),
-                          ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              backgroundColor: mainOrangeColor),
                           onPressed: skipOnboardingScreen,
                           child: Text(
                             "Click to scan Now",

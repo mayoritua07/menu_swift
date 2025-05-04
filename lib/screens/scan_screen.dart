@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:swift_menu/constants/colors.dart';
 import 'package:swift_menu/screens/menu_screen.dart';
 
 String baseUrl = "";
@@ -32,7 +33,6 @@ class _ScanscreenState extends State<Scanscreen> {
     if (!isScanningCode) {
       return;
     }
-    ScaffoldMessenger.of(context).clearSnackBars();
     final List<Barcode> scannedQRcodes = capture.barcodes;
     final Barcode scannedQRcode = scannedQRcodes[0];
 
@@ -69,6 +69,7 @@ class _ScanscreenState extends State<Scanscreen> {
       });
     } else {
       isScanningCode = false;
+      ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             padding: EdgeInsets.all(14),
@@ -76,7 +77,7 @@ class _ScanscreenState extends State<Scanscreen> {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             duration: Duration(seconds: 2, milliseconds: 500),
-            backgroundColor: const Color.fromARGB(255, 247, 107, 21),
+            backgroundColor: mainOrangeColor,
             content: Center(
               child: Text("Invalid QR code. Please Try again!",
                   style: Theme.of(context)
@@ -112,8 +113,7 @@ class _ScanscreenState extends State<Scanscreen> {
               children: showLoadingSpinner
                   ? [
                       CircularProgressIndicator.adaptive(
-                        backgroundColor:
-                            const Color.fromARGB(255, 247, 107, 21),
+                        backgroundColor: mainOrangeColor,
                       ),
                       SizedBox(height: 8),
                       Text("Loading Digital Menu")
@@ -156,21 +156,21 @@ class _ScanscreenState extends State<Scanscreen> {
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Color(0xffF76B15)),
+                            border: Border.all(color: mainOrangeColor),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Icon(Icons.qr_code,
-                                  size: 30, color: Color(0xfff76B15)),
+                                  size: 30, color: mainOrangeColor),
                               SizedBox(width: 4),
                               Text(
                                 'Scan QRcode',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyLarge!
-                                    .copyWith(color: Color(0xfff76B15)),
+                                    .copyWith(color: mainOrangeColor),
                               ),
                             ],
                           ),

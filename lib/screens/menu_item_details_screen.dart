@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swift_menu/constants/colors.dart';
 
 class MenuItemDetailsSheet extends StatefulWidget {
   final String itemName;
@@ -133,7 +134,7 @@ class _MenuItemDetailsSheetState extends State<MenuItemDetailsSheet> {
         Expanded(
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xffF76b15),
+              backgroundColor: mainOrangeColor,
               padding: const EdgeInsets.symmetric(vertical: 15),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(200),
@@ -162,7 +163,7 @@ class _MenuItemDetailsSheetState extends State<MenuItemDetailsSheet> {
       height: 46,
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: const Color(0xffFAAB7A)),
+          border: Border.all(color: borderOrangeColor),
           borderRadius: BorderRadius.circular(200),
         ),
         child: Row(

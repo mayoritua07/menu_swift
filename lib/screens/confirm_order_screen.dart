@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:swift_menu/component/completed_order_dialog.dart';
+import 'package:swift_menu/constants/colors.dart';
 import 'package:swift_menu/model/order_item_model.dart';
 
 class ConfirmOrderSheet extends StatefulWidget {
@@ -103,7 +104,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
           ),
         ),
         const SizedBox(height: 10),
-        const Divider(thickness: 1, color: Color(0xffDCDCDC)),
+        const Divider(thickness: 1, color: borderGreyColor),
       ],
     );
   }
@@ -142,7 +143,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
               width: 137,
               padding: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xffDCDCDC), width: 1.0),
+                border: Border.all(color: borderGreyColor, width: 1.0),
                 borderRadius: BorderRadius.circular(300),
               ),
               child: Row(
@@ -210,20 +211,22 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xffDCDCDC), width: 1.0),
+        border: Border.all(color: borderGreyColor, width: 1.0),
         borderRadius: BorderRadius.circular(300),
       ),
       child: Row(
         children: [
           IconButton(
             icon: const Icon(Icons.remove),
-            onPressed: () {
-              setState(() {
-                if (item.quantity > 1) {
-                  item.quantity--;
-                }
-              });
-            },
+            onPressed: item.quantity > 1
+                ? () {
+                    setState(() {
+                      if (item.quantity > 1) {
+                        item.quantity--;
+                      }
+                    });
+                  }
+                : null,
           ),
           Text(
             '${item.quantity}',
@@ -255,7 +258,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
             borderRadius: BorderRadius.circular(300),
           ),
           side: const BorderSide(
-            color: Color(0xffF76b15), // Orange border color
+            color: mainOrangeColor, // Orange border color
             width: 1.0,
           ),
         ),
@@ -265,7 +268,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
         child: const Text(
           "+ Add another plate",
           style: TextStyle(
-            color: Color(0xffF76b15), // Orange text color
+            color: mainOrangeColor, // Orange text color
             fontSize: 16,
           ),
         ),
@@ -335,7 +338,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
           ),
         ),
         const SizedBox(height: 10),
-        Divider(thickness: 1, color: const Color(0xffDCDCDC)),
+        Divider(thickness: 1, color: borderGreyColor),
       ],
     );
   }
@@ -372,7 +375,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
                   height: 48,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                    border: Border.all(color: const Color(0xffDCDCDC)),
+                    border: Border.all(color: borderGreyColor),
                     borderRadius: BorderRadius.circular(200),
                   ),
                   child: TextFormField(
@@ -404,7 +407,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
                   height: 48,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                    border: Border.all(color: const Color(0xffDCDCDC)),
+                    border: Border.all(color: borderGreyColor),
                     borderRadius: BorderRadius.circular(200),
                   ),
                   child: TextFormField(
@@ -420,7 +423,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
                         fontSize: 12,
                       ),
                     ),
-                    keyboardType: TextInputType.number,
+                    // keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Required';
@@ -442,7 +445,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xffF76b15),
+          backgroundColor: mainOrangeColor,
           padding: const EdgeInsets.symmetric(vertical: 15),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(300),
@@ -456,6 +459,24 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
             widget.onOrderConfirmed();
 
             showCompletedOrderDialog(context);
+          } else {
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  padding: EdgeInsets.all(14),
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  duration: Duration(seconds: 3),
+                  backgroundColor: mainOrangeColor,
+                  content: Center(
+                    child: Text("Fill in the required fields.",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge!
+                            .copyWith(color: Colors.white)),
+                  )),
+            );
           }
         },
         child: const Text(

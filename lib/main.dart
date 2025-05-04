@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swift_menu/component/completed_order_dialog.dart';
+import 'package:swift_menu/constants/colors.dart';
 import 'package:swift_menu/screens/menu_screen.dart';
 import 'package:swift_menu/screens/onboarding_screens.dart';
 import 'package:swift_menu/screens/scan_screen.dart';
@@ -24,9 +25,7 @@ class MyApp extends StatelessWidget {
       // title: 'Flutter Demo',
       theme: ThemeData(
         fontFamily: "HelveticaNeue",
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 247, 107, 21),
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: mainOrangeColor),
         useMaterial3: true,
       ),
       home: Home(),

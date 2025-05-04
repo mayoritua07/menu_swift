@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swift_menu/constants/colors.dart';
 
 class CategoryButton extends StatelessWidget {
   final String text;
@@ -20,7 +21,7 @@ class CategoryButton extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: isSelected ? Color(0xffF76B15) : Color(0xffF2F2F2),
+        color: isSelected ? mainOrangeColor : Color(0xffF2F2F2),
         borderRadius: BorderRadius.circular(300),
       ),
       child: Center(
@@ -29,7 +30,7 @@ class CategoryButton extends StatelessWidget {
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 16,
-            color: isSelected ? Colors.white : Color(0xff606060),
+            color: isSelected ? Colors.white : greyTextColor,
           ),
         ),
       ),

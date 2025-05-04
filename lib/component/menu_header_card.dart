@@ -8,8 +8,8 @@ class MenuHeader extends StatelessWidget {
     double height = MediaQuery.sizeOf(context).height;
     bool isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
-    double containerHeight = (isLandscape ? height * 0.35 : height * 0.2)
-        .clamp(170, double.infinity);
+    double containerHeight = (isLandscape ? height * 0.35 : height * 0.18)
+        .clamp(160, double.infinity);
     return Stack(
       children: [
         // Background Image
@@ -40,9 +40,9 @@ class MenuHeader extends StatelessWidget {
               //     99, 63, 63, 63), // Semi-transparent color
               borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
               gradient: LinearGradient(
-                stops: [0.2, 0.35, 1],
+                stops: [0.3, 0.45, 1],
                 colors: [
-                  const Color.fromARGB(88, 3, 2, 2),
+                  const Color.fromARGB(98, 3, 2, 2),
                   Colors.transparent,
                   Colors.transparent
                 ],
@@ -58,19 +58,17 @@ class MenuHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("EXPERIENCE OUR",
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        color: Colors.white,
-                      )),
+              Text(
+                "EXPERIENCE OUR",
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
               Text("UNIQUE BLEND",
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      )),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: Colors.white)),
               Text("Savor every taste",
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: Colors.white,
-                      )),
+                  style: TextStyle(fontSize: 12, color: Colors.white)),
             ],
           ),
         ),

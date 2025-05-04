@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swift_menu/constants/colors.dart';
 
 class MenuItem extends StatelessWidget {
   final String title;
@@ -47,7 +48,7 @@ class MenuItem extends StatelessWidget {
                     description,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Color(0xff606060),
+                      color: greyTextColor,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -55,7 +56,7 @@ class MenuItem extends StatelessWidget {
                     price,
                     style: const TextStyle(
                       fontSize: 16,
-                      color: Color(0xff606060),
+                      color: greyTextColor,
                     ),
                   ),
                 ],
