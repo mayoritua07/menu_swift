@@ -17,12 +17,28 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
   List<OrderItem> cartItems = [];
   String selectedCategory = 'All';
+  List<Map<String, dynamic>> filteredItemsForDisplay = [];
+  List<Map<String, dynamic>> selectedCategoryItems = [];
   List<String> categories = [
     'All',
     'Rice Dishes',
     'Local Meals',
     'Snacks',
   ];
+  TextEditingController searchFieldController = TextEditingController();
+
+  @override
+  void initState() {
+    selectedCategoryItems = getCategoryItems(selectedCategory);
+    filteredItemsForDisplay = selectedCategoryItems;
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    searchFieldController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +86,8 @@ class _MenuScreenState extends State<MenuScreen> {
                 const SizedBox(height: 16),
                 _buildMenuSection(
                   title: selectedCategory,
-                  itemCount: '${filteredItems.length} items',
-                  items: filteredItems,
+                  itemCount: '${filteredItemsForDisplay.length} items',
+                  items: filteredItemsForDisplay,
                 ),
               ],
             ),
@@ -158,6 +174,7 @@ class _MenuScreenState extends State<MenuScreen> {
       // height: 44,
       width: double.infinity,
       child: TextField(
+        controller: searchFieldController,
         decoration: InputDecoration(
           hintText: "Search menu name",
           hintStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
@@ -174,16 +191,42 @@ class _MenuScreenState extends State<MenuScreen> {
           fillColor: Colors.white,
           filled: true,
         ),
+        onChanged: (value) {
+          setState(() {
+            filteredItemsForDisplay = searchFilter(selectedCategoryItems);
+          });
+        },
+        onSubmitted: (value) {
+          setState(() {
+            filteredItemsForDisplay = searchFilter(selectedCategoryItems);
+          });
+        },
       ),
     );
   }
 
-  // Get filtered items based on selected category
-  List<Map<String, dynamic>> get filteredItems {
-    if (selectedCategory == 'All') return _allItems;
-    return _allItems
-        .where((item) => item['category'] == selectedCategory)
+  List<Map<String, dynamic>> searchFilter(
+      List<Map<String, dynamic>> filteredItems) {
+    // Pass in a list of map of menu items and it filters it based on the search and returns the valid ones.
+    String searchText = searchFieldController.text;
+    if (searchText.isEmpty) {
+      return filteredItems;
+    }
+    return filteredItems
+        .where((item) => (item["title"] as String)
+            .toLowerCase()
+            .contains(searchText.toLowerCase()))
         .toList();
+  }
+
+  // Get filtered items based on selected category
+  List<Map<String, dynamic>> getCategoryItems(String category) {
+    // Returns all items under a particular category
+    if (category == 'All') {
+      return _allItems;
+    } else {
+      return _allItems.where((item) => item['category'] == category).toList();
+    }
   }
 
   // Update category buttons
@@ -194,11 +237,19 @@ class _MenuScreenState extends State<MenuScreen> {
         child: Row(
             children: categories.map((e) {
           return GestureDetector(
-            onTap: () => setState(() => selectedCategory = e),
+            onTap: () => setState(() {
+              selectedCategory = e;
+              selectedCategoryItems = getCategoryItems(selectedCategory);
+              filteredItemsForDisplay = searchFilter(selectedCategoryItems);
+            }),
             child: CategoryButton(
               text: e,
               isSelected: selectedCategory == e,
-              onTap: () => setState(() => selectedCategory = e),
+              onTap: () => setState(() {
+                selectedCategory = e;
+                selectedCategoryItems = getCategoryItems(selectedCategory);
+                filteredItemsForDisplay = searchFilter(selectedCategoryItems);
+              }),
             ),
           );
         }).toList()
@@ -249,6 +300,7 @@ class _MenuScreenState extends State<MenuScreen> {
     required String itemCount,
     required List<Map<String, dynamic>> items,
   }) {
+    double height = MediaQuery.sizeOf(context).height;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -279,29 +331,40 @@ class _MenuScreenState extends State<MenuScreen> {
         const SizedBox(height: 10),
         AnimatedSwitcher(
           duration: Duration(milliseconds: 300),
-          child: ListView.builder(
-              key: ValueKey(filteredItems),
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: filteredItems.length,
-              itemBuilder: (BuildContext ctx, int index) {
-                final item = filteredItems[index];
-                return Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () => _showMenuItemDetailsSheet(context, item),
-                      child: MenuItem(
-                        title: item['title'],
-                        description: item['description'],
-                        price: item['price'],
-                        imagePath: item['image'],
-                        onTap: () => _showMenuItemDetailsSheet(context, item),
-                      ),
+          child: items.isEmpty
+              ? Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: height * 0.1),
+                    child: Text(
+                      "No Meals found!",
+                      style: Theme.of(context).textTheme.bodyLarge,
                     ),
-                    const SizedBox(height: 10),
-                  ],
-                );
-              }),
+                  ),
+                )
+              : ListView.builder(
+                  key: ValueKey(filteredItemsForDisplay),
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: filteredItemsForDisplay.length,
+                  itemBuilder: (BuildContext ctx, int index) {
+                    final item = filteredItemsForDisplay[index];
+                    return Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () => _showMenuItemDetailsSheet(context, item),
+                          child: MenuItem(
+                            title: item['title'],
+                            description: item['description'],
+                            price: item['price'],
+                            imagePath: item['image'],
+                            onTap: () =>
+                                _showMenuItemDetailsSheet(context, item),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    );
+                  }),
         ),
         //Changing the items to a list view to animate it when filters are changed
         // ...items.map(
