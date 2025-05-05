@@ -18,7 +18,6 @@ class _MenuScreenState extends State<MenuScreen> {
   List<OrderItem> cartItems = [];
   String selectedCategory = 'All';
   List<Map<String, dynamic>> filteredItemsForDisplay = [];
-  List<Map<String, dynamic>> selectedCategoryItems = [];
   List<String> categories = [
     'All',
     'Rice Dishes',
@@ -29,8 +28,7 @@ class _MenuScreenState extends State<MenuScreen> {
 
   @override
   void initState() {
-    selectedCategoryItems = getCategoryItems(selectedCategory);
-    filteredItemsForDisplay = selectedCategoryItems;
+    filteredItemsForDisplay = filteredItems;
     super.initState();
   }
 
@@ -193,12 +191,12 @@ class _MenuScreenState extends State<MenuScreen> {
         ),
         onChanged: (value) {
           setState(() {
-            filteredItemsForDisplay = searchFilter(selectedCategoryItems);
+            filteredItemsForDisplay = searchFilter(filteredItems);
           });
         },
         onSubmitted: (value) {
           setState(() {
-            filteredItemsForDisplay = searchFilter(selectedCategoryItems);
+            filteredItemsForDisplay = searchFilter(filteredItems);
           });
         },
       ),
@@ -207,7 +205,7 @@ class _MenuScreenState extends State<MenuScreen> {
 
   List<Map<String, dynamic>> searchFilter(
       List<Map<String, dynamic>> filteredItems) {
-    // Pass in a list of map of menu items and it filters it based on the search and returns the valid ones.
+    // Pass in a list of map of menu items and it filters it based on the search and returns the valid ones as a list of map entries.
     String searchText = searchFieldController.text;
     if (searchText.isEmpty) {
       return filteredItems;
@@ -220,12 +218,14 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   // Get filtered items based on selected category
-  List<Map<String, dynamic>> getCategoryItems(String category) {
+  List<Map<String, dynamic>> get filteredItems {
     // Returns all items under a particular category
-    if (category == 'All') {
+    if (selectedCategory == 'All') {
       return _allItems;
     } else {
-      return _allItems.where((item) => item['category'] == category).toList();
+      return _allItems
+          .where((item) => item['category'] == selectedCategory)
+          .toList();
     }
   }
 
@@ -239,16 +239,14 @@ class _MenuScreenState extends State<MenuScreen> {
           return GestureDetector(
             onTap: () => setState(() {
               selectedCategory = e;
-              selectedCategoryItems = getCategoryItems(selectedCategory);
-              filteredItemsForDisplay = searchFilter(selectedCategoryItems);
+              filteredItemsForDisplay = searchFilter(filteredItems);
             }),
             child: CategoryButton(
               text: e,
               isSelected: selectedCategory == e,
               onTap: () => setState(() {
                 selectedCategory = e;
-                selectedCategoryItems = getCategoryItems(selectedCategory);
-                filteredItemsForDisplay = searchFilter(selectedCategoryItems);
+                filteredItemsForDisplay = searchFilter(filteredItems);
               }),
             ),
           );

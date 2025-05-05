@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:swift_menu/component/shimmer_image.dart';
 
-class MenuHeader extends StatelessWidget {
+class MenuHeader extends StatefulWidget {
   const MenuHeader({super.key});
 
+  @override
+  State<MenuHeader> createState() => _MenuHeaderState();
+}
+
+class _MenuHeaderState extends State<MenuHeader> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.sizeOf(context).height;
@@ -26,7 +32,19 @@ class MenuHeader extends StatelessWidget {
           ),
         ),
 
+// /////////// SHIMMER IMAGE ////////////////
+        // Container(
+        //   height: containerHeight,
+        //   width: double.infinity,
+        //   decoration: BoxDecoration(
+        //     borderRadius: BorderRadius.circular(20),
+        //   ),
+        //   clipBehavior: Clip.hardEdge,
+        //   child:
+        // ),
+
         // Bottom Overlay (Semi-Transparent)
+
         Positioned(
           // bottom: 0,
           // left: 0,
@@ -38,12 +56,13 @@ class MenuHeader extends StatelessWidget {
             decoration: BoxDecoration(
               // color: const Color.fromARGB(
               //     99, 63, 63, 63), // Semi-transparent color
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+              borderRadius: BorderRadius.circular(20),
               gradient: LinearGradient(
-                stops: [0.3, 0.45, 1],
+                stops: [0, 0.2, 0.45, 1],
                 colors: [
-                  const Color.fromARGB(98, 3, 2, 2),
-                  Colors.transparent,
+                  const Color.fromARGB(80, 3, 2, 2),
+                  const Color.fromARGB(50, 3, 2, 2),
+                  const Color.fromARGB(30, 3, 2, 2),
                   Colors.transparent
                 ],
               ),
