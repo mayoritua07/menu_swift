@@ -148,18 +148,22 @@ class _MenuScreenState extends State<MenuScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => ConfirmOrderSheet(
-        orders: cartItems,
-        onAddMoreItems: () {
-          Navigator.pop(context); // Close the confirm order sheet
-        },
-        onOrderConfirmed: () {
-          // Add this new callback
-          setState(() {
-            cartItems.clear(); // Clear the cart
-          });
-          Navigator.pop(context); // Close the confirm order sheet
-        },
+      builder: (context) => Scaffold(
+        backgroundColor: Colors.transparent,
+        body: GestureDetector(onTap: () => Navigator.of(context).pop()),
+        bottomSheet: ConfirmOrderSheet(
+          orders: cartItems,
+          onAddMoreItems: () {
+            Navigator.pop(context); // Close the confirm order sheet
+          },
+          onOrderConfirmed: () {
+            // Add this new callback
+            setState(() {
+              cartItems.clear(); // Clear the cart
+            });
+            Navigator.pop(context); // Close the confirm order sheet
+          },
+        ),
       ),
     ).then((_) {
       // This runs when the sheet is closed
@@ -190,11 +194,6 @@ class _MenuScreenState extends State<MenuScreen> {
           filled: true,
         ),
         onChanged: (value) {
-          setState(() {
-            filteredItemsForDisplay = searchFilter(filteredItems);
-          });
-        },
-        onSubmitted: (value) {
           setState(() {
             filteredItemsForDisplay = searchFilter(filteredItems);
           });

@@ -460,23 +460,24 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
 
             showCompletedOrderDialog(context);
           } else {
-            ScaffoldMessenger.of(context).clearSnackBars();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  padding: EdgeInsets.all(14),
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
-                  duration: Duration(seconds: 3),
-                  backgroundColor: mainOrangeColor,
-                  content: Center(
-                    child: Text("Fill in the required fields.",
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge!
-                            .copyWith(color: Colors.white)),
-                  )),
-            );
+            ScaffoldMessenger.of(context)
+              ..clearSnackBars()
+              ..showSnackBar(
+                SnackBar(
+                    padding: EdgeInsets.all(14),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    duration: Duration(seconds: 3),
+                    // backgroundColor: mainOrangeColor,
+                    content: Center(
+                      child: Text("Fill in the required fields.",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .copyWith(color: Colors.white)),
+                    )),
+              );
           }
         },
         child: const Text(

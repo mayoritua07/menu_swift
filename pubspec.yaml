@@ -75,9 +75,13 @@ flutter:
     - "assets/images/tea.png"
     - "assets/images/Restaurant Image.png"
     - "assets/images/Search Icon.png"
+    - "assets/images/splash_icon.png"
     - "assets/images/Onboarding/onboarding_1.png"
     - "assets/images/Onboarding/onboarding_2.png"
     - "assets/images/Onboarding/onboarding_3.png"
+    - "assets/images/Background/bg1.png"
+    - "assets/images/Background/bg2.png"
+    - "assets/images/Background/bg3.png"
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

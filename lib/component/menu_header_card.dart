@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:swift_menu/component/shimmer_image.dart';
 
 class MenuHeader extends StatefulWidget {
   const MenuHeader({super.key});

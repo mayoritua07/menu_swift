@@ -173,11 +173,13 @@ class _MenuItemDetailsSheetState extends State<MenuItemDetailsSheet> {
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
               icon: const Icon(Icons.remove, size: 14),
-              onPressed: () {
-                if (_quantity > 1) {
-                  setState(() => _quantity--);
-                }
-              },
+              onPressed: _quantity > 1
+                  ? () {
+                      if (_quantity > 1) {
+                        setState(() => _quantity--);
+                      }
+                    }
+                  : null,
             ),
             Text(
               '$_quantity',

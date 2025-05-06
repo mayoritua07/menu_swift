@@ -147,6 +147,23 @@ class _ScanscreenState extends State<Scanscreen> {
                         onTap: () {
                           scanCode();
                         },
+                        ///////////////////////temeporary code for now.....
+                        onDoubleTap: () {
+                          Navigator.of(context).push(PageRouteBuilder(
+                              transitionDuration: Duration(milliseconds: 300),
+                              transitionsBuilder: (context, animation,
+                                  secondaryAnimation, child) {
+                                return FadeTransition(
+                                  opacity: Tween(begin: 0.65, end: 1.0)
+                                      .animate(animation),
+                                  child: child,
+                                );
+                              },
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) {
+                                return MenuScreen();
+                              }));
+                        },
                         child: Container(
                           // height: 55,
                           constraints: BoxConstraints(
