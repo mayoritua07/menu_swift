@@ -152,7 +152,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                       if (!isLastPage)
                         AnimatedOpacity(
-                          duration: Duration(milliseconds: 300),
+                          duration: Duration(milliseconds: 500),
                           opacity: isLastPage ? 0 : 1,
                           child: InkWell(
                             onTap: nextOnboardingScreen,

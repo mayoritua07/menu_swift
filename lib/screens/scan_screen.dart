@@ -77,7 +77,7 @@ class _ScanscreenState extends State<Scanscreen> {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             duration: Duration(seconds: 2, milliseconds: 500),
-            backgroundColor: mainOrangeColor,
+            // backgroundColor: mainOrangeColor,
             content: Center(
               child: Text("Invalid QR code. Please Try again!",
                   style: Theme.of(context)
@@ -101,6 +101,7 @@ class _ScanscreenState extends State<Scanscreen> {
     double width = MediaQuery.sizeOf(context).width;
     bool isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
+    double scannerWidth = isLandscape ? height * 0.6 : width * 0.75;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -128,8 +129,8 @@ class _ScanscreenState extends State<Scanscreen> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        width: isLandscape ? height * 0.5 : width * 0.5,
-                        height: isLandscape ? height * 0.5 : width * 0.5,
+                        width: scannerWidth,
+                        height: scannerWidth,
                         child: MobileScanner(
                           controller: controller,
                           onDetect: onQRDetected,
@@ -169,7 +170,7 @@ class _ScanscreenState extends State<Scanscreen> {
                           constraints: BoxConstraints(
                             minWidth: 280,
                           ),
-                          width: height * 0.5,
+                          width: scannerWidth,
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),

@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:swift_menu/component/completed_order_dialog.dart';
 import 'package:swift_menu/constants/colors.dart';
 import 'package:swift_menu/model/order_item_model.dart';
+import 'package:swift_menu/model/order_model.dart';
 
 class ConfirmOrderSheet extends StatefulWidget {
-  final List<OrderItem> orders;
+  final List<Order> orders;
   final VoidCallback onAddMoreItems;
   final VoidCallback onOrderConfirmed;
+  final Function(int) onOrderRemoved;
 
   const ConfirmOrderSheet({
     super.key,
     required this.orders,
     required this.onAddMoreItems,
     required this.onOrderConfirmed,
+    required this.onOrderRemoved,
   });
 
   @override
@@ -32,8 +35,9 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
   }
   //late int quantity;
 
-  double get subtotal {
-    return widget.orders.fold(0, (sum, item) => sum + item.totalPrice);
+  double get total {
+    // return widget.orders.fold(0, (sum, item) => sum + item.totalPrice);
+    return widget.orders.fold(0, (sum, item) => sum + item.price);
   }
 
   @override
@@ -117,7 +121,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
         children: [
           _buildPlateHeader(index + 1),
           const SizedBox(height: 16),
-          _buildOrderItem(item),
+          ..._buildOrderItem(item.orderItems),
           const SizedBox(height: 16),
         ],
       );
@@ -143,19 +147,26 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
               width: 137,
               padding: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
-                border: Border.all(color: borderGreyColor, width: 1.0),
-                borderRadius: BorderRadius.circular(300),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.add, size: 12),
-                  Text(
-                    'Add to this order',
-                    style: const TextStyle(
-                      fontSize: 12,
+                  border: Border.all(color: borderGreyColor, width: 1.0),
+                  borderRadius: BorderRadius.circular(300),
+                  color: borderGreyColor),
+              child: InkWell(
+                onTap: () {
+                  Navigator.of(context)
+                      .pop({"currentOrderIndex": orderNumber - 1});
+                },
+                child: Row(
+                  children: [
+                    const Icon(Icons.add, size: 12, weight: 15),
+                    Text(
+                      'Add to this order',
+                      style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             const SizedBox(width: 10),
@@ -163,6 +174,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
               onTap: () {
                 setState(() {
                   widget.orders.removeAt(orderNumber - 1);
+                  // widget.onOrderRemoved(orderNumber - 1);
                 });
               },
               child: Container(
@@ -181,30 +193,37 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
     );
   }
 
-  Widget _buildOrderItem(OrderItem item) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              item.name,
-              style: const TextStyle(
-                fontSize: 16,
-              ),
+  List<Widget> _buildOrderItem(List<OrderItem> items) {
+    return items
+        .map(
+          (item) => Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.name,
+                      style: const TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      item.price,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+                _buildQuantityControl(item),
+              ],
             ),
-            Text(
-              item.price,
-              style: const TextStyle(
-                color: Colors.grey,
-              ),
-            ),
-          ],
-        ),
-        _buildQuantityControl(item),
-      ],
-    );
+          ),
+        )
+        .toList();
   }
 
   Widget _buildQuantityControl(OrderItem item) {
@@ -277,42 +296,70 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
   }
 
   Widget _costDetails() {
+    bool isOneOrder = widget.orders.length == 1;
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Sub-total(${widget.orders.length} ${widget.orders.length > 1 ? 'orders' : 'order'})',
+              'Sub-total${isOneOrder ? "(1 order)" : ""}',
               style: TextStyle(
                 fontSize: 15,
                 color: const Color(0xff6b6b6b),
               ),
             ),
-            Text(
-              'N${subtotal.toStringAsFixed(2)}',
-              style: TextStyle(
-                fontSize: 15,
-                color: const Color(0xff6b6b6b),
+            if (isOneOrder)
+              Text(
+                'N${widget.orders[0].price.toStringAsFixed(2)}',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: const Color(0xff6b6b6b),
+                ),
               ),
-            ),
           ],
         ),
-        const SizedBox(height: 10),
+        SizedBox(height: 5),
+        if (!isOneOrder)
+          ...widget.orders.asMap().entries.map((entry) {
+            int index = entry.key + 1;
+            final item = entry.value;
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Order $index",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Text(
+                    'N${item.price.toStringAsFixed(2)}',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: const Color(0xff6b6b6b),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        const SizedBox(height: 5),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               'Total',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 15,
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 16),
             Text(
-              'N${subtotal.toStringAsFixed(2)}',
+              'N${total.toStringAsFixed(2)}',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.black,

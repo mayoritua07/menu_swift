@@ -47,18 +47,19 @@ class _UpdateScreenState extends State<UpdateScreen>
       RotationTransition(
         turns:
             CurvedAnimation(parent: animationController, curve: Curves.linear),
-        child: CircleAvatar(
-            // backgroundColor: Colors.transparent,
-            // backgroundImage: AssetImage("assets/images/Background/bg3.png"),
-            radius: radius,
-            child: Image(
-              color: mainOrangeColor,
-              width: radius * 1.5,
-              fit: BoxFit.cover,
-              image: AssetImage(
-                "assets/images/splash_icon.png",
-              ),
-            )),
+        child: Image(
+          color: mainOrangeColor,
+          width: radius,
+          fit: BoxFit.cover,
+          image: AssetImage(
+            "assets/images/splash_icon.png",
+          ),
+        ),
+        // CircleAvatar(
+        // backgroundColor: Colors.transparent,
+        // backgroundImage: AssetImage("assets/images/Background/bg3.png"),
+        // radius: radius,
+        // child: ),
       ),
       SizedBox(height: height * 0.05),
 

@@ -16,10 +16,10 @@ class CategoryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 111,
-      height: 36,
+      width: 120,
+      // height: 36,
       margin: EdgeInsets.symmetric(horizontal: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: isSelected ? mainOrangeColor : Color(0xffF2F2F2),
         borderRadius: BorderRadius.circular(300),

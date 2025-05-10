@@ -4,6 +4,7 @@ import 'package:swift_menu/component/menu_header_card.dart';
 import 'package:swift_menu/component/menu_item.dart';
 import 'package:swift_menu/constants/colors.dart';
 import 'package:swift_menu/model/order_item_model.dart';
+import 'package:swift_menu/model/order_model.dart';
 import 'package:swift_menu/screens/confirm_order_screen.dart';
 import 'package:swift_menu/screens/menu_item_details_screen.dart';
 
@@ -15,9 +16,10 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  List<OrderItem> cartItems = [];
+  int? currentOrderIndex;
   String selectedCategory = 'All';
   List<Map<String, dynamic>> filteredItemsForDisplay = [];
+  List<Order> cartItems = [];
   List<String> categories = [
     'All',
     'Rice Dishes',
@@ -99,7 +101,11 @@ class _MenuScreenState extends State<MenuScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Image.asset('assets/images/Exclude.png', fit: BoxFit.cover),
+        Image.asset(
+          'assets/images/Exclude.png',
+          fit: BoxFit.cover,
+          color: purpleColor,
+        ),
         Container(
           width: 32,
           height: 32,
@@ -130,13 +136,36 @@ class _MenuScreenState extends State<MenuScreen> {
         onOrderAdded: (quantity) {
           // Change to accept quantity parameter
           setState(() {
-            cartItems.add(
-              OrderItem(
-                name: item['title'],
-                price: item['price'],
-                quantity: quantity,
-              ),
-            );
+            final OrderItem newOrderItem = OrderItem(
+                name: item['title'], price: item['price'], quantity: quantity);
+            if (currentOrderIndex == null) {
+              cartItems.add(
+                Order(
+                  orderItems: [newOrderItem],
+                ),
+              );
+            } else {
+              cartItems[currentOrderIndex!].orderItems.add(newOrderItem);
+              ScaffoldMessenger.of(context).clearSnackBars();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                    padding: EdgeInsets.all(14),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    duration: Duration(
+                      seconds: 2,
+                    ),
+                    content: Center(
+                      child: Text(
+                          "Order ${currentOrderIndex! + 1} has been updated.",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .copyWith(color: Colors.white)),
+                    )),
+              );
+            }
           });
         },
       ),
@@ -163,11 +192,24 @@ class _MenuScreenState extends State<MenuScreen> {
             });
             Navigator.pop(context); // Close the confirm order sheet
           },
+          onOrderRemoved: (int index) {
+            setState(() {
+              cartItems.removeAt(index);
+            });
+          },
         ),
       ),
-    ).then((_) {
-      // This runs when the sheet is closed
-      setState(() {});
+    ).then((value) {
+      // This runs when the sheet is closed\
+
+      setState(() {
+        if (value == null) {
+          currentOrderIndex = null;
+        } else {
+          currentOrderIndex =
+              (value as Map<String, dynamic>)["currentOrderIndex"];
+        }
+      });
     });
   }
 
