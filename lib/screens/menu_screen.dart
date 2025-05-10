@@ -7,6 +7,7 @@ import 'package:swift_menu/model/order_item_model.dart';
 import 'package:swift_menu/model/order_model.dart';
 import 'package:swift_menu/screens/confirm_order_screen.dart';
 import 'package:swift_menu/screens/menu_item_details_screen.dart';
+import 'package:swift_menu/screens/order_notifications_screen.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -107,15 +108,21 @@ class _MenuScreenState extends State<MenuScreen> {
           color: purpleColor,
         ),
         Container(
-          width: 32,
-          height: 32,
-          //padding: const EdgeInsets.symmetric(horizontal: 10),
-          decoration: BoxDecoration(
-            border: Border.all(color: borderGreyColor, width: 1.0),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(Icons.notifications, size: 24, color: mainOrangeColor),
-        ),
+            width: 32,
+            height: 32,
+            //padding: const EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(
+              border: Border.all(color: borderGreyColor, width: 1.0),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: InkWell(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+                    return OrderNotificationsScreen();
+                  }));
+                },
+                child: Icon(Icons.notifications,
+                    size: 24, color: mainOrangeColor))),
       ],
     );
   }
