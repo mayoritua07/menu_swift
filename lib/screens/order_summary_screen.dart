@@ -32,7 +32,10 @@ class OrderSummaryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     double height = MediaQuery.sizeOf(context).height;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        scrolledUnderElevation: 0,
+        backgroundColor: Colors.white,
         title: Text(
           "Order Summary",
           style: TextStyle(fontWeight: FontWeight.bold),
@@ -47,7 +50,7 @@ class OrderSummaryScreen extends StatelessWidget {
             children: [
               // SizedBox(height: 10),
               OrderStatus(orderStatus: orderStatus),
-              SizedBox(height: 18),
+              SizedBox(height: height * 0.05),
               Text(
                 "Order $orderID",
                 style: Theme.of(context)
@@ -55,29 +58,31 @@ class OrderSummaryScreen extends StatelessWidget {
                     .headlineSmall!
                     .copyWith(fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: height * 0.02),
               Text(
                 displayDateAndTime,
                 style: TextStyle(),
               ),
-              SizedBox(height: 18),
+              SizedBox(height: height * 0.02),
               Divider(color: borderGreyColor, thickness: 1),
               SizedBox(height: 10),
               Text("Order Details"),
-              SizedBox(height: 18),
+              SizedBox(height: height * 0.03),
               displayOrderItems(),
               SizedBox(height: height * 0.08),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: mainOrangeColor,
-                    padding: EdgeInsets.symmetric(vertical: 14, horizontal: 30),
-                    minimumSize: Size(double.infinity, 50)),
-                onPressed: () {
-                  cancelOrder();
-                },
-                child: Text("Cancel Order",
-                    style: TextStyle(color: Colors.white, fontSize: 17)),
-              ),
+              if (orderStatus.toLowerCase() == "pending")
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: mainOrangeColor,
+                      padding:
+                          EdgeInsets.symmetric(vertical: 14, horizontal: 30),
+                      minimumSize: Size(double.infinity, 50)),
+                  onPressed: () {
+                    cancelOrder();
+                  },
+                  child: Text("Cancel Order",
+                      style: TextStyle(color: Colors.white, fontSize: 17)),
+                ),
             ],
           ),
         ),
@@ -87,12 +92,13 @@ class OrderSummaryScreen extends StatelessWidget {
 
   Widget displayOrderItems() {
     int totalPrice = price * quantity;
+
     return GridView.count(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       primary: false,
       crossAxisCount: 3,
-      mainAxisSpacing: 8,
+      mainAxisSpacing: 10,
       // crossAxisSpacing: 1,
       childAspectRatio: 4,
       children: [

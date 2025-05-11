@@ -12,75 +12,104 @@ class OrderNotificationsScreen extends StatefulWidget {
 
 class _OrderNotificationsScreenState extends State<OrderNotificationsScreen> {
   bool isLoading = false;
-  String currentSection = "";
-  String section = "";
+  final now = DateTime.now();
+  late DateTime todayDate;
+  late DateTime thisWeekSunday;
 
-  DateTime get orderDate {
+  DateTime getOrderDateAndTime(String timestamp) {
     return DateTime(2025, 5, 1, 18);
   }
 
   @override
+  void initState() {
+    todayDate = DateTime(now.year, now.month, now.day);
+    thisWeekSunday =
+        todayDate.subtract(Duration(days: todayDate.weekday + 1 % 7));
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    String currentSection = "";
+    String section = "";
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         backgroundColor: Colors.white,
-        title: Text("Orders", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text("Orders",
+            style: TextStyle(fontSize: 26, fontWeight: FontWeight.w500)),
       ),
       body: isLoading
           ? CircularProgressIndicator.adaptive()
           : SingleChildScrollView(
+              child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4),
               child: Column(
-              children: [
-                ...orderNotificationsDetails.map((detail) {
-                  String title = detail["title"];
-                  String orderID = detail["orderID"];
-                  String orderStatus = detail["orderStatus"];
-                  String imageUrl = detail["imageUrl"];
-                  int quantity = detail['quantity'];
-                  int price = detail["price"];
-                  final now = DateTime.now();
+                children: [
+                  ...orderNotificationsDetails.map((detail) {
+                    String title = detail["title"];
+                    String orderID = detail["orderID"];
+                    String orderStatus = detail["orderStatus"];
+                    String imageUrl = detail["imageUrl"];
+                    int quantity = detail['quantity'];
+                    int price = detail["price"];
+                    DateTime orderDateAndTime =
+                        getOrderDateAndTime(detail["timestamp"]);
 
-                  final orderDuration = now.difference(orderDate);
-                  if (now.day == orderDate.day) {
-                    section = "Today";
-                  } else if (orderDuration.inDays <= 7) {
-                    section = "This week";
-                  }
-                  bool display = section == currentSection;
-                  currentSection = section;
+                    // final orderDuration = now.difference(orderDateAndTime);
 
-                  return Column(
-                    children: [
-                      if (display)
-                        Text(
-                          section,
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                    if (now.day == orderDateAndTime.day) {
+                      section = "Today";
+                    } else if (!orderDateAndTime
+                        .difference(thisWeekSunday)
+                        .isNegative) {
+                      section = "This week";
+                    } else {
+                      section = "Older";
+                    }
+                    bool display = section != currentSection;
+                    currentSection = section;
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (display)
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 16.0, top: 8, bottom: 8),
+                            child: Text(
+                              section,
+                              // textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (ctx) {
+                              return OrderSummaryScreen(
+                                  title: title,
+                                  orderID: orderID,
+                                  orderDateAndTime: orderDateAndTime,
+                                  orderStatus: orderStatus,
+                                  quantity: quantity,
+                                  price: price);
+                            }));
+                          },
+                          child: OrderNotification(
+                              imageUrl: imageUrl,
+                              title: title,
+                              orderID: orderID,
+                              orderDateAndTime: orderDateAndTime,
+                              orderStatus: orderStatus),
                         ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(builder: (ctx) {
-                            return OrderSummaryScreen(
-                                title: title,
-                                orderID: orderID,
-                                orderDateAndTime: orderDate,
-                                orderStatus: orderStatus,
-                                quantity: quantity,
-                                price: price);
-                          }));
-                        },
-                        child: OrderNotification(
-                            imageUrl: imageUrl,
-                            title: title,
-                            orderID: orderID,
-                            orderDateAndTime: orderDate,
-                            orderStatus: orderStatus),
-                      ),
-                    ],
-                  );
-                })
-              ],
+                      ],
+                    );
+                  })
+                ],
+              ),
             )),
     );
   }

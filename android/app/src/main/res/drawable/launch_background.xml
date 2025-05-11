@@ -21,6 +21,7 @@
         android:gravity="bottom|center_horizontal"
         android:drawable="@drawable/splash_branding"
         android:tileMode="disabled"
+        android:bottom="30dp"
         android:antialias="true"
     />
 </layer-list>

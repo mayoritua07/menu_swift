@@ -54,10 +54,18 @@ class OrderNotification extends StatelessWidget {
   final String orderStatus;
 
   String get displayOrderTime {
-    final orderDuration = DateTime.now().difference(orderDateAndTime);
-    if (orderDuration.inDays < 12) {
-      if (orderDuration.inDays > 0) {
-        return "${orderDuration.inDays}d ago";
+    final now = DateTime.now();
+    final orderDate = DateTime(
+        orderDateAndTime.year, orderDateAndTime.month, orderDateAndTime.day);
+    final todayDate = DateTime(now.year, now.month, now.day);
+
+    final orderDuration = now.difference(orderDateAndTime);
+
+    final days = todayDate.difference(orderDate).inDays;
+
+    if (days < 12) {
+      if (days > 0) {
+        return "${days}d ago";
       } else if (orderDuration.inHours > 0) {
         return "${orderDuration.inHours}h ago";
       } else if (orderDuration.inMinutes > 0) {
@@ -72,15 +80,21 @@ class OrderNotification extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ListTile(
-            leading: ClipOval(
+            leading: Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              clipBehavior: Clip.hardEdge,
               child: Image.asset(
-                width: 70,
-                height: 70,
+                // width: 70,
+                // height: 70,
                 imageUrl,
                 fit: BoxFit.cover,
               ),
@@ -93,7 +107,7 @@ class OrderNotification extends StatelessWidget {
             trailing: Text(displayOrderTime),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 100),
+            padding: const EdgeInsets.only(left: 90),
             child: OrderStatus(orderStatus: orderStatus),
           ),
         ],

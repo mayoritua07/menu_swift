@@ -154,7 +154,7 @@ class OnboardingScreenTemplate extends StatelessWidget {
                   SizedBox(height: height * 0.035),
                   if (isLastPage)
                     AnimatedOpacity(
-                      duration: Duration(milliseconds: 500),
+                      duration: Duration(milliseconds: 800),
                       opacity: isLastPage ? 1 : 0,
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: width * 0.04),
