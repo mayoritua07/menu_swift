@@ -26,6 +26,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _seatController = TextEditingController();
+  final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
   @override
   void dispose() {
@@ -42,35 +43,41 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(),
-            const SizedBox(height: 16),
-            _buildSeatNumberControls(),
-            const SizedBox(height: 16),
-            _buildRestaurantInfo(),
-            const SizedBox(height: 16),
-            ..._buildOrderItems(),
-            const SizedBox(height: 16),
-            _buildAddAnotherPlateButton(),
-            const SizedBox(height: 16),
-            _costTitle(),
-            const SizedBox(height: 16),
-            _costDetails(),
-            const SizedBox(height: 16),
-            _buildConfirmOrderButton(),
-            SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
-          ],
-        ),
+    return ScaffoldMessenger(
+      key: scaffoldMessengerKey,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: GestureDetector(onTap: () => Navigator.of(context).pop()),
+        bottomSheet: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(),
+                  const SizedBox(height: 16),
+                  _buildSeatNumberControls(),
+                  const SizedBox(height: 16),
+                  _buildRestaurantInfo(),
+                  const SizedBox(height: 16),
+                  ..._buildOrderItems(),
+                  const SizedBox(height: 16),
+                  _buildAddAnotherPlateButton(),
+                  const SizedBox(height: 16),
+                  _costTitle(),
+                  const SizedBox(height: 16),
+                  _costDetails(),
+                  const SizedBox(height: 16),
+                  _buildConfirmOrderButton(),
+                  SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
+                ],
+              ),
+            )),
       ),
     );
   }
@@ -507,24 +514,23 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
 
             showCompletedOrderDialog(context);
           } else {
-            ScaffoldMessenger.of(context)
-              ..clearSnackBars()
-              ..showSnackBar(
-                SnackBar(
-                    padding: EdgeInsets.all(14),
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    duration: Duration(seconds: 3),
-                    // backgroundColor: mainOrangeColor,
-                    content: Center(
-                      child: Text("Fill in the required fields.",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge!
-                              .copyWith(color: Colors.white)),
-                    )),
-              );
+            scaffoldMessengerKey.currentState?.clearSnackBars();
+            scaffoldMessengerKey.currentState?.showSnackBar(
+              SnackBar(
+                  padding: EdgeInsets.all(14),
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  duration: Duration(seconds: 3),
+                  // backgroundColor: mainOrangeColor,
+                  content: Center(
+                    child: Text("Fill in the required fields.",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge!
+                            .copyWith(color: Colors.white)),
+                  )),
+            );
           }
         },
         child: const Text(

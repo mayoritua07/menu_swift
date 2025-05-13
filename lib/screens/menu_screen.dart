@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:swift_menu/component/category_button.dart';
 import 'package:swift_menu/component/menu_header_card.dart';
 import 'package:swift_menu/component/menu_item.dart';
@@ -7,10 +9,13 @@ import 'package:swift_menu/model/order_item_model.dart';
 import 'package:swift_menu/model/order_model.dart';
 import 'package:swift_menu/screens/confirm_order_screen.dart';
 import 'package:swift_menu/screens/menu_item_details_screen.dart';
+import 'package:swift_menu/model/menu_item_model.dart';
 import 'package:swift_menu/screens/order_notifications_screen.dart';
 
 class MenuScreen extends StatefulWidget {
-  const MenuScreen({super.key});
+  const MenuScreen({super.key, required this.businessID});
+
+  final String businessID;
 
   @override
   State<MenuScreen> createState() => _MenuScreenState();
@@ -19,6 +24,7 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
   int? currentOrderIndex;
   String selectedCategory = 'All';
+  List<Map<String, dynamic>> _allItems = [];
   List<Map<String, dynamic>> filteredItemsForDisplay = [];
   List<Order> cartItems = [];
   List<String> categories = [
@@ -28,17 +34,97 @@ class _MenuScreenState extends State<MenuScreen> {
     'Snacks',
   ];
   TextEditingController searchFieldController = TextEditingController();
+  bool isLoading = true;
+  String? errorMessage;
+  String businessID = "3fa85f64-5717-4562-b3fc-2c963f66afa7";
 
   @override
   void initState() {
-    filteredItemsForDisplay = filteredItems;
+    // filteredItemsForDisplay = filteredItems;
     super.initState();
+    fetchMenuItems();
   }
 
   @override
   void dispose() {
     searchFieldController.dispose();
     super.dispose();
+  }
+
+  void submitOrder() async {
+    {
+      // "items": [
+      //   {
+      //     "menu_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      //     "quantity": 1
+      //   }
+      // ]
+    }
+    final List<Map<String, dynamic>> parameters = [];
+    cartItems.map((item) {
+      item.orderItems.map((elements) {
+        parameters.add({
+          "menu_id": elements.id,
+          "quantity": elements.quantity,
+        });
+      });
+    });
+    print(
+        "####################################Response###########################");
+    final response = await http.post(
+        Uri.parse("https://api/v1/menus/validate-order"),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({"items": parameters}));
+
+    print(response.body);
+    print(response.statusCode);
+  }
+
+  Future<void> fetchMenuItems() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    try {
+      final response =
+          await http.get(Uri.parse('https://api.visit.menu/api/v1/menus'));
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        final menuResponse = MenuResponse.fromJson(jsonData);
+
+        // Convert MenuItem objects to the format expected by the UI
+        final items = menuResponse.items.map((item) {
+          return {
+            'title': item.name,
+            'description': item.description,
+            'price': 'N${item.price.toStringAsFixed(2)}',
+            'image': item.imgUrl,
+            'category': item.category,
+            /////added business id ot order item for identification
+            "id": item.businessId
+          };
+        }).toList();
+
+        setState(() {
+          _allItems = items;
+          filteredItemsForDisplay = items;
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          errorMessage =
+              'Failed to load menu items. Status code: ${response.statusCode}';
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Error: ${e.toString()}';
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -71,6 +157,8 @@ class _MenuScreenState extends State<MenuScreen> {
             )
           : null,
       body: SafeArea(
+          child: RefreshIndicator(
+        onRefresh: fetchMenuItems,
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -85,15 +173,63 @@ class _MenuScreenState extends State<MenuScreen> {
                 const SizedBox(height: 16),
                 _buildCategoryButtons(),
                 const SizedBox(height: 16),
-                _buildMenuSection(
-                  title: selectedCategory,
-                  itemCount: '${filteredItemsForDisplay.length} items',
-                  items: filteredItemsForDisplay,
-                ),
+                // _buildMenuSection(
+                //   title: selectedCategory,
+                //   itemCount: '${filteredItemsForDisplay.length} items',
+                //   items: filteredItemsForDisplay,
+                // ),
+                if (isLoading)
+                  _buildLoadingIndicator()
+                else if (errorMessage != null)
+                  _buildErrorMessage()
+                else
+                  _buildMenuSection(
+                    title: selectedCategory,
+                    itemCount: '${filteredItemsForDisplay.length} items',
+                    items: filteredItemsForDisplay,
+                  ),
               ],
             ),
           ),
         ),
+      )),
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return Center(
+      child: Column(
+        children: [
+          SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+          CircularProgressIndicator(color: mainOrangeColor),
+          SizedBox(height: 16),
+          Text('Loading menu items...'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorMessage() {
+    return Center(
+      child: Column(
+        children: [
+          SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+          Icon(Icons.error_outline, color: Colors.red, size: 48),
+          SizedBox(height: 16),
+          Text(
+            errorMessage!,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.red),
+          ),
+          SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: fetchMenuItems,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: mainOrangeColor,
+            ),
+            child: Text('Try Again', style: TextStyle(color: Colors.white)),
+          ),
+        ],
       ),
     );
   }
@@ -102,27 +238,61 @@ class _MenuScreenState extends State<MenuScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Image.asset(
-          'assets/images/Exclude.png',
-          fit: BoxFit.cover,
-          color: purpleColor,
-        ),
-        Container(
-            width: 32,
-            height: 32,
-            //padding: const EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-              border: Border.all(color: borderGreyColor, width: 1.0),
-              borderRadius: BorderRadius.circular(8),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              "assets/icons/Logo.png",
+              height: 22,
+              fit: BoxFit.cover,
+              // color: purpleColor,
             ),
-            child: InkWell(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-                    return OrderNotificationsScreen();
-                  }));
-                },
-                child: Icon(Icons.notifications,
-                    size: 24, color: mainOrangeColor))),
+            SizedBox(width: 8),
+            Text(
+              "Swoop Dining",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+            ),
+          ],
+        ),
+        // Container(
+        //     width: 32,
+        //     height: 32,
+        //     //padding: const EdgeInsets.symmetric(horizontal: 10),
+        //     decoration: BoxDecoration(
+        //       border: Border.all(color: borderGreyColor, width: 1.0),
+        //       borderRadius: BorderRadius.circular(8),
+        //     ),
+        //     child: InkWell(
+        //         onTap: () {
+        //           Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+        //             return OrderNotificationsScreen();
+        //           }));
+        //         },
+        //         child: CircleAvatar(
+        //           radius: 8,
+        //           backgroundColor: mainOrangeColor,
+        //           child: Icon(Icons.notifications,
+        //               size: 24, color: mainOrangeColor),
+        //         ))),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: InkWell(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+                  return OrderNotificationsScreen();
+                }));
+              },
+              child: CircleAvatar(
+                radius: 22,
+                backgroundColor: mainOrangeColor,
+                child: Image.asset(
+                  "assets/icons/store.png",
+                  fit: BoxFit.cover,
+                  height: 24,
+                  width: 24,
+                ),
+              )),
+        )
       ],
     );
   }
@@ -144,7 +314,10 @@ class _MenuScreenState extends State<MenuScreen> {
           // Change to accept quantity parameter
           setState(() {
             final OrderItem newOrderItem = OrderItem(
-                name: item['title'], price: item['price'], quantity: quantity);
+                name: item['title'],
+                price: item['price'],
+                quantity: quantity,
+                id: item["id"]);
             if (currentOrderIndex == null) {
               cartItems.add(
                 Order(
@@ -184,27 +357,24 @@ class _MenuScreenState extends State<MenuScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Scaffold(
-        backgroundColor: Colors.transparent,
-        body: GestureDetector(onTap: () => Navigator.of(context).pop()),
-        bottomSheet: ConfirmOrderSheet(
-          orders: cartItems,
-          onAddMoreItems: () {
-            Navigator.pop(context); // Close the confirm order sheet
-          },
-          onOrderConfirmed: () {
-            // Add this new callback
-            setState(() {
-              cartItems.clear(); // Clear the cart
-            });
-            Navigator.pop(context); // Close the confirm order sheet
-          },
-          onOrderRemoved: (int index) {
-            setState(() {
-              cartItems.removeAt(index);
-            });
-          },
-        ),
+      builder: (context) => ConfirmOrderSheet(
+        orders: cartItems,
+        onAddMoreItems: () {
+          Navigator.pop(context); // Close the confirm order sheet
+        },
+        onOrderConfirmed: () {
+          // Add this new callback
+          submitOrder();
+          setState(() {
+            cartItems.clear(); // Clear the cart
+          });
+          Navigator.pop(context); // Close the confirm order sheet
+        },
+        onOrderRemoved: (int index) {
+          setState(() {
+            cartItems.removeAt(index);
+          });
+        },
       ),
     ).then((value) {
       // This runs when the sheet is closed\
@@ -247,6 +417,11 @@ class _MenuScreenState extends State<MenuScreen> {
             filteredItemsForDisplay = searchFilter(filteredItems);
           });
         },
+        onSubmitted: (value) {
+          setState(() {
+            filteredItemsForDisplay = searchFilter(filteredItems);
+          });
+        },
       ),
     );
   }
@@ -265,7 +440,7 @@ class _MenuScreenState extends State<MenuScreen> {
         .toList();
   }
 
-  // Get filtered items based on selected category
+  // // Get filtered items based on selected category
   List<Map<String, dynamic>> get filteredItems {
     // Returns all items under a particular category
     if (selectedCategory == 'All') {
@@ -277,69 +452,196 @@ class _MenuScreenState extends State<MenuScreen> {
     }
   }
 
+  // get unique categories from the api
+  List<String> get uniqueCategories {
+    final categories =
+        _allItems.map((item) => item['category'] as String).toSet().toList();
+    categories.sort();
+    return ['All', ...categories];
+  }
+
   // Update category buttons
   Widget _buildCategoryButtons() {
+    // return Center(
+    //   child: SingleChildScrollView(
+    //     scrollDirection: Axis.horizontal,
+    //     child: Row(
+    //         children: categories.map((e) {
+    //       return GestureDetector(
+    //         onTap: () => setState(() {
+    //           selectedCategory = e;
+    //           filteredItemsForDisplay = searchFilter(filteredItems);
+    //         }),
+    //         child: CategoryButton(
+    //           text: e,
+    //           isSelected: selectedCategory == e,
+    //           onTap: () => setState(() {
+    //             selectedCategory = e;
+    //             filteredItemsForDisplay = searchFilter(filteredItems);
+    //           }),
+    //         ),
+    //       );
+    //     }).toList()
+    //         // [
+    //         //   GestureDetector(
+    //         //     onTap: () => setState(() => selectedCategory = 'All'),
+    //         //     child: CategoryButton(
+    //         //       text: "All",
+    //         //       isSelected: selectedCategory == 'All',
+    //         //       onTap: () => setState(() => selectedCategory = 'All'),
+    //         //     ),
+    //         //   ),
+    //         //   const SizedBox(width: 12),
+    //         //   GestureDetector(
+    //         //     onTap: () => setState(() => selectedCategory = 'Rice Dishes'),
+    //         //     child: CategoryButton(
+    //         //       text: "Rice Dishes",
+    //         //       isSelected: selectedCategory == 'Rice Dishes',
+    //         //       onTap: () => setState(() => selectedCategory = 'Rice Dishes'),
+    //         //     ),
+    //         //   ),
+    //         //   const SizedBox(width: 12),
+    //         //   GestureDetector(
+    //         //     onTap: () => setState(() => selectedCategory = 'Local Meals'),
+    //         //     child: CategoryButton(
+    //         //       text: "Local Meals",
+    //         //       isSelected: selectedCategory == 'Local Meals',
+    //         //       onTap: () => setState(() => selectedCategory = 'Local Meals'),
+    //         //     ),
+    //         //   ),
+    //         //   const SizedBox(width: 12),
+    //         //   GestureDetector(
+    //         //     onTap: () => setState(() => selectedCategory = 'Snacks'),
+    //         //     child: CategoryButton(
+    //         //       text: "Snacks",
+    //         //       isSelected: selectedCategory == 'Snacks',
+    //         //       onTap: () => setState(() => selectedCategory = 'Snacks'),
+    //         //     ),
+    //         //   ),
+    //         // ],
+    //         ),
+    //   ),
+    // );
+    final categories = uniqueCategories;
+
     return Center(
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
-            children: categories.map((e) {
-          return GestureDetector(
-            onTap: () => setState(() {
-              selectedCategory = e;
-              filteredItemsForDisplay = searchFilter(filteredItems);
-            }),
-            child: CategoryButton(
-              text: e,
-              isSelected: selectedCategory == e,
+          children: categories.map((e) {
+            return GestureDetector(
               onTap: () => setState(() {
                 selectedCategory = e;
                 filteredItemsForDisplay = searchFilter(filteredItems);
               }),
-            ),
-          );
-        }).toList()
-            // [
-            //   GestureDetector(
-            //     onTap: () => setState(() => selectedCategory = 'All'),
-            //     child: CategoryButton(
-            //       text: "All",
-            //       isSelected: selectedCategory == 'All',
-            //       onTap: () => setState(() => selectedCategory = 'All'),
-            //     ),
-            //   ),
-            //   const SizedBox(width: 12),
-            //   GestureDetector(
-            //     onTap: () => setState(() => selectedCategory = 'Rice Dishes'),
-            //     child: CategoryButton(
-            //       text: "Rice Dishes",
-            //       isSelected: selectedCategory == 'Rice Dishes',
-            //       onTap: () => setState(() => selectedCategory = 'Rice Dishes'),
-            //     ),
-            //   ),
-            //   const SizedBox(width: 12),
-            //   GestureDetector(
-            //     onTap: () => setState(() => selectedCategory = 'Local Meals'),
-            //     child: CategoryButton(
-            //       text: "Local Meals",
-            //       isSelected: selectedCategory == 'Local Meals',
-            //       onTap: () => setState(() => selectedCategory = 'Local Meals'),
-            //     ),
-            //   ),
-            //   const SizedBox(width: 12),
-            //   GestureDetector(
-            //     onTap: () => setState(() => selectedCategory = 'Snacks'),
-            //     child: CategoryButton(
-            //       text: "Snacks",
-            //       isSelected: selectedCategory == 'Snacks',
-            //       onTap: () => setState(() => selectedCategory = 'Snacks'),
-            //     ),
-            //   ),
-            // ],
-            ),
+              child: CategoryButton(
+                text: e,
+                isSelected: selectedCategory == e,
+                onTap: () => setState(() {
+                  selectedCategory = e;
+                  // filteredItemsForDisplay = searchFilter(_allItems);
+                  filteredItemsForDisplay = searchFilter(filteredItems);
+                }),
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }
+
+  // Widget _buildMenuSection({
+  //   required String title,
+  //   required String itemCount,
+  //   required List<Map<String, dynamic>> items,
+  // }) {
+  //   double height = MediaQuery.sizeOf(context).height;
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Padding(
+  //         padding: const EdgeInsets.symmetric(horizontal: 6.0),
+  //         child: Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //           children: [
+  //             Text(
+  //               title,
+  //               style: const TextStyle(
+  //                 fontWeight: FontWeight.w600,
+  //                 fontSize: 18,
+  //                 color: Colors.black,
+  //               ),
+  //             ),
+  //             Text(
+  //               itemCount,
+  //               style: const TextStyle(
+  //                 fontWeight: FontWeight.w400,
+  //                 fontSize: 18,
+  //                 color: Colors.grey,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //       const SizedBox(height: 10),
+  //       AnimatedSwitcher(
+  //         duration: Duration(milliseconds: 300),
+  //         child: items.isEmpty
+  //             ? Center(
+  //                 child: Padding(
+  //                   padding: EdgeInsets.symmetric(vertical: height * 0.1),
+  //                   child: Text(
+  //                     "No Meals found!",
+  //                     style: Theme.of(context).textTheme.bodyLarge,
+  //                   ),
+  //                 ),
+  //               )
+  //             : ListView.builder(
+  //                 key: ValueKey(filteredItemsForDisplay),
+  //                 shrinkWrap: true,
+  //                 physics: NeverScrollableScrollPhysics(),
+  //                 itemCount: filteredItemsForDisplay.length,
+  //                 itemBuilder: (BuildContext ctx, int index) {
+  //                   final item = filteredItemsForDisplay[index];
+  //                   return Column(
+  //                     children: [
+  //                       GestureDetector(
+  //                         onTap: () => _showMenuItemDetailsSheet(context, item),
+  //                         child: MenuItem(
+  //                           title: item['title'],
+  //                           description: item['description'],
+  //                           price: item['price'],
+  //                           imagePath: item['image'],
+  //                           onTap: () =>
+  //                               _showMenuItemDetailsSheet(context, item),
+  //                         ),
+  //                       ),
+  //                       const SizedBox(height: 10),
+  //                     ],
+  //                   );
+  //                 }),
+  //       ),
+  //       //Changing the items to a list view to animate it when filters are changed
+  //       // ...items.map(
+  //       //   (item) => Column(
+  //       //     children: [
+  //       //       GestureDetector(
+  //       //         onTap: () => _showMenuItemDetailsSheet(context, item),
+  //       //         child: MenuItem(
+  //       //           title: item['title'],
+  //       //           description: item['description'],
+  //       //           price: item['price'],
+  //       //           imagePath: item['image'],
+  //       //           onTap: () => _showMenuItemDetailsSheet(context, item),
+  //       //         ),
+  //       //       ),
+  //       //       const SizedBox(height: 10),
+  //       //     ],
+  //       //   ),
+  //       // ),
+  //     ],
+  //   );
+  // }
 
   Widget _buildMenuSection({
     required String title,
@@ -356,7 +658,7 @@ class _MenuScreenState extends State<MenuScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                title,
+                "${title[0].toUpperCase()}${title.substring(1).toLowerCase()}",
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 18,
@@ -412,88 +714,70 @@ class _MenuScreenState extends State<MenuScreen> {
                     );
                   }),
         ),
-        //Changing the items to a list view to animate it when filters are changed
-        // ...items.map(
-        //   (item) => Column(
-        //     children: [
-        //       GestureDetector(
-        //         onTap: () => _showMenuItemDetailsSheet(context, item),
-        //         child: MenuItem(
-        //           title: item['title'],
-        //           description: item['description'],
-        //           price: item['price'],
-        //           imagePath: item['image'],
-        //           onTap: () => _showMenuItemDetailsSheet(context, item),
-        //         ),
-        //       ),
-        //       const SizedBox(height: 10),
-        //     ],
-        //   ),
-        // ),
       ],
     );
   }
 
-  final List<Map<String, dynamic>> _allItems = [
-    // Rice Dishes
-    {
-      'title': 'Asun Pepper Rice',
-      'description': 'Basmati Rice with pieces of Asun',
-      'price': 'N3,500',
-      'image': 'assets/images/image 5.png',
-      'category': 'Rice Dishes',
-    },
-    {
-      'title': 'Party Jollof',
-      'description': 'Flavorful rice cooked',
-      'price': 'N3,500',
-      'image': 'assets/images/image 6.png',
-      'category': 'Rice Dishes',
-    },
-    {
-      'title': 'Fried Rice',
-      'description': 'Rice stir-fried with vegetables',
-      'price': 'N3,500',
-      'image': 'assets/images/image 4.png',
-      'category': 'Rice Dishes',
-    },
-    // Local Meals
-    {
-      'title': 'Pounded Yam',
-      'description': 'Traditional Nigerian meal',
-      'price': 'N3,500',
-      'image': 'assets/images/image 4.png',
-      'category': 'Local Meals',
-    },
-    {
-      'title': 'Eba',
-      'description': 'Cassava flour meal',
-      'price': 'N2,500',
-      'image': 'assets/images/image 5.png',
-      'category': 'Local Meals',
-    },
+  // final List<Map<String, dynamic>> _allItems = [
+  //   // Rice Dishes
+  //   {
+  //     'title': 'Asun Pepper Rice',
+  //     'description': 'Basmati Rice with pieces of Asun',
+  //     'price': 'N3,500',
+  //     'image': 'assets/images/image 5.png',
+  //     'category': 'Rice Dishes',
+  //   },
+  //   {
+  //     'title': 'Party Jollof',
+  //     'description': 'Flavorful rice cooked',
+  //     'price': 'N3,500',
+  //     'image': 'assets/images/image 6.png',
+  //     'category': 'Rice Dishes',
+  //   },
+  //   {
+  //     'title': 'Fried Rice',
+  //     'description': 'Rice stir-fried with vegetables',
+  //     'price': 'N3,500',
+  //     'image': 'assets/images/image 4.png',
+  //     'category': 'Rice Dishes',
+  //   },
+  //   // Local Meals
+  //   {
+  //     'title': 'Pounded Yam',
+  //     'description': 'Traditional Nigerian meal',
+  //     'price': 'N3,500',
+  //     'image': 'assets/images/image 4.png',
+  //     'category': 'Local Meals',
+  //   },
+  //   {
+  //     'title': 'Eba',
+  //     'description': 'Cassava flour meal',
+  //     'price': 'N2,500',
+  //     'image': 'assets/images/image 5.png',
+  //     'category': 'Local Meals',
+  //   },
 
-    // Snacks
-    {
-      'title': 'Iceream',
-      'description': 'Chocolate iceream',
-      'price': 'N3,500',
-      'image': 'assets/images/icecream.png',
-      'category': 'Snacks',
-    },
-    {
-      'title': 'Tea',
-      'description': 'Slim tea',
-      'price': 'N2,500',
-      'image': 'assets/images/tea.png',
-      'category': 'Snacks',
-    },
-    {
-      'title': 'Biscuit',
-      'description': 'Chocolate biscuit',
-      'price': 'N3,500',
-      'image': 'assets/images/biscuit.png',
-      'category': 'Snacks',
-    },
-  ];
+  //   // Snacks
+  //   {
+  //     'title': 'Iceream',
+  //     'description': 'Chocolate iceream',
+  //     'price': 'N3,500',
+  //     'image': 'assets/images/icecream.png',
+  //     'category': 'Snacks',
+  //   },
+  //   {
+  //     'title': 'Tea',
+  //     'description': 'Slim tea',
+  //     'price': 'N2,500',
+  //     'image': 'assets/images/tea.png',
+  //     'category': 'Snacks',
+  //   },
+  //   {
+  //     'title': 'Biscuit',
+  //     'description': 'Chocolate biscuit',
+  //     'price': 'N3,500',
+  //     'image': 'assets/images/biscuit.png',
+  //     'category': 'Snacks',
+  //   },
+  // ];
 }

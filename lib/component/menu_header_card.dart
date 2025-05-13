@@ -78,12 +78,12 @@ class _MenuHeaderState extends State<MenuHeader> {
             children: [
               Text(
                 "EXPERIENCE OUR",
-                style: TextStyle(fontSize: 16, color: Colors.white),
+                style: TextStyle(fontSize: 14, color: Colors.white),
               ),
               Text("UNIQUE BLEND",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                      fontSize: 20,
                       color: Colors.white)),
               Text("Savor every taste",
                   style: TextStyle(fontSize: 12, color: Colors.white)),

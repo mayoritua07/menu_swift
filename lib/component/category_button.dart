@@ -26,7 +26,7 @@ class CategoryButton extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          text,
+          "${text[0].toUpperCase()}${text.substring(1).toLowerCase()}",
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 16,

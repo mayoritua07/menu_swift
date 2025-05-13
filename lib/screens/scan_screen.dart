@@ -44,28 +44,25 @@ class _ScanscreenState extends State<Scanscreen> {
         showLoadingSpinner = true;
       });
 
-      fetchData(data).then((onValue) {
-        if (context.mounted) {
-          return Navigator.of(context)
-              .push(PageRouteBuilder(
-                  transitionDuration: Duration(milliseconds: 300),
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) {
-                    return FadeTransition(
-                      opacity: Tween(begin: 0.65, end: 1.0).animate(animation),
-                      child: child,
-                    );
-                  },
-                  pageBuilder: (context, animation, secondaryAnimation) {
-                    return MenuScreen();
-                  }))
-              .then((onValue) {
-            setState(() {
-              isScanningCode = false;
-              showLoadingSpinner = false;
-            });
-          });
-        }
+      Navigator.of(context)
+          .push(PageRouteBuilder(
+              transitionDuration: Duration(milliseconds: 300),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return FadeTransition(
+                  opacity: Tween(begin: 0.65, end: 1.0).animate(animation),
+                  child: child,
+                );
+              },
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return MenuScreen(
+                    businessID: "3fa85f64-5717-4562-b3fc-2c963f66afa7");
+              }))
+          .then((onValue) {
+        setState(() {
+          isScanningCode = false;
+          showLoadingSpinner = false;
+        });
       });
     } else {
       isScanningCode = false;
@@ -101,7 +98,7 @@ class _ScanscreenState extends State<Scanscreen> {
     double width = MediaQuery.sizeOf(context).width;
     bool isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
-    double scannerWidth = isLandscape ? height * 0.6 : width * 0.75;
+    double scannerWidth = isLandscape ? height * 0.55 : width * 0.75;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -143,7 +140,7 @@ class _ScanscreenState extends State<Scanscreen> {
                           },
                         ),
                       ),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 20),
                       InkWell(
                         onTap: () {
                           scanCode();
@@ -162,7 +159,9 @@ class _ScanscreenState extends State<Scanscreen> {
                               },
                               pageBuilder:
                                   (context, animation, secondaryAnimation) {
-                                return MenuScreen();
+                                return MenuScreen(
+                                    businessID:
+                                        "3fa85f64-5717-4562-b3fc-2c963f66afa7");
                               }));
                         },
                         child: Container(

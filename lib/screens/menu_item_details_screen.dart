@@ -69,7 +69,7 @@ class _MenuItemDetailsSheetState extends State<MenuItemDetailsSheet> {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: Image.asset(
+          child: Image.network(
             widget.imagePath,
             width: double.infinity,
             height: 200,
