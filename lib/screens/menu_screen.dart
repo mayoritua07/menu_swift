@@ -346,12 +346,12 @@ class _MenuScreenState extends State<MenuScreen> {
         ),
         onChanged: (value) {
           setState(() {
-            filteredItemsForDisplay = searchFilter(_allItems);
+            filteredItemsForDisplay = searchFilter(filteredItems);
           });
         },
         onSubmitted: (value) {
           setState(() {
-            filteredItemsForDisplay = searchFilter(_allItems);
+            filteredItemsForDisplay = searchFilter(filteredItems);
           });
         },
       ),
@@ -373,16 +373,16 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   // // Get filtered items based on selected category
-  // List<Map<String, dynamic>> get filteredItems {
-  //   // Returns all items under a particular category
-  //   if (selectedCategory == 'All') {
-  //     return _allItems;
-  //   } else {
-  //     return _allItems
-  //         .where((item) => item['category'] == selectedCategory)
-  //         .toList();
-  //   }
-  // }
+  List<Map<String, dynamic>> get filteredItems {
+    // Returns all items under a particular category
+    if (selectedCategory == 'All') {
+      return _allItems;
+    } else {
+      return _allItems
+          .where((item) => item['category'] == selectedCategory)
+          .toList();
+    }
+  }
 
   // get unique categories from the api
   List<String> get uniqueCategories {
@@ -464,14 +464,15 @@ class _MenuScreenState extends State<MenuScreen> {
             return GestureDetector(
               onTap: () => setState(() {
                 selectedCategory = e;
-                filteredItemsForDisplay = searchFilter(_allItems);
+                filteredItemsForDisplay = searchFilter(filteredItems);
               }),
               child: CategoryButton(
                 text: e,
                 isSelected: selectedCategory == e,
                 onTap: () => setState(() {
                   selectedCategory = e;
-                  filteredItemsForDisplay = searchFilter(_allItems);
+                  // filteredItemsForDisplay = searchFilter(_allItems);
+                  filteredItemsForDisplay = searchFilter(filteredItems);
                 }),
               ),
             );
@@ -589,7 +590,7 @@ class _MenuScreenState extends State<MenuScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                title,
+                "${title[0].toUpperCase()}${title.substring(1).toLowerCase()}",
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 18,

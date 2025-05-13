@@ -101,7 +101,7 @@ class _ScanscreenState extends State<Scanscreen> {
     double width = MediaQuery.sizeOf(context).width;
     bool isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
-    double scannerWidth = isLandscape ? height * 0.6 : width * 0.75;
+    double scannerWidth = isLandscape ? height * 0.55 : width * 0.75;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(

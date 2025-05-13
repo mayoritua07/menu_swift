@@ -156,6 +156,7 @@ class MenuItem extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     description,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: 14,
                       color: greyTextColor,
