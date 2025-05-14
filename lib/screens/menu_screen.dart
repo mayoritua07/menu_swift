@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:swift_menu/component/category_button.dart';
 import 'package:swift_menu/component/menu_header_card.dart';
@@ -51,7 +52,7 @@ class _MenuScreenState extends State<MenuScreen> {
     super.dispose();
   }
 
-  void submitOrder() async {
+  void submitOrder(List<Order> cartItems) async {
     {
       // "items": [
       //   {
@@ -61,6 +62,7 @@ class _MenuScreenState extends State<MenuScreen> {
       // ]
     }
     final List<Map<String, dynamic>> parameters = [];
+    print(cartItems);
     cartItems.map((item) {
       item.orderItems.map((elements) {
         parameters.add({
@@ -69,15 +71,15 @@ class _MenuScreenState extends State<MenuScreen> {
         });
       });
     });
-    print(
-        "####################################Response###########################");
-    final response = await http.post(
-        Uri.parse("https://api/v1/menus/validate-order"),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({"items": parameters}));
+    // print(
+    //     "####################################Response###########################");
+    // print("parameters = $parameters");
+    // final response = await http.post(
+    //     Uri.parse("https://api/v1/menus/validate-order"),
+    //     body: jsonEncode({"items": parameters}));
 
-    print(response.body);
-    print(response.statusCode);
+    // print(response.body);
+    // print(response.statusCode);
   }
 
   Future<void> fetchMenuItems() async {
@@ -88,7 +90,8 @@ class _MenuScreenState extends State<MenuScreen> {
 
     try {
       final response =
-          await http.get(Uri.parse('https://api.visit.menu/api/v1/menus'));
+          // await http.get(Uri.parse("https://api.visit.menu/api/v1/menus"));
+          await http.get(Uri.parse(dotenv.env["MENU_URL"] ?? ""));
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -243,7 +246,6 @@ class _MenuScreenState extends State<MenuScreen> {
           children: [
             Image.asset(
               "assets/icons/Logo.png",
-              height: 22,
               fit: BoxFit.cover,
               // color: purpleColor,
             ),
@@ -283,13 +285,11 @@ class _MenuScreenState extends State<MenuScreen> {
                 }));
               },
               child: CircleAvatar(
-                radius: 22,
+                radius: 18,
                 backgroundColor: mainOrangeColor,
                 child: Image.asset(
                   "assets/icons/store.png",
                   fit: BoxFit.cover,
-                  height: 24,
-                  width: 24,
                 ),
               )),
         )
@@ -364,7 +364,7 @@ class _MenuScreenState extends State<MenuScreen> {
         },
         onOrderConfirmed: () {
           // Add this new callback
-          submitOrder();
+          submitOrder(cartItems);
           setState(() {
             cartItems.clear(); // Clear the cart
           });
