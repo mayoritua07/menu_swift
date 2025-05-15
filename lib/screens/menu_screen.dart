@@ -251,7 +251,7 @@ class _MenuScreenState extends State<MenuScreen> {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ShimmerImage(widget.logoUrl, fit: BoxFit.cover, width: 22),
+            ShimmerImage(widget.logoUrl, fit: BoxFit.cover, width: 25),
             // Image.network(
             //   widget.logoUrl,
             //   fit: BoxFit.cover,

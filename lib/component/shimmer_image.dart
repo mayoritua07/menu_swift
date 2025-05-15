@@ -47,6 +47,8 @@ class ShimmerImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Image.network(
+      width: width,
+      height: height,
       url,
       loadingBuilder: (context, child, loadingProgress) {
         if (loadingProgress == null) {

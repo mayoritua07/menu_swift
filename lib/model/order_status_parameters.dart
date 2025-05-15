@@ -14,7 +14,7 @@ const pendingOrderStatusParameters = OrderStatusParameters(
     textColor: Color.fromARGB(255, 107, 107, 107),
     borderColor: Color.fromARGB(255, 142, 142, 142),
     bgColor: Color.fromARGB(78, 249, 249, 249));
-const processingOrderStatusParameters = OrderStatusParameters(
+const inProgressOrderStatusParameters = OrderStatusParameters(
     textColor: Color.fromARGB(255, 223, 180, 0),
     borderColor: Color.fromARGB(255, 223, 180, 0),
     bgColor: Color.fromARGB(255, 255, 249, 222));

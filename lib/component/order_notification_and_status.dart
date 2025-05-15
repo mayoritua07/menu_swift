@@ -4,7 +4,7 @@ import 'package:swift_menu/model/order_status_parameters.dart';
 
 final orderStatusParameters = {
   "pending": pendingOrderStatusParameters,
-  "processing": processingOrderStatusParameters,
+  "in progress": inProgressOrderStatusParameters,
   "completed": completedOrderStatusParameters
 };
 
