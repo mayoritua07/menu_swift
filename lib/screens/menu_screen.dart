@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:swift_menu/component/category_button.dart';
 import 'package:swift_menu/component/menu_header_card.dart';
 import 'package:swift_menu/component/menu_item.dart';
+import 'package:swift_menu/component/shimmer_image.dart';
 import 'package:swift_menu/constants/colors.dart';
 import 'package:swift_menu/model/order_item_model.dart';
 import 'package:swift_menu/model/order_model.dart';
@@ -18,11 +19,11 @@ class MenuScreen extends StatefulWidget {
       {super.key,
       required this.businessID,
       required this.businessName,
-      required this.imageUrl});
+      required this.logoUrl});
 
   final String businessID;
   final String businessName;
-  final String imageUrl;
+  final String logoUrl;
 
   @override
   State<MenuScreen> createState() => _MenuScreenState();
@@ -250,11 +251,12 @@ class _MenuScreenState extends State<MenuScreen> {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.network(
-              widget.imageUrl,
-              fit: BoxFit.cover,
-              // color: purpleColor,
-            ),
+            ShimmerImage(widget.logoUrl, fit: BoxFit.cover, width: 22),
+            // Image.network(
+            //   widget.logoUrl,
+            //   fit: BoxFit.cover,
+            //   width: 22,
+            // ),
             SizedBox(width: 8),
             Text(
               widget.businessName,

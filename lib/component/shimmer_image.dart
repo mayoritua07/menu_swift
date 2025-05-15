@@ -37,10 +37,12 @@ class _ShimmerLoadingState extends State<ShimmerLoading> {
 }
 
 class ShimmerImage extends StatelessWidget {
-  const ShimmerImage(this.url, {super.key, this.fit});
+  const ShimmerImage(this.url, {super.key, this.fit, this.width, this.height});
 
   final String url;
   final BoxFit? fit;
+  final double? width;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {

@@ -26,7 +26,31 @@ class OrderSummaryScreen extends StatelessWidget {
     return "${dateFormat.format(orderDateAndTime)} at ${timeFormat.format(orderDateAndTime)}";
   }
 
-  void cancelOrder() {}
+  void cancelOrder(context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Confirm Cancel Order"),
+            content:
+                Text("Are you sure you want to cancel this deicious order?"),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    ///send a request to cancel the order
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("Yes")),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("No"))
+            ],
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +102,7 @@ class OrderSummaryScreen extends StatelessWidget {
                           EdgeInsets.symmetric(vertical: 14, horizontal: 30),
                       minimumSize: Size(double.infinity, 50)),
                   onPressed: () {
-                    cancelOrder();
+                    cancelOrder(context);
                   },
                   child: Text("Cancel Order",
                       style: TextStyle(color: Colors.white, fontSize: 17)),

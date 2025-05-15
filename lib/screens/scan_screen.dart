@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:swift_menu/constants/colors.dart';
@@ -25,30 +27,42 @@ class _ScanscreenState extends State<Scanscreen> {
     super.dispose();
   }
 
-  Future<Map<String, String>> fetchData(String businessID) async {
-    return {};
-  }
+  void fetchData(String businessID) async {
+    try {
+      String SCAN_API =
+          "http://api.business.visit.menu/api/v1/business/${businessID}";
+      final response = await http.get(Uri.parse(SCAN_API));
+      final Map<String, dynamic> data = jsonDecode(response.body);
 
-  void onQRDetected(capture) {
-    if (!isScanningCode) {
-      return;
-    }
-    final List<Barcode> scannedQRcodes = capture.barcodes;
-    final Barcode scannedQRcode = scannedQRcodes[0];
+      ///check if response is valid
+      final String? businessName = data["name"];
+      final String? logoUrl = data["logoUrl"];
 
-    String? businessID = scannedQRcode.rawValue;
-    bool hasValidData = businessID != null;
-
-    if (hasValidData) {
-      setState(() {
-        showLoadingSpinner = true;
-      });
-
-      try {
-        String SCAN_API = "http://api.business.visit.menu/api/v1/business";
-        final response = http.get(Uri.parse(SCAN_API));
-        print(response);
-      } catch (e) {
+      if (businessName != null && logoUrl != null) {
+        Navigator.of(context)
+            .push(PageRouteBuilder(
+                transitionDuration: Duration(milliseconds: 300),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(
+                    opacity: Tween(begin: 0.65, end: 1.0).animate(animation),
+                    child: child,
+                  );
+                },
+                pageBuilder: (context, animation, secondaryAnimation) {
+                  return MenuScreen(
+                    businessID: businessID,
+                    businessName: businessName,
+                    logoUrl: logoUrl,
+                  );
+                }))
+            .then((onValue) {
+          setState(() {
+            isScanningCode = false;
+            showLoadingSpinner = false;
+          });
+        });
+      } else {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -59,35 +73,60 @@ class _ScanscreenState extends State<Scanscreen> {
               duration: Duration(seconds: 2, milliseconds: 500),
               // backgroundColor: mainOrangeColor,
               content: Center(
-                child: Text("Unable to load Data, Please scan again",
+                child: Text("Unable to load Data, Please scan again!",
                     style: Theme.of(context)
                         .textTheme
                         .bodyLarge!
                         .copyWith(color: Colors.white)),
               )),
         );
+        setState(() {
+          showLoadingSpinner = false;
+        });
       }
+    } catch (e) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            padding: EdgeInsets.all(14),
+            behavior: SnackBarBehavior.floating,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            duration: Duration(seconds: 2, milliseconds: 500),
+            // backgroundColor: mainOrangeColor,
+            content: Center(
+              child: Text("Unable to load Data, Please scan again!",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(color: Colors.white)),
+            )),
+      );
+      setState(() {
+        showLoadingSpinner = false;
+      });
+    }
+  }
 
-      // Navigator.of(context)
-      //     .push(PageRouteBuilder(
-      //         transitionDuration: Duration(milliseconds: 300),
-      //         transitionsBuilder:
-      //             (context, animation, secondaryAnimation, child) {
-      //           return FadeTransition(
-      //             opacity: Tween(begin: 0.65, end: 1.0).animate(animation),
-      //             child: child,
-      //           );
-      //         },
-      //         pageBuilder: (context, animation, secondaryAnimation) {
-      //           return MenuScreen(
-      //               businessID: "3fa85f64-5717-4562-b3fc-2c963f66afa7");
-      //         }))
-      //     .then((onValue) {
-      //   setState(() {
-      //     isScanningCode = false;
-      //     showLoadingSpinner = false;
-      //   });
-      // });
+  void onQRDetected(capture) {
+    if (!isScanningCode) {
+      return;
+    }
+    isScanningCode = false;
+    final List<Barcode> scannedQRcodes = capture.barcodes;
+    final Barcode scannedQRcode = scannedQRcodes[0];
+
+    String? businessID = scannedQRcode.rawValue;
+    bool hasValidData = businessID != null;
+
+    // businessID = "02c71f0e-4585-4798-8ab7-f19f366ccfc0";
+
+    if (hasValidData) {
+      setState(() {
+        showLoadingSpinner = true;
+      });
+
+      fetchData(businessID);
     } else {
       isScanningCode = false;
       ScaffoldMessenger.of(context).clearSnackBars();
@@ -152,16 +191,19 @@ class _ScanscreenState extends State<Scanscreen> {
                         ),
                         width: scannerWidth,
                         height: scannerWidth,
-                        child: MobileScanner(
-                          controller: controller,
-                          onDetect: onQRDetected,
-                          placeholderBuilder:
-                              (BuildContext context, Widget? child) {
-                            return Image.asset(
-                              'assets/images/barcode.png',
-                              fit: BoxFit.cover,
-                            );
-                          },
+                        child: RotatedBox(
+                          quarterTurns: isLandscape ? 3 : 0,
+                          child: MobileScanner(
+                            controller: controller,
+                            onDetect: onQRDetected,
+                            placeholderBuilder:
+                                (BuildContext context, Widget? child) {
+                              return Image.asset(
+                                'assets/images/barcode.png',
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          ),
                         ),
                       ),
                       const SizedBox(height: 20),
