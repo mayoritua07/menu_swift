@@ -289,7 +289,8 @@ class _MenuScreenState extends State<MenuScreen> {
           child: InkWell(
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-                  return OrderNotificationsScreen();
+                  return OrderNotificationsScreen(
+                      businessID: widget.businessID);
                 }));
               },
               child: CircleAvatar(

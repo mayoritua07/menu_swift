@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:swift_menu/component/shimmer_image.dart';
 import 'package:swift_menu/model/order_status_parameters.dart';
 
 final orderStatusParameters = {
@@ -86,19 +87,16 @@ class OrderNotification extends StatelessWidget {
         children: [
           ListTile(
             leading: Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              clipBehavior: Clip.hardEdge,
-              child: Image.asset(
-                // width: 70,
-                // height: 70,
-                imageUrl,
-                fit: BoxFit.cover,
-              ),
-            ),
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                clipBehavior: Clip.hardEdge,
+                child: ShimmerImage(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                )),
             title: Text(
               title,
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),

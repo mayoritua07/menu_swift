@@ -4,21 +4,20 @@ import 'package:swift_menu/component/order_notification_and_status.dart';
 import 'package:swift_menu/constants/colors.dart';
 
 class OrderSummaryScreen extends StatelessWidget {
-  const OrderSummaryScreen(
+  OrderSummaryScreen(
       {super.key,
       required this.title,
       required this.orderID,
       required this.orderDateAndTime,
       required this.orderStatus,
-      required this.quantity,
-      required this.price});
+      required this.orderItems});
 
   final String title;
   final String orderID;
   final DateTime orderDateAndTime;
   final String orderStatus;
-  final int quantity;
-  final int price;
+  final List<Map<String, dynamic>> orderItems;
+  double totalPrice = 0;
 
   String get displayDateAndTime {
     final dateFormat = DateFormat('E, MMMM d, y');
@@ -114,9 +113,35 @@ class OrderSummaryScreen extends StatelessWidget {
     );
   }
 
-  Widget displayOrderItems() {
-    int totalPrice = price * quantity;
+  List<Widget> createOrderItemRow(List<Map<String, dynamic>> orderItems) {
+    List<Widget> myTextWidgetList = [];
+    //Update totalPrice variable
+    totalPrice = 0;
+    orderItems.map((item) {
+      final itemName = item["item_name"];
+      final quantity = item["quantity"];
+      final unitPrice = item["unit_price_at_order"];
+      final price = double.parse(unitPrice!) * double.parse(quantity!);
+      totalPrice += price;
+      final myList = [
+        Text(itemName!,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        Text(quantity,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        Text(
+          '$price',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          textAlign: TextAlign.right,
+        )
+      ];
+      return myList;
+    });
 
+    return myTextWidgetList;
+  }
+
+  Widget displayOrderItems() {
     return GridView.count(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
@@ -134,16 +159,7 @@ class OrderSummaryScreen extends StatelessWidget {
           "Price(₦)",
           textAlign: TextAlign.right,
         ),
-        Text(title,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        Text('$quantity',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        Text(
-          '₦$price',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          textAlign: TextAlign.right,
-        ),
+        ...createOrderItemRow(orderItems),
         Text("Total",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19)),
         SizedBox(),

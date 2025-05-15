@@ -3,7 +3,9 @@ import 'package:swift_menu/component/order_notification_and_status.dart';
 import 'package:swift_menu/screens/order_summary_screen.dart';
 
 class OrderNotificationsScreen extends StatefulWidget {
-  const OrderNotificationsScreen({super.key});
+  const OrderNotificationsScreen({super.key, required this.businessID});
+
+  final String businessID;
 
   @override
   State<OrderNotificationsScreen> createState() =>
@@ -48,14 +50,13 @@ class _OrderNotificationsScreenState extends State<OrderNotificationsScreen> {
               child: Column(
                 children: [
                   ...orderNotificationsDetails.map((detail) {
-                    String title = detail["title"];
-                    String orderID = detail["orderID"];
-                    String orderStatus = detail["orderStatus"];
-                    String imageUrl = detail["imageUrl"];
-                    int quantity = detail['quantity'];
-                    int price = detail["price"];
+                    String title = detail["items"][0]["item_name"];
+                    String orderID = detail["order_id"];
+                    String orderStatus = detail["status"];
+                    String imageUrl = detail["items"][0]["img_url"];
+                    // int quantity = detail['quantity'];
                     DateTime orderDateAndTime =
-                        getOrderDateAndTime(detail["timestamp"]);
+                        getOrderDateAndTime(detail["created_at"]);
 
                     // final orderDuration = now.difference(orderDateAndTime);
 
@@ -94,8 +95,7 @@ class _OrderNotificationsScreenState extends State<OrderNotificationsScreen> {
                                   orderID: orderID,
                                   orderDateAndTime: orderDateAndTime,
                                   orderStatus: orderStatus,
-                                  quantity: quantity,
-                                  price: price);
+                                  orderItems: detail["items"]);
                             }));
                           },
                           child: OrderNotification(
@@ -117,48 +117,21 @@ class _OrderNotificationsScreenState extends State<OrderNotificationsScreen> {
 
 final List<Map<String, dynamic>> orderNotificationsDetails = [
   {
-    "title": "Jollof Rice",
-    "orderID": "#MMSS001",
-    "timestamp": "1985-09-25 17:45:30.00",
-    "orderStatus": "pending",
-    "imageUrl": "assets/images/image 5.png",
-    "quantity": 1,
-    "price": 3500,
-  },
-  {
-    "title": "Jollof Rice",
-    "orderID": "#MMSS002",
-    "timestamp": "1985-09-25 17:45:30.00",
-    "orderStatus": "processing",
-    "imageUrl": "assets/images/jellof-rice.png",
-    "quantity": 1,
-    "price": 3500,
-  },
-  {
-    "title": "Jollof Rice",
-    "orderID": "#MMSS003",
-    "timestamp": "Wednesday",
-    "orderStatus": "completed",
-    "imageUrl": "assets/images/image 6.png",
-    "quantity": 1,
-    "price": 3500,
-  },
-  {
-    "title": "Jollof Rice",
-    "orderID": "#MMSS004",
-    "timestamp": "Wednesday",
-    "orderStatus": "completed",
-    "imageUrl": "assets/images/image 4.png",
-    "quantity": 1,
-    "price": 3500,
-  },
-  {
-    "title": "Jollof Rice",
-    "orderID": "#MMSS005",
-    "timestamp": "Wednesday",
-    "orderStatus": "completed",
-    "imageUrl": "assets/images/jellof-rice.png",
-    "quantity": 1,
-    "price": 3500,
-  },
+    "order_id": "b06b6880-9707-456f-8fcf-3373b7d2857e",
+    "name": "Pascal",
+    "table_tag": "56",
+    "status": "in progress",
+    "total_price": "1200.00",
+    "created_at": "2025-05-14T22:27:07.256495Z",
+    "items": [
+      {
+        "item_id": "408745dc-0c2b-402b-96a2-91ddfb5f4e28",
+        "item_name": "Bean and Plantain",
+        "quantity": 1,
+        "unit_price_at_order": "1200.00",
+        "img_url":
+            "https://menucard-menu.s3.amazonaws.com/20250514220346_e9370df0c743465289338b711d3a5303_oil%20beans.jpeg"
+      }
+    ]
+  }
 ];
