@@ -14,9 +14,15 @@ import 'package:swift_menu/model/menu_item_model.dart';
 import 'package:swift_menu/screens/order_notifications_screen.dart';
 
 class MenuScreen extends StatefulWidget {
-  const MenuScreen({super.key, required this.businessID});
+  const MenuScreen(
+      {super.key,
+      required this.businessID,
+      required this.businessName,
+      required this.imageUrl});
 
   final String businessID;
+  final String businessName;
+  final String imageUrl;
 
   @override
   State<MenuScreen> createState() => _MenuScreenState();
@@ -37,7 +43,6 @@ class _MenuScreenState extends State<MenuScreen> {
   TextEditingController searchFieldController = TextEditingController();
   bool isLoading = true;
   String? errorMessage;
-  String businessID = "3fa85f64-5717-4562-b3fc-2c963f66afa7";
 
   @override
   void initState() {
@@ -91,7 +96,8 @@ class _MenuScreenState extends State<MenuScreen> {
     try {
       final response =
           // await http.get(Uri.parse("https://api.visit.menu/api/v1/menus"));
-          await http.get(Uri.parse(dotenv.env["MENU_URL"] ?? ""));
+          await http.get(Uri.parse(
+              "${dotenv.env["MENU_URL"]}/${widget.businessID}/menus"));
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -244,14 +250,14 @@ class _MenuScreenState extends State<MenuScreen> {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(
-              "assets/icons/Logo.png",
+            Image.network(
+              widget.imageUrl,
               fit: BoxFit.cover,
               // color: purpleColor,
             ),
             SizedBox(width: 8),
             Text(
-              "Swoop Dining",
+              widget.businessName,
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
             ),
           ],

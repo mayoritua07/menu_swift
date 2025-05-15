@@ -3,7 +3,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:swift_menu/constants/colors.dart';
 import 'package:swift_menu/screens/menu_screen.dart';
 
-String baseUrl = "";
+import 'package:http/http.dart' as http;
 
 class Scanscreen extends StatefulWidget {
   const Scanscreen({super.key});
@@ -36,34 +36,58 @@ class _ScanscreenState extends State<Scanscreen> {
     final List<Barcode> scannedQRcodes = capture.barcodes;
     final Barcode scannedQRcode = scannedQRcodes[0];
 
-    String? data = scannedQRcode.rawValue;
-    bool hasValidData = data != null;
+    String? businessID = scannedQRcode.rawValue;
+    bool hasValidData = businessID != null;
 
     if (hasValidData) {
       setState(() {
         showLoadingSpinner = true;
       });
 
-      Navigator.of(context)
-          .push(PageRouteBuilder(
-              transitionDuration: Duration(milliseconds: 300),
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                return FadeTransition(
-                  opacity: Tween(begin: 0.65, end: 1.0).animate(animation),
-                  child: child,
-                );
-              },
-              pageBuilder: (context, animation, secondaryAnimation) {
-                return MenuScreen(
-                    businessID: "3fa85f64-5717-4562-b3fc-2c963f66afa7");
-              }))
-          .then((onValue) {
-        setState(() {
-          isScanningCode = false;
-          showLoadingSpinner = false;
-        });
-      });
+      try {
+        String SCAN_API = "http://api.business.visit.menu/api/v1/business";
+        final response = http.get(Uri.parse(SCAN_API));
+        print(response);
+      } catch (e) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              padding: EdgeInsets.all(14),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              duration: Duration(seconds: 2, milliseconds: 500),
+              // backgroundColor: mainOrangeColor,
+              content: Center(
+                child: Text("Unable to load Data, Please scan again",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(color: Colors.white)),
+              )),
+        );
+      }
+
+      // Navigator.of(context)
+      //     .push(PageRouteBuilder(
+      //         transitionDuration: Duration(milliseconds: 300),
+      //         transitionsBuilder:
+      //             (context, animation, secondaryAnimation, child) {
+      //           return FadeTransition(
+      //             opacity: Tween(begin: 0.65, end: 1.0).animate(animation),
+      //             child: child,
+      //           );
+      //         },
+      //         pageBuilder: (context, animation, secondaryAnimation) {
+      //           return MenuScreen(
+      //               businessID: "3fa85f64-5717-4562-b3fc-2c963f66afa7");
+      //         }))
+      //     .then((onValue) {
+      //   setState(() {
+      //     isScanningCode = false;
+      //     showLoadingSpinner = false;
+      //   });
+      // });
     } else {
       isScanningCode = false;
       ScaffoldMessenger.of(context).clearSnackBars();
@@ -144,25 +168,6 @@ class _ScanscreenState extends State<Scanscreen> {
                       InkWell(
                         onTap: () {
                           scanCode();
-                        },
-                        ///////////////////////temeporary code for now.....
-                        onDoubleTap: () {
-                          Navigator.of(context).push(PageRouteBuilder(
-                              transitionDuration: Duration(milliseconds: 300),
-                              transitionsBuilder: (context, animation,
-                                  secondaryAnimation, child) {
-                                return FadeTransition(
-                                  opacity: Tween(begin: 0.65, end: 1.0)
-                                      .animate(animation),
-                                  child: child,
-                                );
-                              },
-                              pageBuilder:
-                                  (context, animation, secondaryAnimation) {
-                                return MenuScreen(
-                                    businessID:
-                                        "3fa85f64-5717-4562-b3fc-2c963f66afa7");
-                              }));
                         },
                         child: Container(
                           // height: 55,
