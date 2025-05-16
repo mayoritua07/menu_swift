@@ -38,7 +38,7 @@ class _ScanscreenState extends State<Scanscreen> {
       final String? logoUrl = data["logoUrl"];
 
       if (businessName != null && logoUrl != null) {
-        await DeviceIdManager.storeBusinessId(businessID);
+        // await DeviceIdManager.storeBusinessId(businessID);
         Navigator.of(context)
             .push(PageRouteBuilder(
                 transitionDuration: Duration(milliseconds: 300),
