@@ -3,12 +3,15 @@ import 'package:swift_menu/component/completed_order_dialog.dart';
 import 'package:swift_menu/constants/colors.dart';
 import 'package:swift_menu/model/order_item_model.dart';
 import 'package:swift_menu/model/order_model.dart';
+import 'package:swift_menu/services/order_service.dart';
+import 'package:swift_menu/utils/device_id_manager.dart';
 
 class ConfirmOrderSheet extends StatefulWidget {
   final List<Order> orders;
   final VoidCallback onAddMoreItems;
   final VoidCallback onOrderConfirmed;
   final Function(int) onOrderRemoved;
+  final String businessId;
 
   const ConfirmOrderSheet({
     super.key,
@@ -16,6 +19,7 @@ class ConfirmOrderSheet extends StatefulWidget {
     required this.onAddMoreItems,
     required this.onOrderConfirmed,
     required this.onOrderRemoved,
+    required this.businessId,
   });
 
   @override
@@ -27,6 +31,22 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _seatController = TextEditingController();
   final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+  bool _isSubmitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLastCustomerName();
+  }
+
+  Future<void> _loadLastCustomerName() async {
+    final lastCustomerName = await DeviceIdManager.getLastCustomerName();
+    if (lastCustomerName != null) {
+      setState(() {
+        _nameController.text = lastCustomerName;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -505,14 +525,50 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
             borderRadius: BorderRadius.circular(300),
           ),
         ),
-        onPressed: () {
+        onPressed: () async {
           if (_formKey.currentState!.validate()) {
             // Proceed with order
 
             // Then call the success callback
-            widget.onOrderConfirmed();
+            // widget.onOrderConfirmed();
 
-            showCompletedOrderDialog(context);
+            setState(() {
+              _isSubmitting = true;
+            });
+
+            // Create order with customer information
+            final order = Order(
+              customerName: _nameController.text,
+              tableTag: _seatController.text,
+              orderItems:
+                  widget.orders.expand((order) => order.orderItems).toList(),
+              businessId:
+                  widget.businessId, // Use the business ID from the QR code
+            );
+
+            // Submit order to endpoing
+            final orderId = await OrderService.submitOrder(order);
+
+            setState(() {
+              _isSubmitting = false;
+            });
+
+            if (orderId != null) {
+              // save customer name
+              await DeviceIdManager.storeCustomerName(_nameController.text);
+
+              // success callback
+              widget.onOrderConfirmed();
+              showCompletedOrderDialog(context);
+            } else {
+              // Show error message
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Failed to submit order. Please try again."),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
           } else {
             scaffoldMessengerKey.currentState?.clearSnackBars();
             scaffoldMessengerKey.currentState?.showSnackBar(
@@ -533,13 +589,15 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
             );
           }
         },
-        child: const Text(
-          "Confirm Order",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-          ),
-        ),
+        child: _isSubmitting
+            ? CircularProgressIndicator(color: Colors.white)
+            : const Text(
+                "Confirm Order",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
+              ),
       ),
     );
   }

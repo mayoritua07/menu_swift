@@ -13,6 +13,7 @@ import 'package:swift_menu/screens/confirm_order_screen.dart';
 import 'package:swift_menu/screens/menu_item_details_screen.dart';
 import 'package:swift_menu/model/menu_item_model.dart';
 import 'package:swift_menu/screens/order_notifications_screen.dart';
+import 'package:swift_menu/utils/device_id_manager.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen(
@@ -50,6 +51,9 @@ class _MenuScreenState extends State<MenuScreen> {
     // filteredItemsForDisplay = filteredItems;
     super.initState();
     fetchMenuItems();
+
+    //storing the businessID
+    DeviceIdManager.storeBusinessId(widget.businessID);
   }
 
   @override
@@ -331,6 +335,9 @@ class _MenuScreenState extends State<MenuScreen> {
               cartItems.add(
                 Order(
                   orderItems: [newOrderItem],
+                  businessId: widget.businessID,
+                  customerName: "Guest",
+                  tableTag: "Table",
                 ),
               );
             } else {
@@ -368,6 +375,7 @@ class _MenuScreenState extends State<MenuScreen> {
       backgroundColor: Colors.transparent,
       builder: (context) => ConfirmOrderSheet(
         orders: cartItems,
+        businessId: widget.businessID,
         onAddMoreItems: () {
           Navigator.pop(context); // Close the confirm order sheet
         },
