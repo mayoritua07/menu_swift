@@ -19,7 +19,7 @@ class _OrderNotificationsScreenState extends State<OrderNotificationsScreen> {
   late DateTime thisWeekSunday;
 
   DateTime getOrderDateAndTime(String timestamp) {
-    return DateTime(2025, 5, 1, 18);
+    return DateTime.parse(timestamp);
   }
 
   @override
