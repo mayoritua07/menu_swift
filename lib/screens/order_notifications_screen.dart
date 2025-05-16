@@ -45,10 +45,9 @@ class _OrderNotificationsScreenState extends State<OrderNotificationsScreen> {
       final customerName = await DeviceIdManager.getLastCustomerName();
 
       if (customerName != null) {
-        // Calculate timestamp for 12 hours ago
         final twelveHoursAgo = DateTime.now().subtract(Duration(hours: 12));
 
-        // Fetch orders for this customer at this business from the last 12 hours
+        // orders from the last 12 hours
         final fetchedOrders =
             await OrderService.getOrdersForCustomerInTimeRange(
           widget.businessID,
