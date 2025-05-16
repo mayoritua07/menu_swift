@@ -29,8 +29,7 @@ class _ScanscreenState extends State<Scanscreen> {
 
   void fetchData(String businessID) async {
     try {
-      String SCAN_API =
-          "http://api.business.visit.menu/api/v1/business/${businessID}";
+      String SCAN_API = "https://api.visit.menu/api/v1/business/${businessID}";
       final response = await http.get(Uri.parse(SCAN_API));
       final Map<String, dynamic> data = jsonDecode(response.body);
 
@@ -120,6 +119,9 @@ class _ScanscreenState extends State<Scanscreen> {
     bool hasValidData = businessID != null;
 
     // businessID = "02c71f0e-4585-4798-8ab7-f19f366ccfc0";
+    //The QR code is a link, http://vist.menu.....
+
+    //Check if the first part is present, if it is, then it belongs to us, then we take the business id.
 
     if (hasValidData) {
       setState(() {
