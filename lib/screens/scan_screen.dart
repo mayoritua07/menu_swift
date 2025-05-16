@@ -29,8 +29,8 @@ class _ScanscreenState extends State<Scanscreen> {
 
   void fetchData(String businessID) async {
     try {
-      String SCAN_API = "https://api.visit.menu/api/v1/business/${businessID}";
-      final response = await http.get(Uri.parse(SCAN_API));
+      String scanAPI = "https://api.visit.menu/api/v1/business/${businessID}";
+      final response = await http.get(Uri.parse(scanAPI));
       final Map<String, dynamic> data = jsonDecode(response.body);
 
       ///check if response is valid
@@ -115,8 +115,15 @@ class _ScanscreenState extends State<Scanscreen> {
     final List<Barcode> scannedQRcodes = capture.barcodes;
     final Barcode scannedQRcode = scannedQRcodes[0];
 
-    String? businessID = scannedQRcode.rawValue;
-    bool hasValidData = businessID != null;
+    String? data = scannedQRcode.rawValue;
+    String businessID = "";
+    bool hasValidData = false;
+    if (data != null) {
+      hasValidData = data.contains("https://visit.menu");
+      businessID = data.split("/").last;
+    }
+
+    // https://visit.menu/menu-dashboard/981c7665-426c-4279-b7a2-9ddcf99c4df2
 
     // businessID = "02c71f0e-4585-4798-8ab7-f19f366ccfc0";
     //The QR code is a link, http://vist.menu.....
