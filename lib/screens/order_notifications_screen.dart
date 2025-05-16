@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:swift_menu/component/order_notification_and_status.dart';
 import 'package:swift_menu/screens/order_summary_screen.dart';
+import 'package:swift_menu/services/order_service.dart';
+import 'package:swift_menu/utils/device_id_manager.dart';
+import 'package:swift_menu/model/order_model.dart';
 
 class OrderNotificationsScreen extends StatefulWidget {
   const OrderNotificationsScreen({super.key, required this.businessID});
@@ -17,6 +20,7 @@ class _OrderNotificationsScreenState extends State<OrderNotificationsScreen> {
   final now = DateTime.now();
   late DateTime todayDate;
   late DateTime thisWeekSunday;
+  List<Order> orders = [];
 
   DateTime getOrderDateAndTime(String timestamp) {
     return DateTime.parse(timestamp);
@@ -28,6 +32,46 @@ class _OrderNotificationsScreenState extends State<OrderNotificationsScreen> {
     thisWeekSunday =
         todayDate.subtract(Duration(days: todayDate.weekday + 1 % 7));
     super.initState();
+    _fetchOrders();
+  }
+
+  Future<void> _fetchOrders() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      // Get the last used customer name
+      final customerName = await DeviceIdManager.getLastCustomerName();
+
+      if (customerName != null) {
+        // Calculate timestamp for 12 hours ago
+        final twelveHoursAgo = DateTime.now().subtract(Duration(hours: 12));
+
+        // Fetch orders for this customer at this business from the last 12 hours
+        final fetchedOrders =
+            await OrderService.getOrdersForCustomerInTimeRange(
+          widget.businessID,
+          customerName,
+          startTime: twelveHoursAgo,
+        );
+
+        setState(() {
+          orders = fetchedOrders;
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          orders = [];
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error fetching orders: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -41,97 +85,113 @@ class _OrderNotificationsScreenState extends State<OrderNotificationsScreen> {
         backgroundColor: Colors.white,
         title: Text("Orders",
             style: TextStyle(fontSize: 26, fontWeight: FontWeight.w500)),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: _fetchOrders,
+          ),
+        ],
       ),
       body: isLoading
-          ? CircularProgressIndicator.adaptive()
+          ? Center(child: CircularProgressIndicator.adaptive())
           : SingleChildScrollView(
               child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4),
               child: Column(
-                children: [
-                  ...orderNotificationsDetails.map((detail) {
-                    String title = detail["items"][0]["item_name"];
-                    String orderID = detail["order_id"];
-                    String orderStatus = detail["status"];
-                    String imageUrl = detail["items"][0]["img_url"];
-                    // int quantity = detail['quantity'];
-                    DateTime orderDateAndTime =
-                        getOrderDateAndTime(detail["created_at"]);
-
-                    // final orderDuration = now.difference(orderDateAndTime);
-
-                    if (now.day == orderDateAndTime.day) {
-                      section = "Today";
-                    } else if (!orderDateAndTime
-                        .difference(thisWeekSunday)
-                        .isNegative) {
-                      section = "This week";
-                    } else {
-                      section = "Older";
-                    }
-                    bool display = section != currentSection;
-                    currentSection = section;
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (display)
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 16.0, top: 8, bottom: 8),
-                            child: Text(
-                              section,
-                              // textAlign: TextAlign.left,
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w500),
-                            ),
+                children: orders.isEmpty
+                    ? [
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.3),
+                        Center(
+                          child: Column(
+                            children: [
+                              Icon(Icons.receipt_long_outlined,
+                                  size: 64, color: Colors.grey),
+                              SizedBox(height: 16),
+                              Text(
+                                'No orders found',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                'Orders from the last 12 hours will appear here',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
                           ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.of(context)
-                                .push(MaterialPageRoute(builder: (ctx) {
-                              return OrderSummaryScreen(
+                        ),
+                      ]
+                    : orders.map((order) {
+                        String title = order.orderItems.isNotEmpty
+                            ? order.orderItems.first.name
+                            : 'Order ${order.id ?? ''}';
+                        String orderID = order.id ?? '';
+                        String orderStatus = order.status;
+                        String imageUrl = order.orderItems.isNotEmpty
+                            ? 'https://menucard-menu.s3.amazonaws.com/placeholder-food.jpg' // Placeholder image
+                            : 'https://menucard-menu.s3.amazonaws.com/placeholder-food.jpg';
+                        DateTime orderDateAndTime = order.orderTime;
+
+                        // Determine section
+                        if (now.day == orderDateAndTime.day) {
+                          section = "Today";
+                        } else if (!orderDateAndTime
+                            .difference(thisWeekSunday)
+                            .isNegative) {
+                          section = "This week";
+                        } else {
+                          section = "Older";
+                        }
+                        bool display = section != currentSection;
+                        currentSection = section;
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (display)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 16.0, top: 8, bottom: 8),
+                                child: Text(
+                                  section,
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                            InkWell(
+                              onTap: () {
+                                Navigator.of(context)
+                                    .push(MaterialPageRoute(builder: (ctx) {
+                                  return OrderSummaryScreen(
+                                      title: title,
+                                      orderID: orderID,
+                                      orderDateAndTime: orderDateAndTime,
+                                      orderStatus: orderStatus,
+                                      orderItems: order.orderItems
+                                          .map((item) => {
+                                                'item_name': item.name,
+                                                'quantity':
+                                                    item.quantity.toString(),
+                                                'unit_price_at_order':
+                                                    item.price.replaceAll(
+                                                        RegExp(r'[^0-9.]'), ''),
+                                              })
+                                          .toList());
+                                })).then((_) => _fetchOrders());
+                              },
+                              child: OrderNotification(
+                                  imageUrl: imageUrl,
                                   title: title,
                                   orderID: orderID,
                                   orderDateAndTime: orderDateAndTime,
-                                  orderStatus: orderStatus,
-                                  orderItems: detail["items"]);
-                            }));
-                          },
-                          child: OrderNotification(
-                              imageUrl: imageUrl,
-                              title: title,
-                              orderID: orderID,
-                              orderDateAndTime: orderDateAndTime,
-                              orderStatus: orderStatus),
-                        ),
-                      ],
-                    );
-                  })
-                ],
+                                  orderStatus: orderStatus),
+                            ),
+                          ],
+                        );
+                      }).toList(),
               ),
             )),
     );
   }
 }
-
-final List<Map<String, dynamic>> orderNotificationsDetails = [
-  {
-    "order_id": "b06b6880-9707-456f-8fcf-3373b7d2857e",
-    "name": "Pascal",
-    "table_tag": "56",
-    "status": "in progress",
-    "total_price": "1200.00",
-    "created_at": "2025-05-14T22:27:07.256495Z",
-    "items": [
-      {
-        "item_id": "408745dc-0c2b-402b-96a2-91ddfb5f4e28",
-        "item_name": "Bean and Plantain",
-        "quantity": 1,
-        "unit_price_at_order": "1200.00",
-        "img_url":
-            "https://menucard-menu.s3.amazonaws.com/20250514220346_e9370df0c743465289338b711d3a5303_oil%20beans.jpeg"
-      }
-    ]
-  }
-];
