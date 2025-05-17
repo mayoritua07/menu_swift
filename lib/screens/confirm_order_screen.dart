@@ -536,31 +536,31 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
               _isSubmitting = true;
             });
 
-//validate order
-            // for (final currentOrder in widget.orders) {
-            //   if (!await OrderService.validateOrder(currentOrder)) {
-            //     scaffoldMessengerKey.currentState?.clearSnackBars();
-            //     scaffoldMessengerKey.currentState?.showSnackBar(
-            //       SnackBar(
-            //         padding: EdgeInsets.all(14),
-            //         behavior: SnackBarBehavior.floating,
-            //         shape: RoundedRectangleBorder(
-            //             borderRadius: BorderRadius.circular(20)),
-            //         duration: Duration(seconds: 2),
-            //         // backgroundColor: mainOrangeColor,
-            //         content: Center(
-            //           child: Text(
-            //               "Items in Order ${widget.orders.indexOf(currentOrder) + 1} is out of stock.",
-            //               style: TextStyle(color: Colors.white)),
-            //         ),
-            //       ),
-            //     );
-            //     setState(() {
-            //       _isSubmitting = false;
-            //     });
-            //     return;
-            //   }
-            // }
+// validate order
+            for (final currentOrder in widget.orders) {
+              if (!await OrderService.validateOrder(currentOrder)) {
+                scaffoldMessengerKey.currentState?.clearSnackBars();
+                scaffoldMessengerKey.currentState?.showSnackBar(
+                  SnackBar(
+                    padding: EdgeInsets.all(14),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    duration: Duration(seconds: 2),
+                    // backgroundColor: mainOrangeColor,
+                    content: Center(
+                      child: Text(
+                          "Items in Order ${widget.orders.indexOf(currentOrder) + 1} is out of stock.",
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                );
+                setState(() {
+                  _isSubmitting = false;
+                });
+                return;
+              }
+            }
 
             // As many orders exist is the number of requests we will do
 
@@ -614,7 +614,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
             //       widget.businessId, // Use the business ID from the QR code
             // );
 
-            // Submit order to endpoing
+            // Submit order to endpoint
             // final orderId = await OrderService.submitOrder(order);
 
             setState(() {
