@@ -30,7 +30,7 @@ class OrderItem {
     return {
       'item_name': name,
       'item_id': id,
-      'price': double.parse(price),
+      'price': double.tryParse(price.replaceAll(RegExp(r'[^0-9.]'), '')),
       'quantity': quantity,
     };
   }

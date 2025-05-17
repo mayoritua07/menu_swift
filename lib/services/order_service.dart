@@ -24,10 +24,10 @@ class OrderService {
         final responseData = jsonDecode(response.body);
         return responseData['order_id']; // Return the order ID
       }
-      return null;
     } catch (e) {
       return null;
     }
+    return null;
   }
 
   // validate order

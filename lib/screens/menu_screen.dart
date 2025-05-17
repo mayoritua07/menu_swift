@@ -116,7 +116,7 @@ class _MenuScreenState extends State<MenuScreen> {
             'image': item.imgUrl,
             'category': item.category,
             /////added business id ot order item for identification
-            "id": item.businessId,
+            "id": item.id,
             "available": item.portionsAvailable > 0,
           };
         }).toList();
