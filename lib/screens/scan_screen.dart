@@ -19,6 +19,7 @@ class _ScanscreenState extends State<Scanscreen> {
       autoStart: true, detectionSpeed: DetectionSpeed.normal);
   bool isScanningCode = false;
   bool showLoadingSpinner = false;
+  final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
   @override
   @override
@@ -39,7 +40,7 @@ class _ScanscreenState extends State<Scanscreen> {
 
       if (businessName != null && logoUrl != null) {
         // await DeviceIdManager.storeBusinessId(businessID);
-        Navigator.of(context)
+        Navigator.of(scaffoldMessengerKey.currentContext!)
             .push(PageRouteBuilder(
                 transitionDuration: Duration(milliseconds: 300),
                 transitionsBuilder:
@@ -63,8 +64,8 @@ class _ScanscreenState extends State<Scanscreen> {
           });
         });
       } else {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
+        scaffoldMessengerKey.currentState?.clearSnackBars();
+        scaffoldMessengerKey.currentState?.showSnackBar(
           SnackBar(
               padding: EdgeInsets.all(14),
               behavior: SnackBarBehavior.floating,
@@ -74,10 +75,7 @@ class _ScanscreenState extends State<Scanscreen> {
               // backgroundColor: mainOrangeColor,
               content: Center(
                 child: Text("Unable to load Data, Please scan again!",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge!
-                        .copyWith(color: Colors.white)),
+                    style: TextStyle(color: Colors.white, fontSize: 12)),
               )),
         );
         setState(() {
@@ -85,8 +83,8 @@ class _ScanscreenState extends State<Scanscreen> {
         });
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
+      scaffoldMessengerKey.currentState?.clearSnackBars();
+      scaffoldMessengerKey.currentState?.showSnackBar(
         SnackBar(
             padding: EdgeInsets.all(14),
             behavior: SnackBarBehavior.floating,
@@ -96,10 +94,7 @@ class _ScanscreenState extends State<Scanscreen> {
             // backgroundColor: mainOrangeColor,
             content: Center(
               child: Text("Unable to load Data, Please scan again!",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge!
-                      .copyWith(color: Colors.white)),
+                  style: TextStyle(color: Colors.white, fontSize: 12)),
             )),
       );
       setState(() {
@@ -173,6 +168,7 @@ class _ScanscreenState extends State<Scanscreen> {
         MediaQuery.of(context).orientation == Orientation.landscape;
     double scannerWidth = isLandscape ? height * 0.55 : width * 0.75;
     return Scaffold(
+      key: scaffoldMessengerKey,
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Container(

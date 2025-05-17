@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:swift_menu/model/order_item_model.dart';
 import 'package:swift_menu/model/order_model.dart';
@@ -40,7 +39,7 @@ class OrderService {
         },
       ).toList();
       final response = await http.post(
-        Uri.parse(baseUrl),
+        Uri.parse("http://api.menu.visit.menu/api/v1/menus/validate-order"),
         headers: {
           'Content-Type': 'application/json',
         },

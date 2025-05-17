@@ -4,7 +4,7 @@ import 'package:swift_menu/component/order_notification_and_status.dart';
 import 'package:swift_menu/constants/colors.dart';
 
 class OrderSummaryScreen extends StatelessWidget {
-  OrderSummaryScreen(
+  const OrderSummaryScreen(
       {super.key,
       required this.title,
       required this.orderID,
@@ -17,7 +17,6 @@ class OrderSummaryScreen extends StatelessWidget {
   final DateTime orderDateAndTime;
   final String orderStatus;
   final List<Map<String, dynamic>> orderItems;
-  double totalPrice = 0;
 
   String get displayDateAndTime {
     final dateFormat = DateFormat('E, MMMM d, y');
@@ -113,10 +112,11 @@ class OrderSummaryScreen extends StatelessWidget {
     );
   }
 
-  List<Widget> createOrderItemRow(List<Map<String, dynamic>> orderItems) {
+  List<Widget> createOrderItemRowAndTotal(
+      List<Map<String, dynamic>> orderItems) {
     List<Widget> myTextWidgetList = [];
     //Update totalPrice variable
-    totalPrice = 0;
+    double totalPrice = 0;
     for (final item in orderItems) {
       final String itemName = item["item_name"];
       final quantity = item["quantity"];
@@ -144,6 +144,17 @@ class OrderSummaryScreen extends StatelessWidget {
 
       myTextWidgetList.addAll(myList);
     }
+    //Total row
+    myTextWidgetList.addAll([
+      Text("Total",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19)),
+      SizedBox(),
+      Text(
+        "₦$totalPrice",
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
+        textAlign: TextAlign.right,
+      )
+    ]);
 
     return myTextWidgetList;
   }
@@ -166,15 +177,7 @@ class OrderSummaryScreen extends StatelessWidget {
           "Price(₦)",
           textAlign: TextAlign.right,
         ),
-        ...createOrderItemRow(orderItems),
-        Text("Total",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19)),
-        SizedBox(),
-        Text(
-          "₦$totalPrice",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
-          textAlign: TextAlign.right,
-        )
+        ...createOrderItemRowAndTotal(orderItems),
       ],
     );
   }

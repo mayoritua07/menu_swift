@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swift_menu/component/order_notification_and_status.dart';
 import 'package:swift_menu/screens/order_summary_screen.dart';
 import 'package:swift_menu/services/order_service.dart';

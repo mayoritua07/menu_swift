@@ -539,8 +539,8 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
 //validate order
             for (final currentOrder in widget.orders) {
               if (!await OrderService.validateOrder(currentOrder)) {
-                ScaffoldMessenger.of(context).clearSnackBars();
-                ScaffoldMessenger.of(context).showSnackBar(
+                scaffoldMessengerKey.currentState?.clearSnackBars();
+                scaffoldMessengerKey.currentState?.showSnackBar(
                   SnackBar(
                     padding: EdgeInsets.all(14),
                     behavior: SnackBarBehavior.floating,
@@ -551,10 +551,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
                     content: Center(
                       child: Text(
                           "Items in Order ${widget.orders.indexOf(currentOrder) + 1} is out of stock.",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge!
-                              .copyWith(color: Colors.white)),
+                          style: TextStyle(color: Colors.white, fontSize: 12)),
                     ),
                   ),
                 );
@@ -589,7 +586,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
                 // success callback
               } else {
                 // Show error message
-                ScaffoldMessenger.of(context).showSnackBar(
+                scaffoldMessengerKey.currentState?.showSnackBar(
                   SnackBar(
                     content:
                         Text("Unable to complete order. Please try again."),
@@ -620,7 +617,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
               _isSubmitting = false;
             });
             widget.onOrderConfirmed();
-            showCompletedOrderDialog(context);
+            showCompletedOrderDialog(scaffoldMessengerKey.currentContext);
 
             // if (orderId != null) {
             //   // save customer name
