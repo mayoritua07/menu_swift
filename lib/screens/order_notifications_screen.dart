@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swift_menu/component/order_notification_and_status.dart';
 import 'package:swift_menu/screens/order_summary_screen.dart';
 import 'package:swift_menu/services/order_service.dart';
@@ -16,7 +17,7 @@ class OrderNotificationsScreen extends StatefulWidget {
 }
 
 class _OrderNotificationsScreenState extends State<OrderNotificationsScreen> {
-  bool isLoading = false;
+  bool isLoading = true;
   final now = DateTime.now();
   late DateTime todayDate;
   late DateTime thisWeekSunday;
@@ -32,27 +33,36 @@ class _OrderNotificationsScreenState extends State<OrderNotificationsScreen> {
     thisWeekSunday =
         todayDate.subtract(Duration(days: todayDate.weekday + 1 % 7));
     super.initState();
+
     _fetchOrders();
   }
 
   Future<void> _fetchOrders() async {
-    setState(() {
-      isLoading = true;
-    });
+    // setState(() {
+    //   isLoading = true;
+    // });
 
     try {
       // Get the last used customer name
-      final customerName = await DeviceIdManager.getLastCustomerName();
+      // final customerName = await DeviceIdManager.getLastCustomerName();
 
-      if (customerName != null) {
-        final twelveHoursAgo = DateTime.now().subtract(Duration(hours: 12));
+      final customerOrderIDs =
+          await DeviceIdManager.getCustomerOrderIDs(widget.businessID);
+
+      if (customerOrderIDs != null) {
+        // final twelveHoursAgo = DateTime.now().subtract(Duration(hours: 12));
 
         // orders from the last 12 hours
         final fetchedOrders =
-            await OrderService.getOrdersForCustomerInTimeRange(
+            //     await OrderService.getOrdersForCustomerInTimeRange(
+            //   widget.businessID,
+            //   customerName,
+            //   startTime: twelveHoursAgo,
+            // );
+
+            await OrderService.getFilteredOrders(
           widget.businessID,
-          customerName,
-          startTime: twelveHoursAgo,
+          customerOrderIDs,
         );
 
         setState(() {
@@ -66,7 +76,6 @@ class _OrderNotificationsScreenState extends State<OrderNotificationsScreen> {
         });
       }
     } catch (e) {
-      print('Error fetching orders: $e');
       setState(() {
         isLoading = false;
       });
@@ -126,10 +135,11 @@ class _OrderNotificationsScreenState extends State<OrderNotificationsScreen> {
                             : 'Order ${order.id ?? ''}';
                         String orderID = order.id ?? '';
                         String orderStatus = order.status;
-                        String imageUrl = order.orderItems.isNotEmpty
-                            ? 'https://menucard-menu.s3.amazonaws.com/placeholder-food.jpg' // Placeholder image
-                            : 'https://menucard-menu.s3.amazonaws.com/placeholder-food.jpg';
+                        // String imageUrl = order.orderItems.isNotEmpty
+                        //     ? 'https://menucard-menu.s3.amazonaws.com/placeholder-food.jpg' // Placeholder image
+                        //     : 'https://menucard-menu.s3.amazonaws.com/placeholder-food.jpg';
                         DateTime orderDateAndTime = order.orderTime;
+                        String imageUrl = order.orderItems[0].imageUrl;
 
                         // Determine section
                         if (now.day == orderDateAndTime.day) {

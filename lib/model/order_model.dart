@@ -2,6 +2,7 @@ import 'package:swift_menu/model/order_item_model.dart';
 
 class Order {
   final String? id;
+
   final String customerName;
   final String tableTag;
   final List<OrderItem> orderItems;
@@ -24,28 +25,35 @@ class Order {
   }
 
   Map<String, dynamic> toJson() {
+    // return {
+    //   'customer_name': customerName,
+    //   'table_tag': tableTag,
+    //   'items': orderItems.map((item) => item.toJson()).toList(),
+    //   'order_time': orderTime.toIso8601String(),
+    //   'status': status,
+    //   'business_id': businessId,
+    //   'total_price': price,
+    // };
+
     return {
-      'customer_name': customerName,
+      'name': customerName,
       'table_tag': tableTag,
       'items': orderItems.map((item) => item.toJson()).toList(),
-      'order_time': orderTime.toIso8601String(),
-      'status': status,
       'business_id': businessId,
-      'total_price': price,
     };
   }
 
-  factory Order.fromJson(Map<String, dynamic> json) {
+  factory Order.fromJson(Map<String, dynamic> json, businessID) {
     return Order(
-      id: json['id'],
-      customerName: json['customer_name'],
+      id: json['order_id'],
+      customerName: json['name'],
       tableTag: json['table_tag'],
       orderItems: (json['items'] as List)
           .map((item) => OrderItem.fromJson(item))
           .toList(),
-      orderTime: DateTime.parse(json['order_time']),
+      orderTime: DateTime.parse(json['created_at']),
       status: json['status'],
-      businessId: json['business_id'],
+      businessId: businessID,
     );
   }
 }

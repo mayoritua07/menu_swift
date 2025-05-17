@@ -6,7 +6,8 @@ import 'package:swift_menu/model/order_status_parameters.dart';
 final orderStatusParameters = {
   "pending": pendingOrderStatusParameters,
   "in progress": inProgressOrderStatusParameters,
-  "completed": completedOrderStatusParameters
+  "completed": completedOrderStatusParameters,
+  "cancelled": cancelledOrderStatusParameters
 };
 
 class OrderStatus extends StatelessWidget {
@@ -98,7 +99,12 @@ class OrderNotification extends StatelessWidget {
                   fit: BoxFit.cover,
                 )),
             title: Text(
-              title,
+              title[0].toUpperCase() +
+                  title
+                      .substring(
+                        1,
+                      )
+                      .toLowerCase(),
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
             ),
             subtitle: Text("Order $orderID"),

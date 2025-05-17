@@ -22,3 +22,7 @@ const completedOrderStatusParameters = OrderStatusParameters(
     textColor: Color.fromARGB(255, 23, 145, 80),
     borderColor: Color.fromARGB(255, 19, 116, 64),
     bgColor: Color.fromARGB(255, 233, 249, 240));
+const cancelledOrderStatusParameters = OrderStatusParameters(
+    textColor: Colors.red,
+    borderColor: Colors.red,
+    bgColor: Color.fromARGB(187, 253, 238, 238));

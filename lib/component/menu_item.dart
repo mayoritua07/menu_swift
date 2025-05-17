@@ -7,15 +7,16 @@ class MenuItem extends StatelessWidget {
   final String price;
   final VoidCallback onTap;
   final String imagePath;
+  final bool isAvailable;
 
-  const MenuItem({
-    super.key,
-    required this.title,
-    required this.description,
-    required this.price,
-    required this.onTap,
-    required this.imagePath,
-  });
+  const MenuItem(
+      {super.key,
+      required this.title,
+      required this.description,
+      required this.price,
+      required this.onTap,
+      required this.imagePath,
+      required this.isAvailable});
 
   @override
   // Widget build(BuildContext context) {
@@ -135,7 +136,9 @@ class MenuItem extends StatelessWidget {
         height: 132,
         padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16),
         decoration: BoxDecoration(
-          color: const Color(0xffFAFAFA),
+          color: isAvailable
+              ? const Color(0xffFAFAFA)
+              : Color.fromARGB(99, 175, 175, 175),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
@@ -147,7 +150,12 @@ class MenuItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    title,
+                    title[0].toUpperCase() +
+                        title
+                            .substring(
+                              1,
+                            )
+                            .toLowerCase(),
                     style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -260,6 +268,21 @@ class MenuItem extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if (!isAvailable)
+                    Positioned(
+                        top: 20,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 3),
+                          width: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                          child: Text("Out of stock",
+                              textAlign: TextAlign.center,
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 11)),
+                        ))
                 ],
               ),
             ),

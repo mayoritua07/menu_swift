@@ -29,7 +29,7 @@ class _ScanscreenState extends State<Scanscreen> {
 
   void fetchData(String businessID) async {
     try {
-      String scanAPI = "https://api.visit.menu/api/v1/business/${businessID}";
+      String scanAPI = "https://api.visit.menu/api/v1/business/$businessID";
       final response = await http.get(Uri.parse(scanAPI));
       final Map<String, dynamic> data = jsonDecode(response.body);
 

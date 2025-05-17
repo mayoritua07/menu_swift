@@ -57,6 +57,11 @@ class ShimmerImage extends StatelessWidget {
 
         return ShimmerLoading(child: child);
       },
+      errorBuilder: (context, error, stackTrace) {
+        return Container(
+          color: Color.fromARGB(255, 231, 228, 228),
+        );
+      },
       fit: fit,
     );
   }

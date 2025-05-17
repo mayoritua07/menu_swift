@@ -72,7 +72,6 @@ class _MenuScreenState extends State<MenuScreen> {
       // ]
     }
     final List<Map<String, dynamic>> parameters = [];
-    print(cartItems);
     cartItems.map((item) {
       item.orderItems.map((elements) {
         parameters.add({
@@ -117,7 +116,8 @@ class _MenuScreenState extends State<MenuScreen> {
             'image': item.imgUrl,
             'category': item.category,
             /////added business id ot order item for identification
-            "id": item.businessId
+            "id": item.businessId,
+            "available": item.portionsAvailable > 0,
           };
         }).toList();
 
@@ -172,8 +172,10 @@ class _MenuScreenState extends State<MenuScreen> {
           : null,
       body: SafeArea(
           child: RefreshIndicator(
+        triggerMode: RefreshIndicatorTriggerMode.onEdge,
         onRefresh: fetchMenuItems,
         child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -231,7 +233,7 @@ class _MenuScreenState extends State<MenuScreen> {
           Icon(Icons.error_outline, color: Colors.red, size: 48),
           SizedBox(height: 16),
           Text(
-            errorMessage!,
+            "Unable to load Menu!",
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.red),
           ),
@@ -255,7 +257,10 @@ class _MenuScreenState extends State<MenuScreen> {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ShimmerImage(widget.logoUrl, fit: BoxFit.cover, width: 25),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: ShimmerImage(widget.logoUrl, fit: BoxFit.cover, width: 30),
+            ),
             // Image.network(
             //   widget.logoUrl,
             //   fit: BoxFit.cover,
@@ -330,6 +335,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 name: item['title'],
                 price: item['price'],
                 quantity: quantity,
+                imageUrl: item["image"],
                 id: item["id"]);
             if (currentOrderIndex == null) {
               cartItems.add(
@@ -716,12 +722,15 @@ class _MenuScreenState extends State<MenuScreen> {
                     return Column(
                       children: [
                         GestureDetector(
-                          onTap: () => _showMenuItemDetailsSheet(context, item),
+                          onTap: item["available"]
+                              ? () => _showMenuItemDetailsSheet(context, item)
+                              : null,
                           child: MenuItem(
                             title: item['title'],
                             description: item['description'],
                             price: item['price'],
                             imagePath: item['image'],
+                            isAvailable: item["available"],
                             onTap: () =>
                                 _showMenuItemDetailsSheet(context, item),
                           ),

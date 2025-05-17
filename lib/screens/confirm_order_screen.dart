@@ -536,39 +536,113 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
               _isSubmitting = true;
             });
 
+//validate order
+            for (final currentOrder in widget.orders) {
+              if (!await OrderService.validateOrder(currentOrder)) {
+                ScaffoldMessenger.of(context).clearSnackBars();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    padding: EdgeInsets.all(14),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    duration: Duration(seconds: 2),
+                    // backgroundColor: mainOrangeColor,
+                    content: Center(
+                      child: Text(
+                          "Items in Order ${widget.orders.indexOf(currentOrder) + 1} is out of stock.",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .copyWith(color: Colors.white)),
+                    ),
+                  ),
+                );
+                setState(() {
+                  _isSubmitting = false;
+                });
+                return;
+              }
+            }
+
+            // As many orders exist is the number of requests we will do
+
+            for (final currentOrder in widget.orders) {
+              final order = Order(
+                customerName: _nameController.text,
+                tableTag: _seatController.text,
+                orderItems: currentOrder.orderItems,
+                businessId:
+                    widget.businessId, // Use the business ID from the QR code
+              );
+              final orderId = await OrderService.submitOrder(order);
+              if (orderId != null) {
+                // save customer name
+                await DeviceIdManager.storeCustomerName(_nameController.text);
+
+                //store customerIDs
+                await DeviceIdManager.storeCustomerOrderID(
+                    widget.businessId, orderId);
+
+                widget.orders.removeAt(widget.orders.indexOf(currentOrder));
+
+                // success callback
+              } else {
+                // Show error message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content:
+                        Text("Unable to complete order. Please try again."),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+
+                setState(() {
+                  _isSubmitting = false;
+                });
+                return;
+              }
+            }
             // Create order with customer information
-            final order = Order(
-              customerName: _nameController.text,
-              tableTag: _seatController.text,
-              orderItems:
-                  widget.orders.expand((order) => order.orderItems).toList(),
-              businessId:
-                  widget.businessId, // Use the business ID from the QR code
-            );
+            // final order = Order(
+            //   customerName: _nameController.text,
+            //   tableTag: _seatController.text,
+            //   orderItems:
+            //       widget.orders.expand((order) => order.orderItems).toList(),
+            //   businessId:
+            //       widget.businessId, // Use the business ID from the QR code
+            // );
 
             // Submit order to endpoing
-            final orderId = await OrderService.submitOrder(order);
+            // final orderId = await OrderService.submitOrder(order);
 
             setState(() {
               _isSubmitting = false;
             });
+            widget.onOrderConfirmed();
+            showCompletedOrderDialog(context);
 
-            if (orderId != null) {
-              // save customer name
-              await DeviceIdManager.storeCustomerName(_nameController.text);
+            // if (orderId != null) {
+            //   // save customer name
+            //   await DeviceIdManager.storeCustomerName(_nameController.text);
 
-              // success callback
-              widget.onOrderConfirmed();
-              showCompletedOrderDialog(context);
-            } else {
-              // Show error message
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text("Failed to submit order. Please try again."),
-                  backgroundColor: Colors.red,
-                ),
-              );
-            }
+            //   //store customerIDs
+            //   await DeviceIdManager.storeCustomerOrderID(
+            //       widget.businessId, orderId);
+
+            //   // success callback
+            //   widget.onOrderConfirmed();
+            //   showCompletedOrderDialog(context);
+            // }
+            // else {
+            //   // Show error message
+            //   ScaffoldMessenger.of(context).showSnackBar(
+            //     SnackBar(
+            //       content: Text("Failed to submit order. Please try again."),
+            //       backgroundColor: Colors.red,
+            //     ),
+            //   );
+            // }
           } else {
             scaffoldMessengerKey.currentState?.clearSnackBars();
             scaffoldMessengerKey.currentState?.showSnackBar(

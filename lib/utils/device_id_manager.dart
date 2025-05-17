@@ -1,5 +1,4 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart';
 
 class DeviceIdManager {
   // static const String _deviceIdKey = 'device_id';
@@ -26,5 +25,19 @@ class DeviceIdManager {
   static Future<String?> getLastBusinessId() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('last_business_id');
+  }
+
+  //order ID list
+  static Future<void> storeCustomerOrderID(
+      String businessID, String orderID) async {
+    final prefs = await SharedPreferences.getInstance();
+    final customerOrderIDs = prefs.getStringList(businessID) ?? [];
+    customerOrderIDs.add(orderID);
+    await prefs.setStringList(businessID, customerOrderIDs);
+  }
+
+  static Future<List<String>?> getCustomerOrderIDs(String businessID) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getStringList(businessID);
   }
 }

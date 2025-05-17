@@ -117,14 +117,20 @@ class OrderSummaryScreen extends StatelessWidget {
     List<Widget> myTextWidgetList = [];
     //Update totalPrice variable
     totalPrice = 0;
-    orderItems.map((item) {
-      final itemName = item["item_name"];
+    for (final item in orderItems) {
+      final String itemName = item["item_name"];
       final quantity = item["quantity"];
       final unitPrice = item["unit_price_at_order"];
       final price = double.parse(unitPrice!) * double.parse(quantity!);
       totalPrice += price;
       final myList = [
-        Text(itemName!,
+        Text(
+            itemName[0].toUpperCase() +
+                itemName
+                    .substring(
+                      1,
+                    )
+                    .toLowerCase(),
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         Text(quantity,
             textAlign: TextAlign.center,
@@ -135,8 +141,9 @@ class OrderSummaryScreen extends StatelessWidget {
           textAlign: TextAlign.right,
         )
       ];
-      return myList;
-    });
+
+      myTextWidgetList.addAll(myList);
+    }
 
     return myTextWidgetList;
   }

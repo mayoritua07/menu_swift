@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:swift_menu/model/order_item_model.dart';
 import 'package:swift_menu/model/order_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -21,13 +23,39 @@ class OrderService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         //getting order id
         final responseData = jsonDecode(response.body);
-        return responseData['id']; // Return the order ID
+        return responseData['order_id']; // Return the order ID
       }
       return null;
     } catch (e) {
-      print('Error submitting order: $e');
       return null;
     }
+  }
+
+  // validate order
+  static Future<bool> validateOrder(Order order) async {
+    try {
+      final data = order.orderItems.map(
+        (OrderItem element) {
+          return {"menu_id": element.id, 'quantity': element.quantity};
+        },
+      ).toList();
+      final response = await http.post(
+        Uri.parse(baseUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({"items": data}),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        //getting order id
+        final responseData = jsonDecode(response.body);
+        return responseData['available'] as bool; // Return the order ID
+      }
+    } catch (e) {
+      return false;
+    }
+    return false;
   }
 
   // Getting orders for business using the customer's name
@@ -42,12 +70,11 @@ class OrderService {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-        return data.map((json) => Order.fromJson(json)).toList();
+        return data.map((json) => Order.fromJson(json, businessId)).toList();
       } else {
         return [];
       }
     } catch (e) {
-      print('Error getting orders for customer: $e');
       return [];
     }
   }
@@ -66,7 +93,8 @@ class OrderService {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-        final orders = data.map((json) => Order.fromJson(json)).toList();
+        final orders =
+            data.map((json) => Order.fromJson(json, businessId)).toList();
 
         // filterin gthe orders to only include orders after the specified time
         return orders
@@ -76,13 +104,12 @@ class OrderService {
         return [];
       }
     } catch (e) {
-      print('Error getting orders for customer in time range: $e');
       return [];
     }
   }
 
   // Get a specific order by id
-  static Future<Order?> getOrderById(String orderId) async {
+  static Future<Order?> getOrderById(String orderId, String businessID) async {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/$orderId'),
@@ -90,13 +117,47 @@ class OrderService {
 
       if (response.statusCode == 200) {
         final dynamic data = jsonDecode(response.body);
-        return Order.fromJson(data);
+        return Order.fromJson(data, businessID);
       } else {
         return null;
       }
     } catch (e) {
-      print('Error getting order by ID: $e');
       return null;
+    }
+  }
+
+// get orders then filter
+  static Future<List<Order>> getFilteredOrders(
+      String businessId, List<String> customerOrderIDs) async {
+    List<Order> filteredOrderList = [];
+    Map<String, String> params = {"business_id": businessId};
+    try {
+      final response = await http.get(
+        Uri.parse(baseUrl).replace(queryParameters: params),
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        List<Order> orderList = data
+            .map(
+              (json) => Order.fromJson(json, businessId),
+            )
+            .toList();
+        filteredOrderList = orderList.where(
+          (order) {
+            if (customerOrderIDs.contains(order.id) &&
+                DateTime.now().difference(order.orderTime).inHours < 13) {
+              return true;
+            }
+            return false;
+          },
+        ).toList();
+        return filteredOrderList;
+      } else {
+        return filteredOrderList;
+      }
+    } catch (e) {
+      return [];
     }
   }
 }
