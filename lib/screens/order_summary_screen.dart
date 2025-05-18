@@ -6,7 +6,7 @@ import 'package:swift_menu/component/order_notification_and_status.dart';
 import 'package:swift_menu/constants/colors.dart';
 import 'package:http/http.dart' as http;
 
-class OrderSummaryScreen extends StatelessWidget {
+class OrderSummaryScreen extends StatefulWidget {
   OrderSummaryScreen(
       {super.key,
       required this.title,
@@ -20,12 +20,18 @@ class OrderSummaryScreen extends StatelessWidget {
   final DateTime orderDateAndTime;
   final String orderStatus;
   final List<Map<String, dynamic>> orderItems;
+
+  @override
+  State<OrderSummaryScreen> createState() => _OrderSummaryScreenState();
+}
+
+class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
   String get displayDateAndTime {
     final dateFormat = DateFormat('E, MMMM d, y');
     final timeFormat = DateFormat.jm();
-    return "${dateFormat.format(orderDateAndTime)} at ${timeFormat.format(orderDateAndTime)}";
+    return "${dateFormat.format(widget.orderDateAndTime)} at ${timeFormat.format(widget.orderDateAndTime)}";
   }
 
   void cancelOrder(context) {
@@ -45,11 +51,13 @@ class OrderSummaryScreen extends StatelessWidget {
                     TextButton(
                         onPressed: () async {
                           ///send a request to cancel the order
-                          isLoading = true;
+                          setState(() {
+                            isLoading = true;
+                          });
                           try {
                             final response = await http.patch(
                                 Uri.parse(
-                                    "http://api.order.visit.menu/api/v1/orders/$orderID/status"),
+                                    "http://api.order.visit.menu/api/v1/orders/${widget.orderID}/status"),
                                 headers: {
                                   'Content-Type': 'application/json',
                                 },
@@ -119,10 +127,10 @@ class OrderSummaryScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // SizedBox(height: 10),
-              OrderStatus(orderStatus: orderStatus),
+              OrderStatus(orderStatus: widget.orderStatus),
               SizedBox(height: height * 0.05),
               Text(
-                "Order $orderID",
+                "Order ${widget.orderID}",
                 style: Theme.of(context)
                     .textTheme
                     .headlineSmall!
@@ -140,7 +148,7 @@ class OrderSummaryScreen extends StatelessWidget {
               SizedBox(height: height * 0.03),
               displayOrderItems(),
               SizedBox(height: height * 0.08),
-              if (orderStatus.toLowerCase() == "pending")
+              if (widget.orderStatus.toLowerCase() == "pending")
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       backgroundColor: mainOrangeColor,
@@ -225,7 +233,7 @@ class OrderSummaryScreen extends StatelessWidget {
           "Price(₦)",
           textAlign: TextAlign.right,
         ),
-        ...createOrderItemRowAndTotal(orderItems),
+        ...createOrderItemRowAndTotal(widget.orderItems),
       ],
     );
   }
