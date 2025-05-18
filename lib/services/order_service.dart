@@ -18,7 +18,6 @@ class OrderService {
         },
         body: jsonEncode(order.toJson()),
       );
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         //getting order id
         final responseData = jsonDecode(response.body);
@@ -31,7 +30,7 @@ class OrderService {
   }
 
   // validate order
-  static Future<bool> validateOrder(Order order) async {
+  static Future<List> validateOrder(Order order) async {
     try {
       final data = order.orderItems.map(
         (OrderItem element) {
@@ -48,13 +47,20 @@ class OrderService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         //getting order id
-        final responseData = jsonDecode(response.body);
-        return responseData['available'] as bool; // Return the order ID
+        final responseData = jsonDecode(response.body) as List<dynamic>;
+        for (final responseItem in responseData) {
+          if (responseItem['available'] as bool) {
+          } else {
+            return [false, responseItem["name"]];
+          }
+        }
+        return [true, ""];
+        // Return the order ID
       }
     } catch (e) {
-      return false;
+      return [false, ""];
     }
-    return false;
+    return [false, ""];
   }
 
   // Getting orders for business using the customer's name

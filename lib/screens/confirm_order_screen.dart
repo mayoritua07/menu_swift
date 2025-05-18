@@ -538,7 +538,8 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
 
 // validate order
             for (final currentOrder in widget.orders) {
-              if (!await OrderService.validateOrder(currentOrder)) {
+              final result = await OrderService.validateOrder(currentOrder);
+              if (!result[0]) {
                 scaffoldMessengerKey.currentState?.clearSnackBars();
                 scaffoldMessengerKey.currentState?.showSnackBar(
                   SnackBar(
@@ -550,7 +551,9 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
                     // backgroundColor: mainOrangeColor,
                     content: Center(
                       child: Text(
-                          "Items in Order ${widget.orders.indexOf(currentOrder) + 1} is out of stock.",
+                          (result[1] as String).isEmpty
+                              ? "Unable to process Order, please try again!"
+                              : "${result[1]} for Order ${widget.orders.indexOf(currentOrder) + 1} is out of stock.",
                           style: TextStyle(color: Colors.white)),
                     ),
                   ),
@@ -594,7 +597,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
                 );
                 //delete orders already placed
                 int index = widget.orders.indexOf(currentOrder);
-                for (int i = 0; i <= index; i++) {
+                for (int i = 0; i < index; i++) {
                   widget.orders.removeAt(0);
                 }
 
