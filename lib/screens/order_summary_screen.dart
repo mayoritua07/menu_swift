@@ -1,10 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:swift_menu/component/order_notification_and_status.dart';
 import 'package:swift_menu/constants/colors.dart';
+import 'package:http/http.dart' as http;
 
 class OrderSummaryScreen extends StatelessWidget {
-  const OrderSummaryScreen(
+  OrderSummaryScreen(
       {super.key,
       required this.title,
       required this.orderID,
@@ -17,6 +20,7 @@ class OrderSummaryScreen extends StatelessWidget {
   final DateTime orderDateAndTime;
   final String orderStatus;
   final List<Map<String, dynamic>> orderItems;
+  final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
   String get displayDateAndTime {
     final dateFormat = DateFormat('E, MMMM d, y');
@@ -25,27 +29,70 @@ class OrderSummaryScreen extends StatelessWidget {
   }
 
   void cancelOrder(context) {
+    bool isLoading = false;
     showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (context) {
           return AlertDialog(
             title: Text("Confirm Cancel Order"),
-            content:
-                Text("Are you sure you want to cancel this deicious order?"),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    ///send a request to cancel the order
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pop();
-                  },
-                  child: Text("Yes")),
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text("No"))
-            ],
+            content: isLoading
+                ? CircularProgressIndicator()
+                : Text("Are you sure you want to cancel this deicious order?"),
+            actions: isLoading
+                ? null
+                : [
+                    TextButton(
+                        onPressed: () async {
+                          ///send a request to cancel the order
+                          isLoading = true;
+                          try {
+                            final response = await http.patch(
+                                Uri.parse(
+                                    "http://api.order.visit.menu/api/v1/orders/$orderID/status"),
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                },
+                                body: jsonEncode({"status": "cancelled"}));
+                            if (response.statusCode == 200) {
+                              scaffoldMessengerKey.currentState
+                                  ?.clearSnackBars();
+                              scaffoldMessengerKey.currentState!.showSnackBar(
+                                SnackBar(
+                                  padding: EdgeInsets.all(14),
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20)),
+                                  duration: Duration(seconds: 2),
+                                  // backgroundColor: mainOrangeColor,
+                                  content: Center(
+                                    child: Text("Order has been cancelled",
+                                        style: TextStyle(color: Colors.white)),
+                                  ),
+                                ),
+                              );
+                            }
+                            Navigator.of(context).pop();
+                          } catch (e) {
+                            scaffoldMessengerKey.currentState?.clearSnackBars();
+                            scaffoldMessengerKey.currentState!.showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    "Unable to cancel order. Please try again."),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+
+                          Navigator.of(context).pop();
+                        },
+                        child: Text("Yes")),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text("No"))
+                  ],
           );
         });
   }
@@ -54,6 +101,7 @@ class OrderSummaryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     double height = MediaQuery.sizeOf(context).height;
     return Scaffold(
+      key: scaffoldMessengerKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
         scrolledUnderElevation: 0,
