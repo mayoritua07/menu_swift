@@ -49,7 +49,7 @@ class OrderNotification extends StatelessWidget {
       required this.orderDateAndTime,
       required this.orderStatus});
 
-  final String imageUrl;
+  final String? imageUrl;
   final String title;
   final String orderID;
   final DateTime orderDateAndTime;
@@ -71,9 +71,9 @@ class OrderNotification extends StatelessWidget {
       } else if (orderDuration.inHours > 0) {
         return "${orderDuration.inHours}h ago";
       } else if (orderDuration.inMinutes > 0) {
-        return "${orderDuration.inHours}m ago";
+        return "${orderDuration.inMinutes}m ago";
       } else if (orderDuration.inSeconds > 0) {
-        return "${orderDuration.inSeconds}m ago";
+        return "${orderDuration.inSeconds}s ago";
       }
     }
     return DateFormat.yMd().format(orderDateAndTime);
@@ -91,13 +91,16 @@ class OrderNotification extends StatelessWidget {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 231, 228, 228),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 clipBehavior: Clip.hardEdge,
-                child: ShimmerImage(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                )),
+                child: imageUrl == null
+                    ? null
+                    : ShimmerImage(
+                        imageUrl!,
+                        fit: BoxFit.cover,
+                      )),
             title: Text(
               title[0].toUpperCase() +
                   title

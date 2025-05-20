@@ -117,7 +117,8 @@ class _MenuScreenState extends State<MenuScreen> {
             'category': item.category,
             /////added business id ot order item for identification
             "id": item.id,
-            "available": item.portionsAvailable > 0,
+            "available": item.available,
+            "is_available": item.isAvailable
           };
         }).toList();
 
@@ -183,7 +184,7 @@ class _MenuScreenState extends State<MenuScreen> {
               children: [
                 _headerIcons(),
                 const SizedBox(height: 16),
-                const MenuHeader(),
+                MenuHeader(businessName: widget.businessName),
                 const SizedBox(height: 16),
                 _buildSearchField(),
                 const SizedBox(height: 16),
@@ -201,7 +202,8 @@ class _MenuScreenState extends State<MenuScreen> {
                 else
                   _buildMenuSection(
                     title: selectedCategory,
-                    itemCount: '${filteredItemsForDisplay.length} items',
+                    itemCount:
+                        '${filteredItemsForDisplay.length} item${filteredItemsForDisplay.length > 1 ? 's' : ""}',
                     items: filteredItemsForDisplay,
                   ),
               ],
@@ -730,7 +732,8 @@ class _MenuScreenState extends State<MenuScreen> {
                             description: item['description'],
                             price: item['price'],
                             imagePath: item['image'],
-                            isAvailable: item["available"],
+                            isAvailable: item["is_available"],
+                            available: item["available"],
                             onTap: () =>
                                 _showMenuItemDetailsSheet(context, item),
                           ),

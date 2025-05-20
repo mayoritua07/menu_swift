@@ -29,10 +29,10 @@ class DeviceIdManager {
 
   //order ID list
   static Future<void> storeCustomerOrderID(
-      String businessID, String orderID) async {
+      String businessID, int orderID) async {
     final prefs = await SharedPreferences.getInstance();
     final customerOrderIDs = prefs.getStringList(businessID) ?? [];
-    customerOrderIDs.add(orderID);
+    customerOrderIDs.add(orderID.toString());
     await prefs.setStringList(businessID, customerOrderIDs);
   }
 

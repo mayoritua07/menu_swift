@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:swift_menu/model/order_item_model.dart';
@@ -9,7 +10,7 @@ class OrderService {
       dotenv.env['ORDER_URL'] ?? 'https://api.visit.menu/api/v1/orders';
 
   //method to submit order
-  static Future<String?> submitOrder(Order order) async {
+  static Future<int?> submitOrder(Order order) async {
     try {
       final response = await http.post(
         Uri.parse(baseUrl),
@@ -143,14 +144,13 @@ class OrderService {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-        List<Order> orderList = data
-            .map(
-              (json) => Order.fromJson(json, businessId),
-            )
-            .toList();
+
+        List<Order> orderList =
+            data.map((json) => Order.fromJson(json, businessId)).toList();
+
         filteredOrderList = orderList.where(
           (order) {
-            if (customerOrderIDs.contains(order.id) &&
+            if (customerOrderIDs.contains(order.id.toString()) &&
                 DateTime.now().difference(order.orderTime).inHours < 13) {
               return true;
             }

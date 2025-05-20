@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class MenuHeader extends StatefulWidget {
-  const MenuHeader({super.key});
+  const MenuHeader({super.key, required this.businessName});
+
+  final String businessName;
 
   @override
   State<MenuHeader> createState() => _MenuHeaderState();
@@ -59,9 +61,9 @@ class _MenuHeaderState extends State<MenuHeader> {
               gradient: LinearGradient(
                 stops: [0, 0.2, 0.45, 1],
                 colors: [
-                  const Color.fromARGB(80, 3, 2, 2),
-                  const Color.fromARGB(50, 3, 2, 2),
-                  const Color.fromARGB(30, 3, 2, 2),
+                  const Color.fromARGB(130, 3, 2, 2),
+                  const Color.fromARGB(90, 3, 2, 2),
+                  const Color.fromARGB(45, 3, 2, 2),
                   Colors.transparent
                 ],
               ),
@@ -76,17 +78,17 @@ class _MenuHeaderState extends State<MenuHeader> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "EXPERIENCE OUR",
-                style: TextStyle(fontSize: 14, color: Colors.white),
-              ),
-              Text("UNIQUE BLEND",
+              // Text(
+              //   "EXPERIENCE OUR",
+              //   style: TextStyle(fontSize: 14, color: Colors.white),
+              // ),
+              Text(widget.businessName,
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 20,
+                      fontSize: 26,
                       color: Colors.white)),
-              Text("Savor every taste",
-                  style: TextStyle(fontSize: 12, color: Colors.white)),
+              // Text("Savor every taste",
+              //     style: TextStyle(fontSize: 12, color: Colors.white)),
             ],
           ),
         ),

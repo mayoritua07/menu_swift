@@ -8,18 +8,21 @@ class MenuItemModel {
   final int portionsAvailable;
   final String businessId;
   final int totalPortions;
+  final bool available;
+  final bool isAvailable;
 
-  MenuItemModel({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.price,
-    required this.imgUrl,
-    required this.category,
-    required this.portionsAvailable,
-    required this.businessId,
-    required this.totalPortions,
-  });
+  MenuItemModel(
+      {required this.id,
+      required this.name,
+      required this.description,
+      required this.price,
+      required this.imgUrl,
+      required this.category,
+      required this.portionsAvailable,
+      required this.businessId,
+      required this.totalPortions,
+      required this.available,
+      required this.isAvailable});
 
   factory MenuItemModel.fromJson(Map<String, dynamic> json) {
     return MenuItemModel(
@@ -32,6 +35,8 @@ class MenuItemModel {
       portionsAvailable: json['portions_available'] as int,
       businessId: json['business_id'] as String,
       totalPortions: json['total_portions'] as int,
+      available: json["available"] as bool,
+      isAvailable: json["is_available"] as bool,
     );
   }
 

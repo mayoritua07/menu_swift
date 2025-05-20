@@ -22,9 +22,9 @@ class _OrderNotificationsScreenState extends State<OrderNotificationsScreen> {
   late DateTime thisWeekSunday;
   List<Order> orders = [];
 
-  DateTime getOrderDateAndTime(String timestamp) {
-    return DateTime.parse(timestamp);
-  }
+  // DateTime getOrderDateAndTime(String timestamp) {
+  //   return DateTime.parse(timestamp);
+  // }
 
   @override
   void initState() {
@@ -32,7 +32,6 @@ class _OrderNotificationsScreenState extends State<OrderNotificationsScreen> {
     thisWeekSunday =
         todayDate.subtract(Duration(days: todayDate.weekday + 1 % 7));
     super.initState();
-
     _fetchOrders();
   }
 
@@ -132,13 +131,13 @@ class _OrderNotificationsScreenState extends State<OrderNotificationsScreen> {
                         String title = order.orderItems.isNotEmpty
                             ? order.orderItems.first.name
                             : 'Order ${order.id ?? ''}';
-                        String orderID = order.id ?? '';
+                        String orderID = order.id.toString();
                         String orderStatus = order.status;
                         // String imageUrl = order.orderItems.isNotEmpty
                         //     ? 'https://menucard-menu.s3.amazonaws.com/placeholder-food.jpg' // Placeholder image
                         //     : 'https://menucard-menu.s3.amazonaws.com/placeholder-food.jpg';
                         DateTime orderDateAndTime = order.orderTime;
-                        String imageUrl = order.orderItems[0].imageUrl;
+                        String? imageUrl = order.orderItems[0].imageUrl;
 
                         // Determine section
                         if (now.day == orderDateAndTime.day) {

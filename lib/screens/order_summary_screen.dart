@@ -7,7 +7,7 @@ import 'package:swift_menu/constants/colors.dart';
 import 'package:http/http.dart' as http;
 
 class OrderSummaryScreen extends StatefulWidget {
-  OrderSummaryScreen(
+  const OrderSummaryScreen(
       {super.key,
       required this.title,
       required this.orderID,
@@ -41,6 +41,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
+            backgroundColor: Colors.white,
             title: Text("Confirm Cancel Order"),
             content: isLoading
                 ? CircularProgressIndicator()
@@ -57,15 +58,14 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                           try {
                             final response = await http.patch(
                                 Uri.parse(
-                                    "http://api.order.visit.menu/api/v1/orders/${widget.orderID}/status"),
+                                    "http://api.order.visit.menu/api/v1/orders/${widget.orderID}/status/"),
                                 headers: {
                                   'Content-Type': 'application/json',
                                 },
                                 body: jsonEncode({"status": "cancelled"}));
                             if (response.statusCode == 200) {
-                              scaffoldMessengerKey.currentState
-                                  ?.clearSnackBars();
-                              scaffoldMessengerKey.currentState!.showSnackBar(
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   padding: EdgeInsets.all(14),
                                   behavior: SnackBarBehavior.floating,
@@ -82,8 +82,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                             }
                             Navigator.of(context).pop();
                           } catch (e) {
-                            scaffoldMessengerKey.currentState?.clearSnackBars();
-                            scaffoldMessengerKey.currentState!.showSnackBar(
+                            ScaffoldMessenger.of(context).clearSnackBars();
+                            ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
                                     "Unable to cancel order. Please try again."),

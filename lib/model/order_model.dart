@@ -1,7 +1,7 @@
 import 'package:swift_menu/model/order_item_model.dart';
 
 class Order {
-  final String? id;
+  final int? id;
 
   final String customerName;
   final String tableTag;

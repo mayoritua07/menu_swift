@@ -2,14 +2,14 @@ class OrderItem {
   final String name;
   final String id;
   final String price;
-  final String imageUrl;
+  final String? imageUrl;
   int quantity;
 
   OrderItem({
     required this.name,
     required this.id,
     required this.price,
-    required this.imageUrl,
+    this.imageUrl,
     this.quantity = 1,
   });
 
@@ -32,6 +32,7 @@ class OrderItem {
       'item_id': id,
       'price': double.tryParse(price.replaceAll(RegExp(r'[^0-9.]'), '')),
       'quantity': quantity,
+      "img_url": imageUrl != null ? Uri.encodeFull(imageUrl!) : null,
     };
   }
 

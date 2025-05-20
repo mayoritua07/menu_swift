@@ -7,6 +7,7 @@ class MenuItem extends StatelessWidget {
   final String price;
   final VoidCallback onTap;
   final String imagePath;
+  final bool available;
   final bool isAvailable;
 
   const MenuItem(
@@ -16,6 +17,7 @@ class MenuItem extends StatelessWidget {
       required this.price,
       required this.onTap,
       required this.imagePath,
+      required this.available,
       required this.isAvailable});
 
   @override
@@ -136,9 +138,9 @@ class MenuItem extends StatelessWidget {
         height: 132,
         padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16),
         decoration: BoxDecoration(
-          color: isAvailable
-              ? const Color(0xffFAFAFA)
-              : Color.fromARGB(99, 175, 175, 175),
+          color: !isAvailable || !available
+              ? Color.fromARGB(99, 175, 175, 175)
+              : const Color(0xffFAFAFA),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
@@ -156,6 +158,7 @@ class MenuItem extends StatelessWidget {
                               1,
                             )
                             .toLowerCase(),
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -268,7 +271,7 @@ class MenuItem extends StatelessWidget {
                       ),
                     ),
                   ),
-                  if (!isAvailable)
+                  if (!isAvailable || !available)
                     Positioned(
                         top: 20,
                         child: Container(
@@ -278,7 +281,8 @@ class MenuItem extends StatelessWidget {
                             color: Colors.red,
                             borderRadius: BorderRadius.circular(2),
                           ),
-                          child: Text("Out of stock",
+                          child: Text(
+                              !isAvailable ? "Out of stock" : "Unavailable",
                               textAlign: TextAlign.center,
                               style:
                                   TextStyle(color: Colors.white, fontSize: 11)),
