@@ -67,23 +67,13 @@ flutter:
     # To add assets to your application, add an assets section, like this:
     assets:
         - "assets/images/Frame.png"
-        - "assets/images/image 4.png"
-        - "assets/images/image 5.png"
-        - "assets/images/image 6.png"
-        - "assets/images/Exclude.png"
-        - "assets/images/biscuit.png"
-        - "assets/images/icecream.png"
         - "assets/images/barcode.png"
-        - "assets/images/tea.png"
         - "assets/images/Restaurant Image.png"
-        - "assets/images/Search Icon.png"
         - "assets/images/splash_icon.png"
         - "assets/images/Onboarding/onboarding_1.png"
         - "assets/images/Onboarding/onboarding_2.png"
         - "assets/images/Onboarding/onboarding_3.png"
-        - "assets/images/jellof-rice.png"
         - "assets/icons/store.png"
-        - "assets/icons/Logo.png"
         - "variables.env"
 
     # An image asset can refer to one or more resolution-specific "variants", see

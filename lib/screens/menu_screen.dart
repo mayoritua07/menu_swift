@@ -112,7 +112,7 @@ class _MenuScreenState extends State<MenuScreen> {
           return {
             'title': item.name,
             'description': item.description,
-            'price': 'N${item.price.toStringAsFixed(2)}',
+            'price': '₦${item.price.toStringAsFixed(2)}',
             'image': item.imgUrl,
             'category': item.category,
             /////added business id ot order item for identification

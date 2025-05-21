@@ -164,57 +164,74 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
           style: TextStyle(
             fontSize: 16,
             color: Colors.black,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        Row(
-          children: [
-            Container(
-              height: 39,
-              width: 137,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                  border: Border.all(color: borderGreyColor, width: 1.0),
-                  borderRadius: BorderRadius.circular(300),
-                  color: borderGreyColor),
-              child: InkWell(
-                onTap: () {
-                  Navigator.of(context)
-                      .pop({"currentOrderIndex": orderNumber - 1});
-                },
-                child: Row(
-                  children: [
-                    const Icon(Icons.add, size: 12, weight: 15),
-                    Text(
-                      'Add to this order',
-                      style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ),
+        // Row(
+        //   children: [
+        // Container(
+        //   height: 39,
+        //   width: 137,
+        //   padding: const EdgeInsets.symmetric(horizontal: 10),
+        //   decoration: BoxDecoration(
+        //       border: Border.all(color: borderGreyColor, width: 1.0),
+        //       borderRadius: BorderRadius.circular(300),
+        //       color: borderGreyColor),
+        //   child: InkWell(
+        //     onTap: () {
+        //       Navigator.of(context)
+        //           .pop({"currentOrderIndex": orderNumber - 1});
+        //     },
+        //     child: Row(
+        //       children: [
+        //         const Icon(Icons.add, size: 12, weight: 15),
+        //         Text(
+        //           'Add to this order',
+        //           style: const TextStyle(
+        //               fontSize: 12,
+        //               color: Colors.black,
+        //               fontWeight: FontWeight.bold),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
+        //     const SizedBox(width: 10),
+        //     GestureDetector(
+        //       onTap: () {
+        //         setState(() {
+        //           widget.orders.removeAt(orderNumber - 1);
+        //           // widget.onOrderRemoved(orderNumber - 1);
+        //         });
+        //       },
+        //       child: Container(
+        //         height: 32,
+        //         width: 32,
+        //         decoration: BoxDecoration(
+        //           color: Colors.red[100],
+        //           borderRadius: BorderRadius.circular(4000),
+        //         ),
+        //         child: Center(child: Icon(Icons.delete, color: Colors.red)),
+        //       ),
+        //     ),
+        //   ],
+        // ),
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              widget.orders.removeAt(orderNumber - 1);
+              // widget.onOrderRemoved(orderNumber - 1);
+            });
+          },
+          child: Container(
+            height: 32,
+            width: 32,
+            decoration: BoxDecoration(
+              color: Colors.red[100],
+              borderRadius: BorderRadius.circular(4000),
             ),
-            const SizedBox(width: 10),
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  widget.orders.removeAt(orderNumber - 1);
-                  // widget.onOrderRemoved(orderNumber - 1);
-                });
-              },
-              child: Container(
-                height: 32,
-                width: 32,
-                decoration: BoxDecoration(
-                  color: Colors.red[100],
-                  borderRadius: BorderRadius.circular(4000),
-                ),
-                child: Center(child: Icon(Icons.delete, color: Colors.red)),
-              ),
-            ),
-          ],
+            child: Center(child: Icon(Icons.delete, color: Colors.red)),
+          ),
         ),
       ],
     );
@@ -225,27 +242,32 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
         .map(
           (item) => Padding(
             padding: const EdgeInsets.symmetric(vertical: 2),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      item.name,
-                      style: const TextStyle(
-                        fontSize: 16,
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.name[0].toUpperCase() +
+                              item.name.substring(1).toLowerCase(),
+                          style: const TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                        Text(
+                          item.price,
+                          style: const TextStyle(
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      item.price,
-                      style: const TextStyle(
-                        color: Colors.grey,
-                      ),
-                    ),
+                    _buildQuantityControl(item),
                   ],
                 ),
-                _buildQuantityControl(item),
               ],
             ),
           ),
@@ -323,55 +345,57 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
   }
 
   Widget _costDetails() {
-    bool isOneOrder = widget.orders.length == 1;
+    // bool isOneOrder = widget.orders.length == 1;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Sub-total${isOneOrder ? "(1 order)" : ""}',
-              style: TextStyle(
-                fontSize: 15,
-                color: const Color(0xff6b6b6b),
-              ),
-            ),
-            if (isOneOrder)
-              Text(
-                'N${widget.orders[0].price.toStringAsFixed(2)}',
-                style: TextStyle(
-                  fontSize: 15,
-                  color: const Color(0xff6b6b6b),
-                ),
-              ),
-          ],
-        ),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //   children: [
+        //     Text(
+        //       'Sub-total${isOneOrder ? "(1 order)" : ""}',
+        //       style: TextStyle(
+        //         fontSize: 15,
+        //         color: const Color(0xff6b6b6b),
+        //       ),
+        //     ),
+        //     if (isOneOrder)
+        //       Text(
+        //         'N${widget.orders[0].price.toStringAsFixed(2)}',
+        //         style: TextStyle(
+        //           fontSize: 15,
+        //           color: const Color(0xff6b6b6b),
+        //         ),
+        //       ),
+        //   ],
+        // ),
         SizedBox(height: 5),
-        if (!isOneOrder)
-          ...widget.orders.asMap().entries.map((entry) {
-            int index = entry.key + 1;
-            final item = entry.value;
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Order $index",
-                    style: TextStyle(fontSize: 16),
+        ...widget.orders.asMap().entries.map((entry) {
+          int index = entry.key + 1;
+          final item = entry.value;
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Sub-total (Order $index)",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: const Color(0xff6b6b6b),
                   ),
-                  Text(
-                    'N${item.price.toStringAsFixed(2)}',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: const Color(0xff6b6b6b),
-                    ),
+                ),
+                Text(
+                  '₦${item.price.toStringAsFixed(2)}',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: const Color(0xff6b6b6b),
                   ),
-                ],
-              ),
-            );
-          }),
+                ),
+              ],
+            ),
+          );
+        }),
         const SizedBox(height: 5),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -386,7 +410,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
             ),
             const SizedBox(height: 16),
             Text(
-              'N${total.toStringAsFixed(2)}',
+              '₦${total.toStringAsFixed(2)}',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.black,
