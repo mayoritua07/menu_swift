@@ -4,12 +4,18 @@ workflows:
     environment:
       flutter: stable
       xcode: latest
-      cocoapods: default
     scripts:
-      - name: Set minimum deployment target
+      - name: Set iOS Deployment Target to 16.0
         script: |
-          echo "Setting iOS deployment target to 16.0"
-          sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = .*/IPHONEOS_DEPLOYMENT_TARGET = 16.0/' ios/Podfile
+          echo "Updating deployment target to 16.0"
+          
+          # Update deployment target in Podfile
+          if grep -q "platform :ios" ios/Podfile; then
+            sed -i '' 's/platform :ios, .*/platform :ios, '\''16.0'\''/' ios/Podfile
+          else
+            echo "platform :ios, '16.0'" >> ios/Podfile
+          fi
+
           flutter clean
           flutter pub get
           flutter build ios --simulator
