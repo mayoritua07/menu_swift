@@ -5,17 +5,17 @@ workflows:
       flutter: stable
       xcode: latest
     scripts:
-      - name: Set iOS deployment target
+      - name: Set iOS deployment targets
         script: |
           echo "Setting iOS deployment target to 15.5"
-          sed -i '' 's/PLATFORM_IOS_DEPLOYMENT_TARGET = .*/PLATFORM_IOS_DEPLOYMENT_TARGET = 15.5/' ios/Podfile
+          sed -i '' 's/platform :ios, .*$/platform :ios, '\''15.5'\''/' ios/Podfile
+          sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*/IPHONEOS_DEPLOYMENT_TARGET = 15.5/g' ios/Runner.xcodeproj/project.pbxproj
           flutter clean
           flutter pub get
           cd ios
           pod install
           cd ..
       - name: Build for iOS Simulator
-        script: |
-          flutter build ios --simulator
+        script: flutter build ios --simulator
     artifacts:
       - build/ios/iphonesimulator/*.app
