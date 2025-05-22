@@ -1,19 +1,25 @@
 workflows:
   ios-simulator-build:
-    name: iOS Simulator Build
+    name: iOS Simulator Build (15.5)
     environment:
       flutter: stable
       xcode: latest
     scripts:
-      - name: Set iOS Deployment Target to 16.0
+      - name: Set iOS Deployment Target to 15.5
         script: |
-          echo "Updating deployment target to 16.0"
-          
-          # Update deployment target in Podfile
-          if grep -q "platform :ios" ios/Podfile; then
-            sed -i '' 's/platform :ios, .*/platform :ios, '\''16.0'\''/' ios/Podfile
+          echo "Setting minimum iOS deployment target to 15.5"
+
+          PODFILE_PATH="ios/Podfile"
+
+          if [ -f "$PODFILE_PATH" ]; then
+            if grep -q "platform :ios" "$PODFILE_PATH"; then
+              sed -i '' 's/platform :ios, .*/platform :ios, '\''15.5'\''/' "$PODFILE_PATH"
+            else
+              echo "platform :ios, '15.5'" | cat - "$PODFILE_PATH" > temp && mv temp "$PODFILE_PATH"
+            fi
           else
-            echo "platform :ios, '16.0'" >> ios/Podfile
+            echo "Error: Podfile not found."
+            exit 1
           fi
 
           flutter clean
