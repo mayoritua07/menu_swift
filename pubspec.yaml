@@ -2,7 +2,7 @@ name: swift_menu
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.6.0-334.2.beta
+    sdk: ^3.6.0-334.2.beta
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -28,67 +28,121 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  flutter:
-    sdk: flutter
+    flutter:
+        sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
+    # The following adds the Cupertino Icons font to your application.
+    # Use with the CupertinoIcons class for iOS style icons.
+    cupertino_icons: ^1.0.8
+    smooth_page_indicator: ^1.2.1
+    shared_preferences: ^2.5.3
+    mobile_scanner: ^6.0.10
+    http: ^1.4.0
+    # flutter_local_notifications: ^19.1.0
+    intl: ^0.20.2
+    flutter_dotenv: ^5.2.1
+    uuid: ^4.5.1
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
+    flutter_test:
+        sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
-  flutter_lints: ^5.0.0
+    # The "flutter_lints" package below contains a set of recommended lints to
+    # encourage good coding practices. The lint set provided by the package is
+    # activated in the `analysis_options.yaml` file located at the root of your
+    # package. See that file for information about deactivating specific lint
+    # rules and activating additional ones.
+    flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
 flutter:
+    # The following line ensures that the Material Icons font is
+    # included with your application, so that you can use the icons in
+    # the material Icons class.
+    uses-material-design: true
 
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
-  uses-material-design: true
+    # To add assets to your application, add an assets section, like this:
+    assets:
+        - "assets/images/Frame.png"
+        - "assets/images/barcode.png"
+        - "assets/images/Restaurant Image.png"
+        - "assets/images/splash_icon.png"
+        - "assets/images/Onboarding/onboarding_1.png"
+        - "assets/images/Onboarding/onboarding_2.png"
+        - "assets/images/Onboarding/onboarding_3.png"
+        - "assets/icons/store.png"
+        - "variables.env"
 
-  # To add assets to your application, add an assets section, like this:
-  assets:
-    - "assets/images/Frame.png"
-    - "assets/images/image 4.png"
-    - "assets/images/image 5.png"
-    - "assets/images/image 6.png"
-    - "assets/images/Restaurant Image.png"
-    - "assets/images/Search Icon.png"
+    # An image asset can refer to one or more resolution-specific "variants", see
+    # https://flutter.dev/to/resolution-aware-images
 
+    # For details regarding adding assets from package dependencies, see
+    # https://flutter.dev/to/asset-from-package
 
-  # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/to/resolution-aware-images
-
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/to/asset-from-package
-
-  # To add custom fonts to your application, add a fonts section here,
-  # in this "flutter" section. Each entry in this list should have a
-  # "family" key with the font family name, and a "fonts" key with a
-  # list giving the asset and other descriptors for the font. For
-  # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
-  #
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/to/font-from-package
+    # To add custom fonts to your application, add a fonts section here,
+    # in this "flutter" section. Each entry in this list should have a
+    # "family" key with the font family name, and a "fonts" key with a
+    # list giving the asset and other descriptors for the font. For
+    # example:
+    fonts:
+        - family: HelveticaNeue
+          fonts:
+              - asset: assets/fonts/HelveticaNeueUltraLight-w100.otf
+                weight: 100
+                style: normal
+              - asset: assets/fonts/HelveticaNeueUltraLightItalic-w100.otf
+                weight: 100
+                style: italic
+              - asset: assets/fonts/HelveticaNeueThin-w200.otf
+                weight: 200
+                style: normal
+              - asset: assets/fonts/HelveticaNeueThinItalic-w200.otf
+                weight: 200
+                style: italic
+              - asset: assets/fonts/HelveticaNeueLight-w300.otf
+                weight: 300
+                style: normal
+              - asset: assets/fonts/HelveticaNeueLightItalic-w300.otf
+                weight: 300
+                style: italic
+              - asset: assets/fonts/HelveticaNeueRoman-w400.otf
+                weight: 400
+                style: normal
+              - asset: assets/fonts/HelveticaNeueItalic-w400.ttf
+                weight: 400
+                style: italic
+              - asset: assets/fonts/HelveticaNeueMedium-w500.otf
+                weight: 500
+                style: normal
+              - asset: assets/fonts/HelveticaNeueMediumItalic-w500.otf
+                weight: 500
+                style: italic
+              - asset: assets/fonts/HelveticaNeueBold-w700.otf
+                weight: 700
+                style: normal
+              - asset: assets/fonts/HelveticaNeueBoldItalic-w700.otf
+                weight: 700
+                style: italic
+              - asset: assets/fonts/HelveticaNeueHeavy-w800.otf
+                weight: 800
+                style: normal
+              - asset: assets/fonts/HelveticaNeueHeavyItalic-w800.otf
+                weight: 800
+                style: italic
+              - asset: assets/fonts/HelveticaNeueBlack-w900.otf
+                weight: 900
+                style: normal
+              - asset: assets/fonts/HelveticaNeueBlackItalic-w900.otf
+                weight: 900
+                style: italic
+    #   - family: Trajan Pro
+    #     fonts:
+    #       - asset: fonts/TrajanPro.ttf
+    #       - asset: fonts/TrajanPro_Bold.ttf
+    #         weight: 700
+    #
+    # For details regarding fonts from package dependencies,
+    # see https://flutter.dev/to/font-from-package
