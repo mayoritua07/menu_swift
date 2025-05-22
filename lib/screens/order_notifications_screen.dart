@@ -58,10 +58,12 @@ class _OrderNotificationsScreenState extends State<OrderNotificationsScreen> {
             //   startTime: twelveHoursAgo,
             // );
 
-            await OrderService.getFilteredOrders(
+            (await OrderService.getFilteredOrders(
           widget.businessID,
           customerOrderIDs,
-        );
+        ))
+                .reversed
+                .toList();
 
         setState(() {
           orders = fetchedOrders;

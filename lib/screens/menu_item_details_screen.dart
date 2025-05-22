@@ -74,6 +74,30 @@ class _MenuItemDetailsSheetState extends State<MenuItemDetailsSheet> {
             width: double.infinity,
             height: 200,
             fit: BoxFit.cover,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return SizedBox(
+                width: double.infinity,
+                height: 200,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                        : null,
+                    color: mainOrangeColor,
+                  ),
+                ),
+              );
+            },
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                width: double.infinity,
+                height: 200,
+                color: Colors.grey[200],
+                child: Icon(Icons.image_not_supported, color: Colors.grey),
+              );
+            },
           ),
         ),
         Positioned(

@@ -69,33 +69,36 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
         backgroundColor: Colors.transparent,
         body: GestureDetector(onTap: () => Navigator.of(context).pop()),
         bottomSheet: Container(
-            padding: const EdgeInsets.all(20),
+            // padding: const EdgeInsets.all(20),
             decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
             child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeader(),
-                  const SizedBox(height: 16),
-                  _buildSeatNumberControls(),
-                  const SizedBox(height: 16),
-                  _buildRestaurantInfo(),
-                  const SizedBox(height: 16),
-                  ..._buildOrderItems(),
-                  const SizedBox(height: 16),
-                  _buildAddAnotherPlateButton(),
-                  const SizedBox(height: 16),
-                  _costTitle(),
-                  const SizedBox(height: 16),
-                  _costDetails(),
-                  const SizedBox(height: 16),
-                  _buildConfirmOrderButton(),
-                  SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
-                ],
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildHeader(),
+                    const SizedBox(height: 16),
+                    _buildSeatNumberControls(),
+                    const SizedBox(height: 16),
+                    _buildRestaurantInfo(),
+                    const SizedBox(height: 16),
+                    ..._buildOrderItems(),
+                    const SizedBox(height: 16),
+                    _buildAddAnotherPlateButton(),
+                    const SizedBox(height: 16),
+                    _costTitle(),
+                    const SizedBox(height: 16),
+                    _costDetails(),
+                    const SizedBox(height: 16),
+                    _buildConfirmOrderButton(),
+                    SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
+                  ],
+                ),
               ),
             )),
       ),
@@ -148,8 +151,55 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
         children: [
           _buildPlateHeader(index + 1),
           const SizedBox(height: 16),
-          ..._buildOrderItem(item.orderItems),
-          const SizedBox(height: 16),
+          ..._buildOrderItem(item),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+            decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 249, 249, 249),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(12))),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Your selections",
+                  style:
+                      TextStyle(color: const Color(0xff6b6b6b), fontSize: 16),
+                ),
+                Text(
+                  "₦${item.price}",
+                  style:
+                      TextStyle(color: const Color(0xff6b6b6b), fontSize: 16),
+                )
+              ],
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.of(context).pop({"currentOrderIndex": index});
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              decoration: BoxDecoration(
+                  color: mainOrangeColor,
+                  borderRadius:
+                      BorderRadius.vertical(bottom: Radius.circular(12))),
+              child: Row(
+                children: [
+                  Text(
+                    "Edit Selection",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
+                  SizedBox(width: 4),
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 10,
+                    weight: 20,
+                  )
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
         ],
       );
     }).toList();
@@ -230,18 +280,23 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
               color: Colors.red[100],
               borderRadius: BorderRadius.circular(4000),
             ),
-            child: Center(child: Icon(Icons.delete, color: Colors.red)),
+            child: Center(
+                child: Icon(
+              Icons.delete,
+              color: Colors.red,
+              size: 18,
+            )),
           ),
         ),
       ],
     );
   }
 
-  List<Widget> _buildOrderItem(List<OrderItem> items) {
-    return items
+  List<Widget> _buildOrderItem(Order order) {
+    return order.orderItems
         .map(
           (item) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 2),
+            padding: const EdgeInsets.symmetric(vertical: 3),
             child: Column(
               children: [
                 Row(
@@ -268,6 +323,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
                     _buildQuantityControl(item),
                   ],
                 ),
+                SizedBox(height: 12),
               ],
             ),
           ),
@@ -403,7 +459,7 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
             Text(
               'Total',
               style: TextStyle(
-                fontSize: 15,
+                fontSize: 16,
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
@@ -412,13 +468,14 @@ class _ConfirmOrderSheetState extends State<ConfirmOrderSheet> {
             Text(
               '₦${total.toStringAsFixed(2)}',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 16,
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ],
         ),
+        const SizedBox(height: 40),
       ],
     );
   }

@@ -50,7 +50,9 @@ class OrderService {
         //getting order id
         final responseData = jsonDecode(response.body) as List<dynamic>;
         for (final responseItem in responseData) {
-          if (responseItem['available'] as bool) {
+          if (responseItem['available'] as bool &&
+              responseItem["portions_available"] >
+                  data[responseData.indexOf(responseItem)]["quantity"]) {
           } else {
             return [false, responseItem["name"]];
           }
