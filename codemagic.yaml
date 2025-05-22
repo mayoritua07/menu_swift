@@ -1,21 +1,17 @@
 workflows:
-  ios-simulator:
+  ios-simulator-build:
     name: iOS Simulator Build
     environment:
       flutter: stable
       xcode: latest
+      cocoapods: default
     scripts:
-      - name: Set iOS Deployment Target to 15.5
+      - name: Set minimum deployment target
         script: |
-          sed -i '' 's/PLATFORM_VERSION = [0-9.]*/PLATFORM_VERSION = 15.5/' ios/Flutter/Generated.xcconfig || true
-          sed -i '' 's/ios', '.*'/ios', '15.5'/' ios/Podfile || true
-      - name: Install dependencies
-        script: flutter pub get
-      - name: Build for iOS Simulator
-        script: flutter build ios --simulator
+          echo "Setting iOS deployment target to 16.0"
+          sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = .*/IPHONEOS_DEPLOYMENT_TARGET = 16.0/' ios/Podfile
+          flutter clean
+          flutter pub get
+          flutter build ios --simulator
     artifacts:
       - build/ios/iphonesimulator/*.app
-    publishing:
-      email:
-        recipients:
-          - your-email@example.com
